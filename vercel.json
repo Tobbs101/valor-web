@@ -1,0 +1,8 @@
+{
+  "installCommand": "yarn install",
+  "build": {
+    "env": {
+      "VERCEL_BUILD_CACHE": "false"
+    }
+  }
+}

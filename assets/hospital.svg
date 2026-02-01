@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="hospital" viewBox="0 0 2500 2000">
+  <rect width="2500" height="2000" style="fill:none"></rect>
+  <path d="M2042.13,1416.1c-.29-7.56,7-14.51,14.5-13.91s13.58,8.63,12.08,16c1.93-5.85,9.82-8.48,15.23-5.54s7.64,10.26,5.48,16-8.05,9.7-14.18,10.31a13.91,13.91,0,0,1,14.19,1.22c6.43,4.75,7.4,13.83,7.81,21.82h-55.12Z" style="fill:#89af5d"></path>
+  <path d="M2002.26,1405.33s13.9-47.84,30.22-38.89c10,5.51.34,36.2-6.78,35.47,0,0,16.42-10.3,24.4-2.14,10,10.19,0,22.25,0,22.25s20.53-2.92,26.88,10.09c6.86,14.07-14.65,30-14.65,30h-60.07Z" style="fill:#a1c180"></path>
+  <path d="M457.87,1416.1c.29-7.56-7-14.51-14.5-13.91s-13.58,8.63-12.08,16c-1.93-5.85-9.82-8.48-15.23-5.54s-7.64,10.26-5.48,16,8.05,9.7,14.18,10.31a13.91,13.91,0,0,0-14.19,1.22c-6.43,4.75-7.4,13.83-7.81,21.82h55.12Z" style="fill:#89af5d"></path>
+  <path d="M497.74,1405.33s-13.9-47.84-30.22-38.89c-10,5.51-.34,36.2,6.78,35.47,0,0-16.42-10.3-24.4-2.14-10,10.19,0,22.25,0,22.25s-20.53-2.92-26.88,10.09c-6.86,14.07,14.65,30,14.65,30h60.07Z" style="fill:#a1c180"></path>
+  <rect width="507.32" height="507.32" x="1504.4" y="954.76" style="fill:#ececec"></rect>
+  <rect width="574.07" height="34.12" x="1461.38" y="939.18" rx="17.06" style="fill:#e0e0e0"></rect>
+  <rect width="112.5" height="211.05" x="1862.64" y="1001.68" style="fill:#e0e0e0" transform="rotate(-180 1918.885 1107.205)"></rect>
+  <rect width="112.5" height="211.05" x="1709.22" y="1001.68" style="fill:#e0e0e0" transform="rotate(-180 1765.475 1107.205)"></rect>
+  <rect width="112.5" height="211.05" x="1555.81" y="1001.68" style="fill:#e0e0e0" transform="rotate(-180 1612.065 1107.205)"></rect>
+  <rect width="105.56" height="198.03" x="1559.28" y="1008.19" style="fill:#fff"></rect>
+  <rect width="105.56" height="198.03" x="1712.69" y="1008.19" style="fill:#fff"></rect>
+  <rect width="105.56" height="198.03" x="1866.11" y="1008.19" style="fill:#fff"></rect>
+  <rect width="112.5" height="211.05" x="1862.64" y="1222.7" style="fill:#e0e0e0" transform="rotate(-180 1918.885 1328.23)"></rect>
+  <rect width="112.5" height="211.05" x="1709.22" y="1222.7" style="fill:#e0e0e0" transform="rotate(-180 1765.475 1328.23)"></rect>
+  <rect width="112.5" height="211.05" x="1555.81" y="1222.7" style="fill:#e0e0e0" transform="rotate(-180 1612.065 1328.23)"></rect>
+  <rect width="105.56" height="198.03" x="1559.28" y="1229.21" style="fill:#fff"></rect>
+  <rect width="105.56" height="198.03" x="1712.69" y="1229.21" style="fill:#fff"></rect>
+  <rect width="105.56" height="198.03" x="1866.11" y="1229.21" style="fill:#fff"></rect>
+  <rect width="507.32" height="507.32" x="488.29" y="954.76" style="fill:#ececec" transform="rotate(-180 741.945 1208.415)"></rect>
+  <rect width="574.07" height="34.12" x="464.55" y="939.18" rx="17.06" style="fill:#e0e0e0" transform="rotate(-180 751.585 956.24)"></rect>
+  <rect width="112.5" height="211.05" x="831.69" y="1001.68" style="fill:#e0e0e0" transform="rotate(-180 887.935 1107.205)"></rect>
+  <rect width="105.56" height="198.03" x="835.16" y="1008.19" style="fill:#fff" transform="rotate(-180 887.935 1107.205)"></rect>
+  <rect width="112.5" height="211.05" x="678.28" y="1001.68" style="fill:#e0e0e0" transform="rotate(-180 734.525 1107.205)"></rect>
+  <rect width="105.56" height="198.03" x="681.75" y="1008.19" style="fill:#fff" transform="rotate(-180 734.525 1107.205)"></rect>
+  <rect width="112.5" height="211.05" x="524.87" y="1001.68" style="fill:#e0e0e0" transform="rotate(-180 581.115 1107.205)"></rect>
+  <rect width="112.5" height="211.05" x="831.69" y="1222.7" style="fill:#e0e0e0" transform="rotate(-180 887.935 1328.23)"></rect>
+  <rect width="112.5" height="211.05" x="678.28" y="1222.7" style="fill:#e0e0e0" transform="rotate(-180 734.525 1328.23)"></rect>
+  <rect width="112.5" height="211.05" x="524.87" y="1222.7" style="fill:#e0e0e0" transform="rotate(-180 581.115 1328.23)"></rect>
+  <rect width="105.56" height="198.03" x="528.34" y="1008.19" style="fill:#fff" transform="rotate(-180 581.115 1107.205)"></rect>
+  <rect width="105.56" height="198.03" x="835.16" y="1229.21" style="fill:#fff" transform="rotate(-180 887.935 1328.23)"></rect>
+  <rect width="105.56" height="198.03" x="681.75" y="1229.21" style="fill:#fff" transform="rotate(-180 734.525 1328.23)"></rect>
+  <rect width="105.56" height="198.03" x="528.34" y="1229.21" style="fill:#fff" transform="rotate(-180 581.115 1328.23)"></rect>
+  <rect width="437.6" height="399.77" x="1031.2" y="554.99" style="fill:#a1c180"></rect>
+  <rect width="94.94" height="134.24" x="1069.76" y="605.06" style="fill:#89af5d"></rect>
+  <rect width="94.94" height="134.24" x="1069.76" y="768.97" style="fill:#89af5d"></rect>
+  <rect width="94.94" height="134.24" x="1202.53" y="605.06" style="fill:#89af5d"></rect>
+  <rect width="94.94" height="134.24" x="1202.53" y="768.97" style="fill:#89af5d"></rect>
+  <rect width="94.94" height="134.24" x="1335.29" y="605.06" style="fill:#89af5d"></rect>
+  <rect width="94.94" height="134.24" x="1335.29" y="768.97" style="fill:#89af5d"></rect>
+  <rect width="86.03" height="121.64" x="1074.22" y="611.36" style="fill:#ececec"></rect>
+  <rect width="86.04" height="121.64" x="1074.22" y="775.27" style="fill:#ececec"></rect>
+  <rect width="483.58" height="34.12" x="1008.21" y="537.93" rx="17.06" style="fill:#609b88"></rect>
+  <polygon points="1160.25 612.54 1160.25 632.31 1074.22 689.86 1074.22 670.07 1160.25 612.54" style="fill:#fff"></polygon>
+  <polygon points="1160.25 656.47 1160.25 669.68 1074.22 727.21 1074.22 714.02 1160.25 656.47" style="fill:#fff"></polygon>
+  <polygon points="1160.25 778.76 1160.25 798.53 1074.22 856.08 1074.22 836.29 1160.25 778.76" style="fill:#fff"></polygon>
+  <polygon points="1160.25 822.68 1160.25 835.89 1074.22 893.42 1074.22 880.24 1160.25 822.68" style="fill:#fff"></polygon>
+  <rect width="86.03" height="121.64" x="1206.98" y="611.36" style="fill:#ececec"></rect>
+  <rect width="86.04" height="121.64" x="1206.98" y="775.27" style="fill:#ececec"></rect>
+  <polygon points="1293.01 612.54 1293.01 632.31 1206.98 689.86 1206.98 670.07 1293.01 612.54" style="fill:#fff"></polygon>
+  <polygon points="1293.01 656.47 1293.01 669.68 1206.98 727.21 1206.98 714.02 1293.01 656.47" style="fill:#fff"></polygon>
+  <polygon points="1293.01 778.76 1293.01 798.53 1206.98 856.08 1206.98 836.29 1293.01 778.76" style="fill:#fff"></polygon>
+  <polygon points="1293.01 822.68 1293.01 835.89 1206.98 893.42 1206.98 880.24 1293.01 822.68" style="fill:#fff"></polygon>
+  <rect width="86.03" height="121.64" x="1339.74" y="611.36" style="fill:#ececec"></rect>
+  <rect width="86.04" height="121.64" x="1339.75" y="775.27" style="fill:#ececec"></rect>
+  <polygon points="1425.78 612.54 1425.78 632.31 1339.74 689.86 1339.74 670.07 1425.78 612.54" style="fill:#fff"></polygon>
+  <polygon points="1425.78 656.47 1425.78 669.68 1339.74 727.21 1339.74 714.02 1425.78 656.47" style="fill:#fff"></polygon>
+  <polygon points="1425.78 778.76 1425.78 798.53 1339.74 856.08 1339.74 836.29 1425.78 778.76" style="fill:#fff"></polygon>
+  <polygon points="1425.78 822.68 1425.78 835.89 1339.74 893.42 1339.74 880.24 1425.78 822.68" style="fill:#fff"></polygon>
+  <rect width="540.69" height="507.32" x="979.65" y="954.76" style="fill:#a1c180"></rect>
+  <rect width="243.27" height="196.55" x="1128.36" y="1265.52" style="fill:#89af5d"></rect>
+  <rect width="290.74" height="16.32" x="1104.63" y="1249.21" rx="8.16" style="fill:#609b88"></rect>
+  <rect width="106.43" height="183.57" x="1143.57" y="1278.5" style="fill:#fff"></rect>
+  <rect width="106.43" height="183.57" x="1250" y="1278.5" style="fill:#fff" transform="rotate(-180 1303.215 1370.29)"></rect>
+  <circle cx="1270.95" cy="1374.18" r="6.95" style="fill:#e0e0e0"></circle>
+  <circle cx="1229.05" cy="1374.18" r="6.95" style="fill:#e0e0e0"></circle>
+  <circle cx="1250" cy="1106.06" r="111.25" style="fill:#89af5d"></circle>
+  <circle cx="1250" cy="1106.06" r="89.74" style="fill:#fff"></circle>
+  <path d="M1307,1092.62h-43.58V1049a13.44,13.44,0,0,0-26.88,0v43.58H1193a13.44,13.44,0,0,0,0,26.88h43.58v43.58a13.44,13.44,0,0,0,26.88,0V1119.5H1307a13.44,13.44,0,0,0,0-26.88Z" style="fill:#ffc749"></path>
+  <rect width="574.07" height="34.12" x="962.97" y="939.18" rx="17.06" style="fill:#609b88"></rect>
+  <line x1="1250" x2="1250" y1="1278.5" y2="1462.07" style="fill:none;stroke:#e0e0e0;stroke-miterlimit:10;stroke-width:8.77665328979492px"></line>
+  <path d="M2500,883.52c0,9-10.29,16.23-23,16.23a29.14,29.14,0,0,1-14.84-3.84C2466.86,884,2475,875,2483.59,868,2493.08,870,2500,876.17,2500,883.52Z" style="fill:#fff"></path>
+</svg>
