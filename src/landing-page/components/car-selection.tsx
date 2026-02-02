@@ -13,6 +13,8 @@ import Bus from "@/assets/bus.svg";
 import Vintage from "@/assets/vintage.svg";
 import Pickup from "@/assets/pickup.svg";
 import Highlander from "@/assets/highlander.png";
+import SecurePayment from "@/assets/secure-payment.svg";
+import PaymentShield from "@/assets/security-padlock.png";
 
 // Car categories - replace placeholder images with actual images
 // Example: import SedanImg from "@/assets/sedan.png";
@@ -92,16 +94,40 @@ const CarSelection = () => {
     {
       id: 1,
       content: (
-        <div className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-6 shadow-lg min-h-[420px]">
-          <div>
+        <motion.div
+          className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-6 shadow-lg min-h-[420px]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: -20 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.5, ease: "easeOut" },
+              },
+            }}
+          >
             <h3 className="text-[22px] md:text-[26px] font-[700] text-primary mb-2">
               Variety
             </h3>
             <p className="text-[14px] md:text-[16px] text-[#646464] mb-6 leading-[22px]">
               Search for any vehicle from a deep pool of car owners in your area
             </p>
-          </div>
-          <div className="grid w-full grid-cols-3 gap-3">
+          </motion.div>
+          <motion.div
+            className="grid border border-gray-200 p-3 rounded-2xl bg-white w-full grid-cols-3 gap-3"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.4, delay: 0.5 },
+              },
+            }}
+          >
             {[
               { name: "SUVs", icon: "mdi:car-suv" },
               { name: "Sedan", icon: "mdi:car-saloon" },
@@ -110,41 +136,78 @@ const CarSelection = () => {
               { name: "Bus", icon: "mdi:bus" },
               { name: "Pickup", icon: "mdi:car-pickup" },
             ].map((item, idx) => (
-              <div
+              <motion.div
                 key={idx}
                 className="bg-white border border-gray-200 rounded-[12px] p-3 flex flex-col items-center justify-center gap-2 hover:border-primary/30 transition-colors cursor-pointer"
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8, y: 10 },
+                  visible: {
+                    opacity: 1,
+                    scale: 1,
+                    y: 0,
+                    transition: {
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 20,
+                      delay: 0.3 + idx * 0.08,
+                    },
+                  },
+                }}
               >
                 <Icon icon={item.icon} className="text-[28px] text-primary" />
                 <span className="text-[12px] text-[#323232] font-[500]">
                   {item.name}
                 </span>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       ),
     },
     {
       id: 2,
       content: (
-        <div className="bg-[#C5EBFF] rounded-[24px] p-6 shadow-lg min-h-[420px] flex flex-col justify-between">
+        <motion.div
+          className="bg-[#C5EBFF] rounded-[24px] p-6 shadow-lg min-h-[420px] flex flex-col justify-between"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
           <div className="flex-1 flex items-center justify-center">
-            <div className="relative">
-              {/* Credit Card Illustration */}
-              <div className="w-[180px] h-[110px] bg-[#4A9FD4] rounded-[12px] relative overflow-hidden shadow-lg">
-                <div className="absolute top-4 left-4 right-4">
-                  <div className="w-[60%] h-[8px] bg-white/80 rounded-full mb-2"></div>
-                  <div className="w-[40%] h-[8px] bg-white/80 rounded-full"></div>
-                </div>
-                <div className="absolute top-0 left-0 right-0 h-[20px] bg-[#D4A84A]"></div>
-              </div>
-              {/* Lock Icon */}
-              <div className="absolute -bottom-2 -right-2 w-[50px] h-[50px] bg-[#023047] rounded-[10px] flex items-center justify-center shadow-lg">
-                <Icon icon="mdi:lock" className="text-white text-2xl" />
-              </div>
-            </div>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, scale: 0.8, y: 20 },
+                visible: {
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                  transition: {
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20,
+                    delay: 0.5,
+                  },
+                },
+              }}
+            >
+              <Image
+                src={SecurePayment}
+                alt="Secure Payment"
+                width={200}
+                height={200}
+              />
+            </motion.div>
           </div>
-          <div>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.5, delay: 0.4 },
+              },
+            }}
+          >
             <h3 className="text-[22px] md:text-[26px] font-[700] text-primary mb-2">
               Secure Payment
             </h3>
@@ -152,76 +215,167 @@ const CarSelection = () => {
               Payment is made via our platform eliminating the risk of being
               defrauded
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       ),
     },
     {
       id: 3,
       content: (
-        <div className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-6 shadow-lg min-h-[420px]">
-          <div>
+        <motion.div
+          className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-6 shadow-lg min-h-[420px]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: -20 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.5, ease: "easeOut" },
+              },
+            }}
+          >
             <h3 className="text-[22px] md:text-[26px] font-[700] text-primary mb-2">
               Best Price
             </h3>
             <p className="text-[14px] md:text-[16px] text-[#646464] mb-5 leading-[22px]">
               Compare cost of vehicles and select the rental best for you.
             </p>
-          </div>
+          </motion.div>
           <div className="space-y-3 relative">
-            {/* First car card - slightly rotated */}
-            <div className="bg-[#023047] rounded-[14px] p-3 flex items-center gap-3 transform -rotate-[7deg] relative z-10">
-              <div className="w-[70px] h-[50px] bg-gray-400 rounded-[8px] overflow-hidden relative">
+            {/* First car card - slightly rotated with drop-in bounce */}
+            <motion.div
+              className="bg-[#023047] rounded-[14px] p-3 flex items-center gap-3 relative z-10"
+              variants={{
+                hidden: { opacity: 0, y: -80, scale: 0.9, rotate: 0 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  rotate: -6.5,
+                  transition: {
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 15,
+                    delay: 0.5,
+                    mass: 0.8,
+                  },
+                },
+              }}
+            >
+              <motion.div
+                className="w-[90px] h-[70px] bg-gray-400 rounded-[8px] overflow-hidden relative"
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8 },
+                  visible: {
+                    opacity: 1,
+                    scale: 1,
+                    transition: { delay: 0.7, duration: 0.3 },
+                  },
+                }}
+              >
                 <Image
                   src={Highlander}
                   alt="Car"
                   fill
                   className="object-cover"
                 />
-              </div>
-              <div className="flex-1">
+              </motion.div>
+              <motion.div
+                className="flex-1"
+                variants={{
+                  hidden: { opacity: 0, x: -10 },
+                  visible: {
+                    opacity: 1,
+                    x: 0,
+                    transition: { delay: 0.9, duration: 0.3 },
+                  },
+                }}
+              >
                 <h4 className="text-white font-[600] text-[14px]">
                   Lexus M360
                 </h4>
-                <p className="text-white/60 text-[11px]">Driver: John Doe</p>
-                <p className="text-white/60 text-[11px]">Reg No: MKV-234-TGH</p>
+                <p className="text-[#F4F4F4] text-[12px]">Driver: John Doe</p>
+                <p className="text-[#F4F4F4] text-[12px]">
+                  Reg No: MKV-234-TGH
+                </p>
                 <p className="text-white text-[13px] mt-1">
                   From <span className="text-[#4ADE80] font-[700]">N57k</span>{" "}
                   /Day
                 </p>
-              </div>
+              </motion.div>
               <Icon
                 icon="mdi:dots-vertical"
                 className="text-white/60 text-xl"
               />
-            </div>
+            </motion.div>
 
-            {/* Second car card */}
-            <div className="bg-white border border-primary rounded-[14px] p-3 flex items-center gap-3">
-              <div className="w-[70px] h-[50px] bg-gray-400 rounded-[8px] overflow-hidden relative">
+            {/* Second car card with drop-in bounce */}
+            <motion.div
+              className="bg-white border border-primary rounded-[14px] p-3 flex items-center gap-3"
+              variants={{
+                hidden: { opacity: 0, y: -100, scale: 0.9 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: {
+                    type: "spring",
+                    stiffness: 280,
+                    damping: 14,
+                    delay: 1,
+                    mass: 0.8,
+                  },
+                },
+              }}
+            >
+              <motion.div
+                className="w-[90px] h-[80px] bg-gray-400 rounded-[8px] overflow-hidden relative"
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8 },
+                  visible: {
+                    opacity: 1,
+                    scale: 1,
+                    transition: { delay: 1.2, duration: 0.3 },
+                  },
+                }}
+              >
                 <Image
                   src={Highlander}
                   alt="Car"
                   fill
                   className="object-cover"
                 />
-              </div>
-              <div className="flex-1">
+              </motion.div>
+              <motion.div
+                className="flex-1"
+                variants={{
+                  hidden: { opacity: 0, x: -10 },
+                  visible: {
+                    opacity: 1,
+                    x: 0,
+                    transition: { delay: 1.4, duration: 0.3 },
+                  },
+                }}
+              >
                 <h4 className="text-primary font-[600] text-[14px]">
                   Swirl C4D
                 </h4>
-                <p className="text-primary/60 text-[11px]">Driver: John Doe</p>
-                <p className="text-primary/60 text-[11px]">
+                <p className="text-[#646464] text-[12px]">Driver: John Doe</p>
+                <p className="text-[#646464] text-[12px]">
                   Reg No: MKV-234-TGH
                 </p>
                 <p className="text-primary text-[13px] mt-1">
                   From <span className="text-black font-[700]">N80k</span> /Day
                 </p>
-              </div>
+              </motion.div>
               <Icon icon="mdi:dots-vertical" className="text-primary text-xl" />
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       ),
     },
     {
@@ -326,25 +480,13 @@ const CarSelection = () => {
             </p>
           </div>
           {/* Shield Illustration */}
-          <div className="flex-1 flex items-center justify-center">
-            <div className="relative">
-              {/* Shield shape */}
-              <div className="w-[140px] h-[160px] bg-gradient-to-b from-[#8B7FE8] to-[#6B5DD3] rounded-t-[70px] rounded-b-[20px] flex items-center justify-center relative overflow-hidden">
-                {/* Shield inner glow */}
-                <div className="absolute inset-2 bg-gradient-to-b from-[#A599F2] to-[#8B7FE8] rounded-t-[60px] rounded-b-[16px] opacity-50"></div>
-                {/* Checkmark */}
-                <div className="relative z-10 w-[50px] h-[50px] bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <Icon icon="mdi:check-bold" className="text-white text-3xl" />
-                </div>
-              </div>
-              {/* Lock icon */}
-              <div className="absolute -bottom-3 -right-3 w-[55px] h-[55px] bg-[#87CEEB] rounded-[12px] flex items-center justify-center shadow-lg">
-                <Icon
-                  icon="mdi:lock-outline"
-                  className="text-[#023047] text-2xl"
-                />
-              </div>
-            </div>
+          <div className=" flex items-center justify-center w-full">
+            <Image
+              className="w-[150px]"
+              src={PaymentShield}
+              alt="Secure Payment"
+              width={150}
+            />
           </div>
         </div>
       ),
