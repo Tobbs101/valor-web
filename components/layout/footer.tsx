@@ -34,7 +34,7 @@ const Footer = () => {
     <footer className="bg-[#023047] text-white">
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col items-start md:items-center gap-8">
           {/* Logo */}
           <Image
             src={Logo}
@@ -43,7 +43,7 @@ const Footer = () => {
           />
 
           {/* Links */}
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="flex flex-wrap justify-start md:justify-center gap-8">
             <Link
               href="/terms-and-conditions"
               className="text-white/90 hover:text-white transition-colors text-[16px] underline underline-offset-4"
@@ -59,7 +59,7 @@ const Footer = () => {
           </div>
 
           {/* Social Icons */}
-          <div className="flex gap-4">
+          <div className="flex w-full md:justify-center justify-start gap-4">
             {socialLinks.map((social) => (
               <Link
                 key={social.label}
@@ -75,7 +75,7 @@ const Footer = () => {
           </div>
 
           {/* Copyright */}
-          <p className="text-[14px] text-white/80 text-center mt-4">
+          <p className="text-[14px] w-full text-white/80 text-left md:text-center mt-4">
             Copyright ©{new Date().getFullYear()} All rights reserved. Valorhire
             Technologies Limited
           </p>

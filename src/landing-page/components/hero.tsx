@@ -1,12 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import background from "@/assets/valor-hero.jpg";
-import Image from "next/image";
-import { Icon } from "@iconify/react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Each from "@/components/helpers/each";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import {
@@ -16,9 +12,9 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import AnimatedBtn from "@/components/ui/animated-btn";
 import { ArrowRight } from "lucide-react";
-import Container from "@/components/layout/container";
+import { useInView } from "react-intersection-observer";
+import { useLayoutContext } from "@/app/client-layout";
 
 const lines = ["Hire any car with ease"];
 
@@ -84,13 +80,27 @@ const Hero = () => {
 
   const [searchType, setSearchType] = useState("");
 
+  const { ref: heroRef, inView: heroInView } = useInView({
+    threshold: 0.1,
+  });
+
+  const { setIsHeroVisible } = useLayoutContext();
+
+  console.log(heroInView);
+
+  useEffect(() => {
+    if (window.innerWidth < 1440) return setIsHeroVisible(false);
+
+    setIsHeroVisible(heroInView);
+  }, [heroInView, setIsHeroVisible]);
+
   return (
     <div className="w-full relative lg:h-screen-minus-82 py-5 lg:py-0 overflow-hidden flex items-center justify-center flex-col gap-2">
       <div
+        ref={heroRef}
         className=" relative py-[50px] flex items-center justify-center flex-col rounded-[30px] h-[600px] lg:h-[94%] w-[95%] md:w-[97.5%] mx-auto bg-cover"
         style={{
           backgroundImage: `url(${(background as any).src ?? background})`,
-          // filter: "brightness(0.6)",
         }}
       >
         <AnimatedText />
@@ -105,32 +115,13 @@ const Hero = () => {
           our platform.
         </motion.p>
 
-        {/* <motion.div
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="absolute top-0 z-[-1] left-0 w-full h-full"
-        >
-          <Image
-            src={background}
-            alt=""
-            className="w-full h-full object-cover"
-          />
-        </motion.div> */}
-        {/* <motion.div
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="absolute rounded-[30px] top-0 left-0 bg-black/30 z-[1] w-full h-full"
-        /> */}
-
         <motion.div
           initial={{ y: "100%", opacity: 0 }}
           animate={{ y: "0%", opacity: 1 }}
           transition={{ delay: 1.2, duration: 0.5, ease: "easeOut" }}
-          className="mt-5 lg:mt-7 w-[90%] max-w-[900px] mx-auto z-[1] p-2 sm:p-3 flex flex-col sm:flex-row items-center gap-3 rounded-full shadow-xl bg-white"
+          className="mt-5 lg:mt-7 w-[90%] max-w-[900px] mx-auto z-[1] p-2 sm:p-3 flex flex-col sm:flex-row items-center gap-3 rounded-3xl md:rounded-full shadow-xl bg-white"
         >
-          <div className="flex flex-col sm:flex-row items-center gap-3 flex-1 w-full">
+          <div className="flex items-center gap-2 md:gap-3 flex-1 w-full">
             {/* Location Select */}
             <Select
               value={searchType}

@@ -2,6 +2,7 @@
 import { Metadata } from "next";
 import "@fontsource-variable/open-sans";
 import "./globals.css";
+import ClientLayout from "./client-layout";
 
 export const metadata: Metadata = {
   title: "Limit Breakers Tutoring",
@@ -15,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ClientLayout>{children}</ClientLayout>
+      </body>
     </html>
   );
 }

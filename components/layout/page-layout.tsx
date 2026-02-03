@@ -8,6 +8,7 @@ import Sidebar from "./sidebar";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "./header";
 import WhatsappWidget from "../custom/whatsapp-widget";
+import { usePathname } from "next/navigation";
 
 function PageLayout({
   className,
@@ -29,6 +30,8 @@ function PageLayout({
     });
   };
 
+  const pathname = usePathname();
+
   useEffect(() => {
     const handleScroll = () => {
       setShowScrollTop(window.scrollY > 100);
@@ -39,11 +42,16 @@ function PageLayout({
   }, []);
 
   return (
-    <main className={cn("h-screen relative flex flex-col bg-white", className)}>
+    <main className={cn(" relative flex flex-col bg-white", className)}>
       {/* {showWhatsapp ? <WhatsappWidget /> : null} */}
 
       {header ?? <Header toggleSidebar={toggleSidebar} />}
-      <div className="w-full mt-[82px] relative dark:bg-[#121212]/95 bg-[#F9FBFF] dark:text-white grow flex flex-col md:flex-row">
+      <div
+        className={cn(
+          "w-full mt-[75px] relative dark:bg-[#121212]/95 bg-[#F9FBFF] dark:text-white grow flex flex-col md:flex-row",
+          { "mt-0": pathname === "/" },
+        )}
+      >
         <Sidebar toggleSidebar={toggleSidebar} isOpen={sidebarOpen} />
 
         <motion.div
@@ -65,11 +73,11 @@ function PageLayout({
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.9 }}
             onClick={scrollToTop}
-            className="fixed bottom-6 left-6 z-50 w-16 h-16 bg-primary hover:bg-primary/80 text-white rounded-md shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+            className="fixed bottom-3 left-3 md:bottom-5 md:left-5 z-50 w-[45px] h-[45px] md:w-[60px] md:h-[60px] bg-orange-500 hover:bg-orange-500/80 text-white rounded-md shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
             aria-label="Scroll to top"
           >
             <svg
-              className="w-6 h-6 transform group-hover:-translate-y-0.5 transition-transform"
+              className="w-5 h-5 md:w-6 md:h-6 transform group-hover:-translate-y-0.5 transition-transform"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

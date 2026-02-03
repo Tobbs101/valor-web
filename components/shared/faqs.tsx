@@ -116,8 +116,10 @@ const Faqs = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <p className="text-[16px] text-[#646464] mb-3">FAQs</p>
-          <h2 className="text-[32px] md:text-[40px] font-[700] text-primary leading-[40px] md:leading-[48px]">
+          <p className="text-[12px] md:text-[16px] text-[#646464] mb-1 md:mb-3">
+            FAQs
+          </p>
+          <h2 className="text-[20px] md:text-[40px] font-[700] text-primary leading-[30px] md:leading-[48px]">
             Frequently Asked Questions
           </h2>
         </motion.div>

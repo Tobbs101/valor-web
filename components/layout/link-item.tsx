@@ -30,7 +30,7 @@ function LinkItem({ route, active }: { route: LinkProp; active: boolean }) {
                   "w-full flex duration-200 items-end hover:underline cursor-pointer justify-start gap-[6px] font-medium text-[14px] px-4 py-3.5 rounded-md",
                   {
                     " text-primary": active,
-                  }
+                  },
                 )}
                 href={route.route || ""}
               >
@@ -47,16 +47,15 @@ function LinkItem({ route, active }: { route: LinkProp; active: boolean }) {
   return (
     <Link
       className={cn(
-        "w-full dark:bg-gray-500 hover:bg-gray-300 hover:text-black flex duration-200 items-end justify-start gap-[6px] font-medium text-[14px] px-4 py-3.5 rounded-md",
+        "w-full dark:bg-gray-500 hover:bg-gray-300 hover:text-black flex duration-200 items-end justify-start gap-[6px] font-medium text-[14px] px-8 py-3",
         {
-          "dark:bg-primary bg-primary text-white hover:bg-primary hover:text-white ":
+          " bg-[#D6F1FF] font-[700] border-b-[2px] border-primary text-primary hover:bg-[#D6F1FF]/90 hover:text-primary":
             active,
-        }
+        },
       )}
       href={route.route || ""}
     >
-      {/* {route.icon}{" "} */}
-      <Text className="" size={"sm"} weight={"medium"}>
+      <Text className={cn("text-[14px] font-[400]", { "font-[700]": active })}>
         {route.label}
       </Text>
     </Link>

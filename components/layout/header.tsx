@@ -1,14 +1,15 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Container from "./container";
 import Each from "../helpers/each";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import logo from "../../assets/valor-logo.png";
-import LogoMinimal from "../../assets/valor-logo.png";
+import logowhite from "@/assets/vw.png";
 import Image from "next/image";
-import { AlignJustify } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Icon } from "@iconify/react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -17,8 +18,9 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { LinkProp } from "@/types";
-import { Icon } from "@iconify/react";
 import { usePathname, useRouter } from "next/navigation";
+import { useLayoutContext } from "@/app/client-layout";
+import useScrollAtTop from "@/hooks/use-scroll";
 
 const NAVIGATION_LINKS: LinkProp[] = [
   { id: 1, route: "/", label: "Home" },
@@ -52,9 +54,11 @@ const NAVIGATION_LINKS: LinkProp[] = [
 const HeaderLink = ({
   item,
   className,
+  isWhite,
 }: {
   item: LinkProp;
   className?: string;
+  isWhite?: boolean;
 }) => {
   const pathname = usePathname();
 
@@ -116,6 +120,7 @@ const HeaderLink = ({
         </NavigationMenuList>
       </NavigationMenu>
     );
+
   return (
     <Link
       key={item.id}
@@ -124,13 +129,34 @@ const HeaderLink = ({
     >
       <motion.span
         className={cn(
-          "text-black group-hover:text-primary group-hover:font-medium transition-colors duration-300",
-          { "text-primary": pathname === item.route },
+          "text-black group-hover:text-primary transition-colors duration-300",
+          {
+            "text-orange-400 group-hover:text-orange-500 font-medium":
+              pathname === item.route && isWhite,
+          },
+          { "text-primary font-medium": pathname === item.route && !isWhite },
+
+          {
+            "text-white group-hover:text-white":
+              isWhite && pathname !== item.route,
+          },
         )}
       >
         {item.label}
       </motion.span>
-      <motion.span className="absolute left-0 -bottom-2 w-0 h-[2px] bg-primary group-hover:w-full transition-all duration-300" />
+      <motion.span
+        className={cn(
+          "absolute left-0 -bottom-1.5 w-0 h-[2px] bg-primary group-hover:w-full transition-all duration-300",
+          {
+            "bg-orange-500  font-medium": pathname === item.route && isWhite,
+          },
+          // { "text-primary font-medium": pathname === item.route && !isWhite },
+
+          {
+            "bg-white": isWhite && pathname !== item.route,
+          },
+        )}
+      />
     </Link>
   );
 };
@@ -147,37 +173,62 @@ const Header = ({
   const onClickLogo = () => {
     router.push("/");
   };
+  // const { isHeroVisible } = useLayoutContext();
+
+  const pathname = usePathname();
+  const isAtTop = useScrollAtTop();
+
+  const logoToUse = isAtTop && pathname === "/" ? logowhite : logo;
+
   return (
-    <div className="px-7 fixed z-[100] w-full bg-white border-b border-gray-100 shadow-sm">
+    <div
+      className={cn(
+        "px-5 fixed z-[100] w-full bg-white border-b border-gray-100 shadow-sm",
+        {
+          "bg-transparent border-transparent text-white shadow-none":
+            isAtTop && pathname === "/",
+        },
+        { "bg-white border-transparent": !isAtTop },
+        { "bg-white text-primary": pathname !== "/" },
+      )}
+    >
       <motion.div
-        className={cn("flex items-center justify-between py-5", className)}
-        transition={{ duration: 1 }}
-        // initial={{ opacity: 0, y: -50 }}
-        // animate={{ opacity: 1, y: 0 }}
+        className={cn(
+          "flex items-center w-full justify-between max-w-[1440px] py-5 mx-auto",
+          className,
+        )}
+        animate={{
+          maxWidth: "1440px",
+          opacity: 1,
+        }}
+        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+        initial={{ opacity: 0 }}
       >
-        <div className="flex items-center justify-start gap-1">
+        <div className="flex items-center justify-between w-full lg:w-fit gap-1">
+          <Image
+            src={logoToUse}
+            width={150}
+            onClick={onClickLogo}
+            alt=""
+            className="w-[100px] lg:w-[150px] cursor-pointer"
+          />
+
           {toggleSidebar && (
-            <Button
-              className="lg:hidden block border dark:border-white text-black dark:bg-white py-0 px-3 mr-4"
+            <button
+              className={cn(
+                "lg:hidden block py-0 px-0 text-black dark:bg-white",
+                {
+                  "text-white": isAtTop && pathname === "/",
+                },
+              )}
               onClick={toggleSidebar}
-              variant={"ghost"}
             >
-              <AlignJustify className="w-4" />
-            </Button>
+              <Icon
+                className="w-[30px] h-[30px]"
+                icon={"proicons:text-align-justify"}
+              />
+            </button>
           )}
-          <Image
-            src={logo}
-            onClick={onClickLogo}
-            alt=""
-            className="w-[150px] cursor-pointer lg:block hidden"
-          />
-          <Image
-            onClick={onClickLogo}
-            src={LogoMinimal}
-            width={100}
-            alt=""
-            className="w-[100px] lg:hidden cursor-pointer block"
-          />
         </div>
         {/* Nav section */}
         <div className="items-center hidden lg:flex justify-center space-x-10">
@@ -185,13 +236,22 @@ const Header = ({
             of={NAVIGATION_LINKS}
             render={(item: LinkProp) => (
               <HeaderLink
+                isWhite={isAtTop && pathname === "/"}
                 key={item.id}
                 item={item}
                 className={item?.className}
               />
             )}
           />
-          <Button className="rounded-[36px] text-[14px] font-[400] p-[20px_40px] bg-primary text-white hover:bg-primary/90 duration-200">
+          <Button
+            className={cn(
+              "rounded-[36px] w-[129px] h-[47px] text-[14px] font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200",
+              {
+                "border border-white bg-transparent text-white hover:bg-white/5":
+                  isAtTop && pathname === "/",
+              },
+            )}
+          >
             Sign Up
           </Button>
         </div>

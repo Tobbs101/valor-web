@@ -137,7 +137,7 @@ const CarCard = ({
           </span>
         </div>
         <div className="flex items-baseline gap-1">
-          <span className="text-[24px] md:text-[32px] font-[700] text-primary">
+          <span className="text-[20px] md:text-[32px] font-[700] text-primary">
             ₦{car.price.toLocaleString()}
           </span>
           <span className="text-[14px] md:text-[20px] text-[#646464]">
@@ -198,7 +198,7 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
               animate={headerInView ? "visible" : "hidden"}
               variants={headerVariants}
               className={cn(
-                "w-full text-[48px] text-primary leading-[56px] mb-3 md:text-[48px] font-[700] text-left",
+                "w-full text-[24px] text-primary leading-[56px] md:mb-3 md:text-[48px] font-[700] text-left",
                 headerClass,
               )}
             >
@@ -209,7 +209,7 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                 initial="hidden"
                 animate={headerInView ? "visible" : "hidden"}
                 variants={descriptionVariants}
-                className="w-full md:w-[60%] text-[16px] text-[#323232] leading-[20px] md:leading-[28px] md:text-[20px] font-[400] md:text-base"
+                className="w-full md:w-[60%] text-[14px] text-[#323232] leading-[20px] md:leading-[28px] md:text-[20px] font-[400] md:text-base"
               >
                 Handpicked premium vehicles from trusted hosts across
                 Nigeria—&gt;Explore our Popular Rides, handpicked from the
@@ -220,7 +220,7 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                 animate={headerInView ? "visible" : "hidden"}
                 variants={buttonVariants}
               >
-                <Button className="rounded-[36px] md:flex hidden text-[14px] text-center font-[400] p-[23px_40px] bg-primary text-white hover:bg-primary/90 duration-200">
+                <Button className="rounded-[36px] w-[139px] h-[49px] md:flex hidden text-[16px] text-center font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200">
                   View All
                 </Button>
               </motion.div>

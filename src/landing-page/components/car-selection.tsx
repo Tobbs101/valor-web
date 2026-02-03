@@ -1,7 +1,7 @@
 "use client";
 
 import Container from "@/components/layout/container";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Image, { StaticImageData } from "next/image";
@@ -33,23 +33,23 @@ const CategoryCard = ({
   category: { id: number; name: string; image: StaticImageData | null };
 }) => {
   return (
-    <div className="flex-shrink-0 w-[200px] md:w-[260px]">
-      <div className="bg-[#EEF9FF] border border-[#C9D3D8] rounded-[30px] h-[180px] md:h-[220px] w-full flex items-center justify-center overflow-hidden">
+    <div className="flex-shrink-0 w-[150px] md:w-[260px]">
+      <div className="bg-[#EEF9FF] px-4 border border-[#C9D3D8] rounded-[12px] md:rounded-[30px] h-[150px] md:h-[220px] w-full flex items-center justify-center overflow-hidden">
         {category.image ? (
           <Image
             src={category.image}
             alt={category.name}
             width={180}
-            height={120}
+            height={220}
             className="object-contain"
           />
         ) : (
-          <div className="w-[140px] h-[80px] md:w-[180px] md:h-[100px] border-2 border-dashed border-[#023047]/30 rounded-lg flex items-center justify-center">
+          <div className="w-[150px] h-[150px] md:w-[260px] md:h-[220px] border-2 border-dashed border-[#023047]/30 rounded-lg flex items-center justify-center">
             <span className="text-[#023047]/40 text-sm">Add Image</span>
           </div>
         )}
       </div>
-      <h3 className="mt-3 text-[16px] md:text-[18px] font-[700] text-[#323232]">
+      <h3 className="mt-1 md:mt-3 text-[12px] md:text-[18px] font-[500] md:font-[700] text-[#323232]">
         {category.name}
       </h3>
     </div>
@@ -58,6 +58,24 @@ const CategoryCard = ({
 
 const CarSelection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleCards, setVisibleCards] = useState(3);
+
+  // Responsive visible cards count
+  useEffect(() => {
+    const updateVisibleCards = () => {
+      if (window.innerWidth < 640) {
+        setVisibleCards(1); // Mobile: 1 card
+      } else if (window.innerWidth < 768) {
+        setVisibleCards(2); // Small screens: 2 cards
+      } else {
+        setVisibleCards(3); // Desktop: 3 cards
+      }
+    };
+
+    updateVisibleCards();
+    window.addEventListener("resize", updateVisibleCards);
+    return () => window.removeEventListener("resize", updateVisibleCards);
+  }, []);
 
   const { ref: headerRef, inView: headerInView } = useInView({
     triggerOnce: true,
@@ -95,7 +113,7 @@ const CarSelection = () => {
       id: 1,
       content: (
         <motion.div
-          className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-6 shadow-lg min-h-[420px]"
+          className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-4 md:p-6 shadow-lg h-[350px] md:min-h-[420px]"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -110,7 +128,7 @@ const CarSelection = () => {
               },
             }}
           >
-            <h3 className="text-[22px] md:text-[26px] font-[700] text-primary mb-2">
+            <h3 className="text-[20px] md:text-[26px] font-[700] text-primary mb-2">
               Variety
             </h3>
             <p className="text-[14px] md:text-[16px] text-[#646464] mb-6 leading-[22px]">
@@ -168,7 +186,7 @@ const CarSelection = () => {
       id: 2,
       content: (
         <motion.div
-          className="bg-[#C5EBFF] rounded-[24px] p-6 shadow-lg min-h-[420px] flex flex-col justify-between"
+          className="bg-[#C5EBFF] rounded-[24px] p-4 md:p-6 shadow-lg h-[350px] md:min-h-[420px] flex flex-col justify-between"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -208,7 +226,7 @@ const CarSelection = () => {
               },
             }}
           >
-            <h3 className="text-[22px] md:text-[26px] font-[700] text-primary mb-2">
+            <h3 className="text-[20px] md:text-[26px] font-[700] text-primary mb-2">
               Secure Payment
             </h3>
             <p className="text-[14px] md:text-[16px] text-[#646464] leading-[22px]">
@@ -223,7 +241,7 @@ const CarSelection = () => {
       id: 3,
       content: (
         <motion.div
-          className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-6 shadow-lg min-h-[420px]"
+          className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-4 md:p-6 shadow-lg h-[350px] md:min-h-[420px]"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -238,7 +256,7 @@ const CarSelection = () => {
               },
             }}
           >
-            <h3 className="text-[22px] md:text-[26px] font-[700] text-primary mb-2">
+            <h3 className="text-[20px] md:text-[26px] font-[700] text-primary mb-2">
               Best Price
             </h3>
             <p className="text-[14px] md:text-[16px] text-[#646464] mb-5 leading-[22px]">
@@ -381,9 +399,9 @@ const CarSelection = () => {
     {
       id: 4,
       content: (
-        <div className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-6 shadow-lg min-h-[420px]">
+        <div className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-4 md:p-6 shadow-lg h-[350px] md:min-h-[420px]">
           <div>
-            <h3 className="text-[22px] md:text-[26px] font-[700] text-primary mb-2">
+            <h3 className="text-[20px] md:text-[26px] font-[700] text-primary mb-2">
               Simplicity
             </h3>
             <p className="text-[14px] md:text-[16px] text-[#646464] mb-5 leading-[22px]">
@@ -469,9 +487,9 @@ const CarSelection = () => {
     {
       id: 5,
       content: (
-        <div className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-6 shadow-lg min-h-[420px]">
+        <div className="bg-[#EEF9FF] flex flex-col justify-between rounded-[24px] p-4 md:p-6 shadow-lg h-[350px] md:min-h-[420px]">
           <div>
-            <h3 className="text-[22px] md:text-[26px] font-[700] text-primary mb-2">
+            <h3 className="text-[20px] md:text-[26px] font-[700] text-primary mb-2">
               Security
             </h3>
             <p className="text-[14px] md:text-[16px] text-[#646464] mb-5 leading-[22px]">
@@ -480,9 +498,9 @@ const CarSelection = () => {
             </p>
           </div>
           {/* Shield Illustration */}
-          <div className=" flex items-center justify-center w-full">
+          <div className="h-full flex items-center justify-center w-full">
             <Image
-              className="w-[150px]"
+              className="w-[125px] md:w-[150px]"
               src={PaymentShield}
               alt="Secure Payment"
               width={150}
@@ -501,7 +519,7 @@ const CarSelection = () => {
           initial="hidden"
           animate={headerInView ? "visible" : "hidden"}
           variants={headerVariants}
-          className="w-full text-[48px] text-primary leading-[56px] mb-3 md:text-[48px] font-[700] text-left"
+          className="w-full text-[24px] text-primary leading-[56px] md:mb-3 md:text-[48px] font-[700] text-left"
         >
           Car Selection
         </motion.h1>
@@ -509,7 +527,7 @@ const CarSelection = () => {
           initial="hidden"
           animate={headerInView ? "visible" : "hidden"}
           variants={descriptionVariants}
-          className=" text-[16px] text-[#323232] leading-[20px] md:leading-[24px] md:text-[20px] font-[400] md:text-base"
+          className="text-[14px] text-[#323232] leading-[20px] md:leading-[24px] md:text-[20px] font-[400] md:text-base"
         >
           From small cars to premium rides, the Valor Hire platform offers a
           wide range of vehicles. <br />
@@ -542,7 +560,7 @@ const CarSelection = () => {
         </div>
 
         {/* What Valor Gives You Section - Wrapper for overlap effect */}
-        <div className="mt-[150px] relative">
+        <div className="mt-[70px] hidden lg:block md:mt-[150px] relative">
           {/* Dark header section */}
           <div className="rounded-[30px] bg-gradient-to-l from-[#023047] to-[#034a6b] pt-[50px] pb-[200px] md:pb-[250px] px-5 md:px-10">
             <div className="max-w-[1400px] mx-auto">
@@ -568,7 +586,7 @@ const CarSelection = () => {
                     securely using our platform
                   </motion.p>
                 </div>
-                <div className="hidden md:flex items-center gap-3">
+                <div className="flex items-center gap-3">
                   <button
                     onClick={() =>
                       setCurrentIndex((prev) => Math.max(0, prev - 1))
@@ -584,10 +602,12 @@ const CarSelection = () => {
                   <button
                     onClick={() =>
                       setCurrentIndex((prev) =>
-                        Math.min(featureCards.length - 3, prev + 1),
+                        Math.min(featureCards.length - visibleCards, prev + 1),
                       )
                     }
-                    disabled={currentIndex >= featureCards.length - 3}
+                    disabled={
+                      currentIndex >= featureCards.length - visibleCards
+                    }
                     className="w-[50px] h-[50px] rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <Icon
@@ -604,8 +624,18 @@ const CarSelection = () => {
           <div className="relative -mt-[140px] md:-mt-[180px] pb-[50px] px-5 md:px-10 overflow-x-clip">
             <div className="max-w-[1400px] mx-auto">
               <motion.div
-                className="flex gap-6"
-                animate={{ x: -currentIndex * (100 / 3 + 1.5) + "%" }}
+                className="flex gap-4 sm:gap-5 md:gap-6"
+                animate={{
+                  x:
+                    -currentIndex *
+                      (100 / visibleCards +
+                        (visibleCards === 1
+                          ? 5
+                          : visibleCards === 2
+                            ? 3
+                            : 1.5)) +
+                    "%",
+                }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 <AnimatePresence mode="popLayout">
@@ -616,7 +646,7 @@ const CarSelection = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -30 }}
                       transition={{ duration: 0.4, delay: idx * 0.05 }}
-                      className="flex-shrink-0 w-[85%] sm:w-[60%] md:w-[calc(33.333%-16px)]"
+                      className="flex-shrink-0 w-[90%] min-w-[380px] sm:w-[48%] md:w-[calc(33.333%-16px)]"
                     >
                       {card.content}
                     </motion.div>
@@ -627,6 +657,77 @@ const CarSelection = () => {
           </div>
         </div>
       </Container>
+
+      {/* Feature Cards - Mobile & Tablet (below lg) */}
+      <div className="w-full bg-gradient-to-l from-[#023047] to-[#034a6b] lg:hidden px-5 py-[50px] mt-[30px] relative">
+        <div className="max-w-[1400px] mx-auto">
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-[24px] md:text-[48px] text-white font-[700] leading-[40px] md:leading-[56px] mb-4"
+            >
+              What Valor Gives You
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-[14px] md:text-[18px] text-white/80 max-w-[500px] leading-[24px]"
+            >
+              Book from a variety of vetted hosts and make payment securely
+              using our platform
+            </motion.p>
+          </div>
+          <motion.div
+            className="flex mt-5 gap-4"
+            animate={{
+              x:
+                -currentIndex *
+                  (100 / visibleCards + (visibleCards === 1 ? 4 : 2)) +
+                "%",
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            {featureCards.map((card, idx) => (
+              <motion.div
+                key={card.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                className="flex-shrink-0 w-[calc(100%-0px)] sm:w-[350px]"
+              >
+                {card.content}
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Mobile/Tablet Navigation Arrows */}
+          <div className="flex items-center gap-3 mt-6">
+            <button
+              onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+              disabled={currentIndex === 0}
+              className="w-[50px] h-[50px] rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Icon icon="mdi:arrow-left" className="text-white text-xl" />
+            </button>
+            <button
+              onClick={() =>
+                setCurrentIndex((prev) =>
+                  Math.min(featureCards.length - visibleCards, prev + 1),
+                )
+              }
+              disabled={currentIndex >= featureCards.length - visibleCards}
+              className="w-[50px] h-[50px] rounded-full border border-white/30 flex items-center justify-center hover:bg-white/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Icon icon="mdi:arrow-right" className="text-white text-xl" />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
