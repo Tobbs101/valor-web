@@ -9,22 +9,22 @@ import Image from "next/image";
 const socialLinks = [
   {
     icon: "mdi:whatsapp",
-    href: "https://wa.me/",
+    href: "https://wa.me/2347031647277",
     label: "WhatsApp",
   },
   {
     icon: "mdi:instagram",
-    href: "https://www.instagram.com",
+    href: "https://www.instagram.com/valorhire/",
     label: "Instagram",
   },
   {
     icon: "mdi:linkedin",
-    href: "https://www.linkedin.com",
+    href: "https://www.linkedin.com/company/valorhire1",
     label: "LinkedIn",
   },
   {
     icon: "ic:baseline-tiktok",
-    href: "https://www.tiktok.com",
+    href: "https://www.tiktok.com/@valorhire?_r=1&_t=ZS-93dfOtL1EOa",
     label: "TikTok",
   },
 ];

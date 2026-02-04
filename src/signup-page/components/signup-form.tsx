@@ -275,7 +275,9 @@ const SignUpForm = () => {
       if (isHost) {
         payload.companyName = signupData.companyName || "";
         payload.companyAddress = signupData.companyAddress || "";
-        payload.hostAccountType = signupData.hostAccountType || "individual";
+        payload.hostAccountType = signupData.companyName.trim()
+          ? "company"
+          : "individual";
       }
 
       await SignUp({ payload });

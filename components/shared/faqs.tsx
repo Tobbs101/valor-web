@@ -7,34 +7,42 @@ import { Icon } from "@iconify/react";
 
 const faqData = [
   {
-    question: "How do I choose the right vehicle?",
+    question: "Do you offer self drive?",
     answer:
-      "You can browse different categories in the app and select the type that fits your need best.",
+      "Yes, we offer self-drive services for customers who meet the required criteria. Please note that this option is currently available offline only. Kindly contact us via WhatsApp or Instagram for assistance.",
   },
   {
-    question: "How do I make payments?",
+    question: "Do your rates include fuel?",
     answer:
-      "Payments can be made securely through our platform using various payment methods including cards and bank transfers.",
+      "Yes. Our rates include a vehicle with a driver and fuel. However, customers may choose to fuel the vehicle themselves if they prefer.",
   },
   {
-    question: "What if my request is not approved?",
+    question: "How many hours does the daily rental cover?",
     answer:
-      "If your request is not approved, you will be notified and can try booking with another host or modify your request.",
+      "Our standard daily rental covers 12 hours. Additional hours may attract extra charges.",
   },
   {
-    question: "What if my request is not approved?",
+    question: "Are the vehicles insured?",
     answer:
-      "If your request is not approved, you will be notified and can try booking with another host or modify your request.",
+      "Yes, all our vehicles are fully insured. Clients are not liable for damages during rentals with a driver. However, for self-drive rentals, the client will be liable for any damages.",
   },
   {
-    question: "How do I make payments?",
+    question: "What happens if I leave an item in the car?",
     answer:
-      "Payments can be made securely through our platform using various payment methods including cards and bank transfers.",
+      "Please contact us immediately. While we'll assist in recovery, we are not liable for lost items.",
   },
   {
-    question: "How do I make payments?",
+    question: "What if my trip ends earlier than planned?",
+    answer: "Early completion does not attract a refund for unused time.",
+  },
+  {
+    question: "What type of vehicles are available?",
     answer:
-      "Payments can be made securely through our platform using various payment methods including cards and bank transfers.",
+      "Sedans, SUVs, luxury, Vintage, Pick-Ups and Buses. Subject to availability.",
+  },
+  {
+    question: "Do you offer airport pickup and drop-off services?",
+    answer: "Yes, we provide airport transfers.",
   },
 ];
 
