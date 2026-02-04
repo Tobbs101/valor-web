@@ -4,13 +4,17 @@ import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import RentalCarService from "@/assets/rental-car-service.svg";
+import { cn } from "@/lib/utils";
 
-const ExperienceValor = () => {
+const ExperienceValor = ({ className }: { className?: string }) => {
   return (
     <>
       {/* Large Screen Section */}
       <motion.div
-        className="bg-[#023047] lg:flex hidden mt-[75px] md:mt-[100px] rounded-[20px] overflow-hidden flex-col lg:flex-row items-stretch"
+        className={cn(
+          "bg-[#023047] lg:flex hidden mt-[75px] md:mt-[100px] rounded-[20px] overflow-hidden flex-col lg:flex-row items-stretch",
+          className,
+        )}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.3 }}

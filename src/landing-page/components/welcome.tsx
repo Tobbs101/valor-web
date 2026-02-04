@@ -15,6 +15,7 @@ import LGA from "@/assets/lga.png";
 import Prembly from "@/assets/prembly.png";
 import Paystack from "@/assets/paystack.png";
 import Fleet from "@/assets/fleet.png";
+import { useRouter } from "next/navigation";
 
 // Partner logos
 const partners = [
@@ -91,6 +92,8 @@ const CarCard = ({
     threshold: 0.2,
   });
 
+  const router = useRouter();
+
   return (
     <motion.div
       ref={ref}
@@ -101,6 +104,7 @@ const CarCard = ({
         delay: index * 0.15,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
+      onClick={() => router.push(`/search/${index + 1}`)}
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       className="rounded-[16px] overflow-hidden bg-white shadow-sm border border-gray-100 cursor-pointer"
     >
@@ -187,6 +191,8 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
     },
   };
 
+  const router = useRouter();
+
   return (
     <div className="px-5 bg-white">
       <Container className="py-[30px] sm:py-[70px]">
@@ -220,7 +226,10 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                 animate={headerInView ? "visible" : "hidden"}
                 variants={buttonVariants}
               >
-                <Button className="rounded-[36px] w-[139px] h-[49px] md:flex hidden text-[16px] text-center font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200">
+                <Button
+                  onClick={() => router.push("/search")}
+                  className="rounded-[36px] w-[139px] h-[49px] md:flex hidden text-[14px] text-center font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200"
+                >
                   View All
                 </Button>
               </motion.div>

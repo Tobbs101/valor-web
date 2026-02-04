@@ -1,18 +1,28 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
-import logo_black from "@/assets/logo_black.svg";
-import logo_white from "@/assets/logo_white.svg";
+import logo_black from "@/assets/valor-logo.png";
+import logo_white from "@/assets/vw.png";
 import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 
 interface LogoProps extends React.HTMLAttributes<HTMLImageElement> {
   orientation?: "light" | "dark";
+  width?: number;
+  height?: number;
 }
 
-const Logo = ({ className, orientation, ...props }: LogoProps) => {
-  const { theme } = useTheme();
+const Logo = ({
+  className,
+  orientation,
+  width = 250,
+  height = 250,
+  ...props
+}: LogoProps) => {
+  const logoType = orientation;
 
-  const logoType = orientation || theme;
+  const router = useRouter();
 
   return (
     <Image
@@ -21,8 +31,9 @@ const Logo = ({ className, orientation, ...props }: LogoProps) => {
       alt="Logo"
       role="img"
       className={cn("w-[140px]", className)}
-      width={250}
-      height={250} // Ensure proper rendering
+      width={width}
+      height={height}
+      onClick={() => router.push("/")}
     />
   );
 };

@@ -49,7 +49,7 @@ function PageLayout({
       <div
         className={cn(
           "w-full mt-[75px] relative dark:bg-[#121212]/95 bg-[#F9FBFF] dark:text-white grow flex flex-col md:flex-row",
-          { "mt-0": pathname === "/" },
+          // { "mt-0": pathname === "/" },
         )}
       >
         <Sidebar toggleSidebar={toggleSidebar} isOpen={sidebarOpen} />

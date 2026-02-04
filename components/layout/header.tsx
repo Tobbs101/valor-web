@@ -21,6 +21,7 @@ import { LinkProp } from "@/types";
 import { usePathname, useRouter } from "next/navigation";
 import { useLayoutContext } from "@/app/client-layout";
 import useScrollAtTop from "@/hooks/use-scroll";
+import { useSignupStore } from "@/store/signup-store";
 
 const NAVIGATION_LINKS: LinkProp[] = [
   { id: 1, route: "/", label: "Home" },
@@ -173,21 +174,24 @@ const Header = ({
   const onClickLogo = () => {
     router.push("/");
   };
+
+  const { resetStore } = useSignupStore();
   // const { isHeroVisible } = useLayoutContext();
 
   const pathname = usePathname();
   const isAtTop = useScrollAtTop();
 
-  const logoToUse = isAtTop && pathname === "/" ? logowhite : logo;
+  // const logoToUse = isAtTop && pathname === "/" ? logowhite : logo;
+  const logoToUse = logo;
 
   return (
     <div
       className={cn(
         "px-5 fixed z-[100] w-full bg-white border-b border-gray-100 shadow-sm",
-        {
-          "bg-transparent border-transparent text-white shadow-none":
-            isAtTop && pathname === "/",
-        },
+        // {
+        //   "bg-transparent border-transparent text-white shadow-none":
+        //     isAtTop && pathname === "/",
+        // },
         { "bg-white border-transparent": !isAtTop },
         { "bg-white text-primary": pathname !== "/" },
       )}
@@ -217,9 +221,9 @@ const Header = ({
             <button
               className={cn(
                 "lg:hidden block py-0 px-0 text-black dark:bg-white",
-                {
-                  "text-white": isAtTop && pathname === "/",
-                },
+                // {
+                //   "text-white": isAtTop && pathname === "/",
+                // },
               )}
               onClick={toggleSidebar}
             >
@@ -236,7 +240,7 @@ const Header = ({
             of={NAVIGATION_LINKS}
             render={(item: LinkProp) => (
               <HeaderLink
-                isWhite={isAtTop && pathname === "/"}
+                // isWhite={isAtTop && pathname === "/"}
                 key={item.id}
                 item={item}
                 className={item?.className}
@@ -244,12 +248,17 @@ const Header = ({
             )}
           />
           <Button
+            onClick={() => {
+              resetStore();
+
+              router.push("/sign-up");
+            }}
             className={cn(
               "rounded-[36px] w-[129px] h-[47px] text-[14px] font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200",
-              {
-                "border border-white bg-transparent text-white hover:bg-white/5":
-                  isAtTop && pathname === "/",
-              },
+              // {
+              //   "border border-white bg-transparent text-white hover:bg-white/5":
+              //     isAtTop && pathname === "/",
+              // },
             )}
           >
             Sign Up

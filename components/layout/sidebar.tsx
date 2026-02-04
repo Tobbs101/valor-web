@@ -67,7 +67,10 @@ const Sidebar = ({
           </div>
 
           <div className="w-full px-7">
-            <Button className="rounded-[36px] text-[14px] font-[400] p-[20px_40px] bg-primary text-white hover:bg-primary/90 duration-200">
+            <Button
+              onClick={() => router.push("/sign-up")}
+              className="rounded-[36px] text-[14px] font-[400] p-[20px_40px] bg-primary text-white hover:bg-primary/90 duration-200"
+            >
               Sign Up
             </Button>
           </div>

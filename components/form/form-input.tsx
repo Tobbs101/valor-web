@@ -19,6 +19,7 @@ const FormInput = ({
   containerClassName,
   description,
   hasError,
+  id,
 }: {
   field: any;
   label?: string | React.ReactNode;
@@ -29,6 +30,7 @@ const FormInput = ({
   containerClassName?: string;
   description?: any;
   hasError?: any;
+  id?: string;
 }) => {
   if (type === "file")
     return (
@@ -36,8 +38,9 @@ const FormInput = ({
         {label && <FormLabel>{label}</FormLabel>}
         <FormControl>
           <Input
+            id={id}
             disabled={disabled}
-            className={cn(`text-xs duration-200 bg-white`, className)}
+            className={cn(`text-[16px] duration-200 bg-white`, className)}
             type={type}
             placeholder={placeholder}
             {...field}
@@ -65,8 +68,12 @@ const FormInput = ({
       {label && <FormLabel>{label}</FormLabel>}
       <FormControl>
         <Input
+          id={id}
           disabled={disabled}
-          className={cn(`text-xs duration-200 bg-white`, className)}
+          className={cn(
+            `text-[16px] placeholder:text-[14px] duration-200 bg-white`,
+            className,
+          )}
           type={type}
           placeholder={placeholder}
           {...field}

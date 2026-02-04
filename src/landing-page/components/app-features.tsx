@@ -19,12 +19,16 @@ import Whatsapp from "@/assets/whatsapp.svg";
 import Faqs from "@/components/shared/faqs";
 import Rafiki from "@/assets/rafiki.svg";
 import ExperienceValor from "@/components/shared/experience-valor";
+import { useRouter } from "next/navigation";
+import { useSignupStore } from "@/store/signup-store";
 
 const AppFeatures = () => {
   const { ref: headerRef, inView: headerInView } = useInView({
     triggerOnce: true,
     threshold: 0.5,
   });
+
+  const { resetStore } = useSignupStore();
 
   const headerVariants = {
     hidden: { opacity: 0, y: 40 },
@@ -43,6 +47,8 @@ const AppFeatures = () => {
       transition: { duration: 0.6, delay: 0.2, ease: "easeOut" },
     },
   };
+
+  const router = useRouter();
 
   return (
     <div className="bg-white pt-[50px] md:pt-[80px] overflow-hidden">
@@ -886,7 +892,10 @@ const AppFeatures = () => {
                   options include Daily rentals, hourly rentals, Airport Pickup
                   and drop off services.
                 </p>
-                <button className="bg-primary text-white px-8 py-3 rounded-full text-[15px] font-[500] w-fit mb-3 hover:bg-primary/90 transition-colors">
+                <button
+                  onClick={() => router.push("/sign-up")}
+                  className="bg-primary text-white px-8 py-3 rounded-full text-[15px] font-[500] w-fit mb-3 hover:bg-primary/90 transition-colors"
+                >
                   Sign Up
                 </button>
 
@@ -956,7 +965,7 @@ const AppFeatures = () => {
       </Container>
 
       {/* How the Valor App can be used Section mobile */}
-      <div className="mt-24 pb-7 bg-gradient-to-l from-[#023047] to-[#034a6b]">
+      <div className="lg:hidden block mt-24 pb-10 bg-gradient-to-l from-[#023047] to-[#034a6b]">
         {/* Dark header section */}
         <div className="pt-8 px-8 md:px-12">
           <motion.h2
@@ -1002,7 +1011,10 @@ const AppFeatures = () => {
                 options include Daily rentals, hourly rentals, Airport Pickup
                 and drop off services.
               </p>
-              <button className="bg-primary text-white px-8 py-3 rounded-full text-[15px] font-[500] w-fit hover:bg-primary/90 transition-colors">
+              <button
+                onClick={() => router.push("/sign-up")}
+                className="bg-primary text-white px-8 py-3 rounded-full text-[15px] font-[500] w-fit hover:bg-primary/90 transition-colors"
+              >
                 Sign Up
               </button>
 
@@ -1109,6 +1121,10 @@ const AppFeatures = () => {
               platform.
             </motion.p>
             <motion.button
+              onClick={() => {
+                resetStore();
+                router.push("/sign-up?accountType=host");
+              }}
               className="bg-primary text-white font-[500] text-[16px] px-10 py-3 rounded-full hover:bg-primary/90 transition-colors"
               variants={{
                 hidden: { opacity: 0, y: 20 },
@@ -1191,6 +1207,10 @@ const AppFeatures = () => {
             platform.
           </motion.p>
           <motion.button
+            onClick={() => {
+              resetStore();
+              router.push("/sign-up?accountType=host");
+            }}
             className="bg-primary text-white font-[400] text-[14px] w-[163px] p-[14px_10px] h-[47px] rounded-[36px] hover:bg-primary/90 transition-colors"
             variants={{
               hidden: { opacity: 0, y: 20 },
