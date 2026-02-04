@@ -933,7 +933,7 @@ const SignUpForm = () => {
                   </p>
 
                   {/* OTP Inputs */}
-                  <div className="flex gap-4 mb-4">
+                  <div className="flex w-full gap-4 mb-4">
                     {otp.map((digit, index) => (
                       <input
                         key={index}
@@ -947,7 +947,7 @@ const SignUpForm = () => {
                         onChange={(e) => handleOtpChange(index, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
                         onPaste={handleOtpPaste}
-                        className={`min-w-[20%] flex-1 h-[100px] text-center text-[36px] font-[600] text-primary border-2 rounded-xl outline-none transition-colors ${
+                        className={`w-[100%] h-[100px] text-center text-[36px] font-[600] text-primary border-2 rounded-xl outline-none transition-colors ${
                           otpError
                             ? "border-red-500"
                             : digit
