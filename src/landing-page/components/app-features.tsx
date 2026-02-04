@@ -128,6 +128,7 @@ const AppFeatures = () => {
                     src={FleetRentals}
                     alt="Fleet rentals"
                     fill
+                    priority
                     className="object-cover"
                   />
                 </div>
@@ -178,6 +179,7 @@ const AppFeatures = () => {
                     src={SigMotors}
                     alt="SIG Motors"
                     fill
+                    priority
                     className="object-cover"
                   />
                 </div>
@@ -258,6 +260,7 @@ const AppFeatures = () => {
                         src={Highlander}
                         alt="Toyota Highlander"
                         fill
+                        priority
                         className="object-cover"
                       />
                       <button className="absolute top-2 right-2 w-[30px] h-[30px] bg-primary rounded-full flex items-center justify-center">
@@ -315,6 +318,7 @@ const AppFeatures = () => {
                         src={Highlander}
                         alt="Bentley Continental"
                         fill
+                        priority
                         className="object-cover"
                       />
                       <button className="absolute top-2 right-2 w-[30px] h-[30px] bg-primary rounded-full flex items-center justify-center">
@@ -372,6 +376,7 @@ const AppFeatures = () => {
                         src={Highlander}
                         alt="Bentley EXP 10"
                         fill
+                        priority
                         className="object-cover"
                       />
                       <button className="absolute top-2 right-2 w-[30px] h-[30px] bg-primary rounded-full flex items-center justify-center">
@@ -529,6 +534,7 @@ const AppFeatures = () => {
                   alt="Valor App - Trip Tracking"
                   width={525}
                   height={339}
+                  priority
                   className="object-cover w-[525px] h-[339px]"
                 />
               </motion.div>
@@ -550,6 +556,7 @@ const AppFeatures = () => {
               <div className=" flex items-center justify-center text-[#646464]">
                 {/* Add phone image here */}
                 <Image
+                  priority
                   src={HowItWorks}
                   alt="How it works"
                   width={687.175537109375}
@@ -834,6 +841,7 @@ const AppFeatures = () => {
                 alt="Rental Options"
                 width={482}
                 // height={760}
+                priority
                 className="w-[482px] h-auto object-cover"
               />
             </div>
@@ -906,6 +914,7 @@ const AppFeatures = () => {
                     alt="How it works"
                     width={687.175537109375}
                     height={858.375}
+                    priority
                     className="object-cover top-[0%] left-[0%] lg:left-[5%] absolute w-[687.175537109375px] h-[858.375px]"
                   />
                 </div>
@@ -945,6 +954,7 @@ const AppFeatures = () => {
                     alt="WhatsApp"
                     className="w-[80px]"
                     width={80}
+                    priority
                   />
                 </button>
 
@@ -956,6 +966,7 @@ const AppFeatures = () => {
                     width={687.175537109375}
                     height={858.375}
                     className="object-cover top-[0%] left-[0%] lg:left-[5%] absolute w-[687.175537109375px] h-[858.375px]"
+                    priority
                   />
                 </div>
               </motion.div>
@@ -1025,6 +1036,7 @@ const AppFeatures = () => {
                   alt="How it works"
                   width={687.175537109375}
                   height={858.375}
+                  priority
                   className="object-cover w-[90%] h-auto"
                 />
               </div>
@@ -1064,6 +1076,7 @@ const AppFeatures = () => {
                   alt="WhatsApp"
                   className="w-[80px]"
                   width={80}
+                  priority
                 />
               </button>
 
@@ -1074,6 +1087,7 @@ const AppFeatures = () => {
                   alt="Report Bug"
                   width={687.175537109375}
                   height={858.375}
+                  priority
                   className="w-[90%] h-auto object-cover"
                 />
               </div>
@@ -1160,6 +1174,7 @@ const AppFeatures = () => {
               src={Rafiki}
               alt="Become a Host - Car Illustration"
               width={800}
+              priority
               height={400}
               className="w-full max-w-[600px] h-auto object-contain"
             />
@@ -1247,6 +1262,7 @@ const AppFeatures = () => {
             alt="Become a Host - Car Illustration"
             width={800}
             height={400}
+            priority
             className="w-full max-w-[600px] h-auto object-contain"
           />
         </motion.div>

@@ -110,7 +110,13 @@ const CarCard = ({
     >
       {/* Image Container */}
       <div className="relative h-[350px] w-full bg-gray-200">
-        <Image src={car.image} alt={car.name} fill className="object-cover" />
+        <Image
+          src={car.image}
+          alt={car.name}
+          priority
+          fill
+          className="object-cover"
+        />
         {/* Rating Badge */}
         <div className="absolute top-3 right-3 bg-white rounded-full px-3 py-1 flex items-center gap-1 shadow-sm">
           <Icon
@@ -263,6 +269,7 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                     className={`relative flex items-center justify-center hover:grayscale-0 transition-all duration-300 ${partner.className}`}
                   >
                     <Image
+                      priority
                       src={partner.logo}
                       alt={partner.name}
                       className={`object-contain`}

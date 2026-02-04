@@ -41,6 +41,7 @@ const CategoryCard = ({
             alt={category.name}
             width={180}
             height={220}
+            priority
             className="object-contain"
           />
         ) : (
@@ -213,6 +214,7 @@ const CarSelection = () => {
                 alt="Secure Payment"
                 width={200}
                 height={200}
+                priority
               />
             </motion.div>
           </div>
@@ -300,6 +302,7 @@ const CarSelection = () => {
                   alt="Car"
                   fill
                   className="object-cover"
+                  priority
                 />
               </motion.div>
               <motion.div
@@ -366,6 +369,7 @@ const CarSelection = () => {
                   alt="Car"
                   fill
                   className="object-cover"
+                  priority
                 />
               </motion.div>
               <motion.div
@@ -418,6 +422,7 @@ const CarSelection = () => {
                     alt="Toyota Highlander"
                     fill
                     className="object-cover"
+                    priority
                   />
                   <button className="absolute top-2 right-2 w-[28px] h-[28px] bg-white/90 rounded-full flex items-center justify-center">
                     <Icon
@@ -455,6 +460,7 @@ const CarSelection = () => {
                     src={Highlander}
                     alt="Toyota Camry"
                     fill
+                    priority
                     className="object-cover"
                   />
                 </div>
@@ -500,6 +506,7 @@ const CarSelection = () => {
           {/* Shield Illustration */}
           <div className="h-full flex items-center justify-center w-full">
             <Image
+              priority
               className="w-[125px] md:w-[150px]"
               src={PaymentShield}
               alt="Secure Payment"

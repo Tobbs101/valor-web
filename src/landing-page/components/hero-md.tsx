@@ -150,6 +150,7 @@ const HeroMd = () => {
           </div>
           <div className="absolute top-0 left-0 w-full h-full">
             <Image
+              priority
               src={background}
               alt="Hero Background"
               className="w-full h-full object-cover"
