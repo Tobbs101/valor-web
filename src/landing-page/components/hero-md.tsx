@@ -46,7 +46,7 @@ const HeroMd = () => {
         onClose={() => setIsJobListingModalOpen(false)}
       />
       <Container className="sm:pt-[70px]">
-        <div className="w-full relative rounded-none sm:rounded-2xl py-5 overflow-hidden flex items-center justify-center flex-col gap-2">
+        <div className="w-full relative rounded-none sm:rounded-2xl sm:py-5 py-10 overflow-hidden flex items-center justify-center flex-col gap-2">
           <div className="gap-5 w-full z-[5] flex items-center justify-center flex-col">
             <Container className="px-6 md:px-10 w-full">
               {/* <AnimatedText /> */}

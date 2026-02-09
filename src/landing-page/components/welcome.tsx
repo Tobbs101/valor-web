@@ -237,7 +237,7 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                 initial="hidden"
                 animate={headerInView ? "visible" : "hidden"}
                 variants={descriptionVariants}
-                className="w-full md:w-[60%] text-[14px] text-[#323232] leading-[20px] md:leading-[28px] md:text-[20px] font-[400] md:text-base"
+                className="w-full sm:block hidden md:w-[60%] text-[14px] text-[#323232] leading-[20px] md:leading-[28px] md:text-[20px] font-[400] md:text-base"
               >
                 Handpicked premium vehicles from trusted hosts across
                 Nigeria—&gt;Explore our Popular Rides, handpicked from the
@@ -263,7 +263,7 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
             </div>
 
             {/*carousel for mobile */}
-            <div className="mt-[40px] sm:hidden block">
+            <div className="mt-[15px] sm:hidden block">
               <Carousel className="w-full">
                 <div className="flex items-center justify-end gap-7">
                   <div className="relative rounded-full">
