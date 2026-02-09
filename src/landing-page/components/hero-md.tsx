@@ -40,13 +40,13 @@ const HeroMd = () => {
   const [isJobListingModalOpen, setIsJobListingModalOpen] = useState(false);
 
   return (
-    <div className="px-5 bg-white">
+    <div className="px-0 sm:px-5 bg-white">
       <JobListingModal
         isOpen={isJobListingModalOpen}
         onClose={() => setIsJobListingModalOpen(false)}
       />
-      <Container className="pt-[30px] sm:pt-[70px]">
-        <div className="w-full relative rounded-2xl py-5 overflow-hidden flex items-center justify-center flex-col gap-2">
+      <Container className="sm:pt-[70px]">
+        <div className="w-full relative rounded-none sm:rounded-2xl py-5 overflow-hidden flex items-center justify-center flex-col gap-2">
           <div className="gap-5 w-full z-[5] flex items-center justify-center flex-col">
             <Container className="px-6 md:px-10 w-full">
               {/* <AnimatedText /> */}

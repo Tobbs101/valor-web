@@ -108,7 +108,7 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-[50px] rounded-full border border-gray-200 bg-gray-50/50 pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+        className="w-full placeholder:text-xs sm:placeholder:text-sm placeholder:font-[400] h-[50px] rounded-full border border-gray-200 bg-gray-50/50 pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
       />
     </div>
   );

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import logo_black from "@/assets/valor-logo.png";
+import logo_black from "@/assets/full_color_logo.png";
 import logo_white from "@/assets/vw.png";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";

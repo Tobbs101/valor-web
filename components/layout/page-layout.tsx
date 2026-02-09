@@ -48,7 +48,7 @@ function PageLayout({
       {header ?? <Header toggleSidebar={toggleSidebar} />}
       <div
         className={cn(
-          "w-full mt-[75px] relative dark:bg-[#121212]/95 bg-[#F9FBFF] dark:text-white grow flex flex-col md:flex-row",
+          "w-full mt-[70px] relative dark:bg-[#121212]/95 bg-[#F9FBFF] dark:text-white grow flex flex-col md:flex-row",
           // { "mt-0": pathname === "/" },
         )}
       >

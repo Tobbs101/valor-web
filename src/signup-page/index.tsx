@@ -17,7 +17,7 @@ const SignupPage = () => {
       <Logo
         orientation="dark"
         width={200}
-        className="absolute md:block hidden cursor-pointer w-[200px] top-7 right-7"
+        className="absolute lg:block hidden cursor-pointer w-[200px] top-7 right-7"
       />
     </div>
   );

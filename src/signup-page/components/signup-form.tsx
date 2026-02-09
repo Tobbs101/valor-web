@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -72,7 +72,7 @@ const SignUpForm = () => {
   // OTP State
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [otpError, setOtpError] = useState("");
-  const [resendCountdown, setResendCountdown] = useState(20);
+  const [resendCountdown, setResendCountdown] = useState(600);
   const [showResendSuccess, setShowResendSuccess] = useState(false);
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -90,6 +90,18 @@ const SignUpForm = () => {
 
   const { mutateAsync: GetOtp } = useMutation(auth.getOtp);
   const { mutateAsync: SignUp } = useMutation(auth.signUp);
+  const { mutateAsync: CheckEmailExists } = useMutation(auth.checkEmailExists);
+  const { mutateAsync: CheckPhoneExists } = useMutation(auth.checkPhoneExists);
+
+  // Email & Phone availability state: null = not checked, true = available, false = taken
+  const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
+  const [emailCheckMsg, setEmailCheckMsg] = useState("");
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [phoneAvailable, setPhoneAvailable] = useState<boolean | null>(null);
+  const [phoneCheckMsg, setPhoneCheckMsg] = useState("");
+  const [isCheckingPhone, setIsCheckingPhone] = useState(false);
+  const emailCheckTimer = useRef<NodeJS.Timeout | null>(null);
+  const phoneCheckTimer = useRef<NodeJS.Timeout | null>(null);
 
   const router = useRouter();
 
@@ -129,6 +141,112 @@ const SignUpForm = () => {
 
   // Company name state for hosts (optional field in step 2)
   const [companyName, setCompanyName] = useState(signupData.companyName || "");
+
+  // Debounced email availability check
+  const checkEmailAvailability = useCallback(
+    async (email: string) => {
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setEmailAvailable(null);
+        setEmailCheckMsg("");
+        setIsCheckingEmail(false);
+        return;
+      }
+      setIsCheckingEmail(true);
+      try {
+        await CheckEmailExists({ payload: { email } });
+        setEmailAvailable(true);
+        setEmailCheckMsg("Email is available");
+      } catch (error: any) {
+        setEmailAvailable(false);
+        setEmailCheckMsg(
+          error?.response?.data?.message || "Email is not available",
+        );
+      } finally {
+        setIsCheckingEmail(false);
+      }
+    },
+    [CheckEmailExists],
+  );
+
+  // Debounced phone availability check
+  const checkPhoneAvailability = useCallback(
+    async (phone: string) => {
+      if (!phone || phone.length < 10) {
+        setPhoneAvailable(null);
+        setPhoneCheckMsg("");
+        setIsCheckingPhone(false);
+        return;
+      }
+      setIsCheckingPhone(true);
+      try {
+        await CheckPhoneExists({
+          payload: { phoneNumber: `234${phone.replace(/^0+/, "")}` },
+        });
+        setPhoneAvailable(true);
+        setPhoneCheckMsg("Phone number is available");
+      } catch (error: any) {
+        setPhoneAvailable(false);
+        setPhoneCheckMsg(
+          error?.response?.data?.message || "Phone number is not available",
+        );
+      } finally {
+        setIsCheckingPhone(false);
+      }
+    },
+    [CheckPhoneExists],
+  );
+
+  // Watch fields to reset state on change & start idle timer (3s)
+  const watchedCustomerEmail = step1Form.watch("email");
+  const watchedHostEmail = hostStep1Form.watch("email");
+  const watchedPhone = step2Form.watch("phoneNumber");
+
+  // Reset email state & start 3s idle timer on every keystroke
+  useEffect(() => {
+    const email = isHost ? watchedHostEmail : watchedCustomerEmail;
+    setEmailAvailable(null);
+    setEmailCheckMsg("");
+    setIsCheckingEmail(false);
+    if (emailCheckTimer.current) clearTimeout(emailCheckTimer.current);
+    emailCheckTimer.current = setTimeout(() => {
+      checkEmailAvailability(email);
+    }, 1000);
+    return () => {
+      if (emailCheckTimer.current) clearTimeout(emailCheckTimer.current);
+    };
+  }, [watchedCustomerEmail, watchedHostEmail, isHost, checkEmailAvailability]);
+
+  // Reset phone state & start 3s idle timer on every keystroke
+  useEffect(() => {
+    setPhoneAvailable(null);
+    setPhoneCheckMsg("");
+    setIsCheckingPhone(false);
+    if (phoneCheckTimer.current) clearTimeout(phoneCheckTimer.current);
+    phoneCheckTimer.current = setTimeout(() => {
+      checkPhoneAvailability(watchedPhone);
+    }, 1000);
+    return () => {
+      if (phoneCheckTimer.current) clearTimeout(phoneCheckTimer.current);
+    };
+  }, [watchedPhone, checkPhoneAvailability]);
+
+  // Blur handlers — trigger check immediately on blur
+  const handleEmailBlur = useCallback(() => {
+    if (!emailAvailable) return;
+
+    if (emailCheckTimer.current) clearTimeout(emailCheckTimer.current);
+    const email = isHost
+      ? hostStep1Form.getValues("email")
+      : step1Form.getValues("email");
+    checkEmailAvailability(email);
+  }, [isHost, hostStep1Form, step1Form, checkEmailAvailability]);
+
+  const handlePhoneBlur = useCallback(() => {
+    if (!phoneAvailable) return;
+    if (phoneCheckTimer.current) clearTimeout(phoneCheckTimer.current);
+    const phone = step2Form.getValues("phoneNumber");
+    checkPhoneAvailability(phone);
+  }, [step2Form, checkPhoneAvailability]);
 
   // Resend countdown timer
   useEffect(() => {
@@ -234,7 +352,7 @@ const SignUpForm = () => {
         },
       });
       setStep(otpStep);
-      setResendCountdown(20);
+      setResendCountdown(600);
     } catch (error: any) {
       console.error("Failed to send OTP:", error);
       setStep2Error(
@@ -286,11 +404,21 @@ const SignUpForm = () => {
       resetStore();
       setOtp(["", "", "", ""]);
 
+      setSignupData({}); // Clear all signup data
+
+      step1Form.reset();
+      step2Form.reset();
+
       setTimeout(() => {
         setShowSuccessModal(true);
-      }, 1000);
+        resetStore();
+        setSignupData({}); // Clear all signup data
+      }, 500);
     } catch (error: any) {
-      setOtpError("Wrong code. Please try again or contact support.");
+      setOtpError(
+        error?.response?.data?.message ||
+          "Wrong code. Please try again or contact support.",
+      );
     } finally {
       setIsLoading(false);
       setLoadingMessage("");
@@ -310,7 +438,7 @@ const SignUpForm = () => {
           fName: signupData.firstName,
         },
       });
-      setResendCountdown(20);
+      setResendCountdown(600);
       setShowResendSuccess(true);
       setOtp(["", "", "", ""]);
       setOtpError("");
@@ -345,10 +473,10 @@ const SignUpForm = () => {
           transition={{ duration: 0.5 }}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full min-h-[100vh] flex-1 gap-5 overflow-y-auto flex items-center justify-center px-5 py-10"
+          className="w-full min-h-[100vh] flex-1 gap-5 overflow-y-auto flex items-center justify-center px-5 py-5"
         >
           <div className="max-w-[500px] items-center justify-center w-full flex flex-col">
-            <div className="flex mb-10 md:hidden items-center justify-center w-full">
+            <div className="flex mb-10 lg:hidden items-center justify-center w-full">
               <Logo
                 orientation="light"
                 width={200}
@@ -455,29 +583,66 @@ const SignUpForm = () => {
                           control={step1Form.control}
                           name="email"
                           render={({ field }) => (
-                            <FormInput
-                              id="email"
-                              label="Email Address"
-                              type="email"
-                              placeholder="Enter your email address"
-                              className="rounded-full border-gray-200 h-[56px] px-5"
-                              field={field}
-                            />
+                            <div>
+                              <FormInput
+                                id="email"
+                                label="Email Address"
+                                type="email"
+                                placeholder="Enter your email address"
+                                className={`rounded-full h-[56px] px-5 ${
+                                  emailAvailable === true
+                                    ? "border-green-500 border-2"
+                                    : emailAvailable === false
+                                      ? "border-red-500 border-2"
+                                      : "border-gray-200"
+                                }`}
+                                field={{
+                                  ...field,
+                                  onBlur: () => {
+                                    field.onBlur();
+                                    handleEmailBlur();
+                                  },
+                                }}
+                              />
+                              {emailCheckMsg && (
+                                <p
+                                  className={`text-[12px] mt-[-6px] ml-3 ${
+                                    emailAvailable
+                                      ? "text-green-500"
+                                      : "text-red-500"
+                                  }`}
+                                >
+                                  {isCheckingEmail
+                                    ? "Checking..."
+                                    : emailCheckMsg}
+                                </p>
+                              )}
+                              {isCheckingEmail && !emailCheckMsg && (
+                                <p className="text-[12px] mt-[-6px] ml-3 text-gray-400">
+                                  Checking...
+                                </p>
+                              )}
+                            </div>
                           )}
                         />
 
                         <button
                           type="submit"
-                          disabled={!step1Form.formState.isValid}
+                          disabled={
+                            !step1Form.formState.isValid ||
+                            emailAvailable !== true
+                          }
                           className={`w-full flex items-center justify-center gap-2 transition-colors rounded-full py-4 px-6 mt-8 ${
-                            step1Form.formState.isValid
+                            step1Form.formState.isValid &&
+                            emailAvailable === true
                               ? "bg-primary hover:bg-primary/90"
                               : "bg-[#F5F5F5] hover:bg-[#EBEBEB] cursor-not-allowed"
                           }`}
                         >
                           <span
                             className={`text-[16px] font-[500] ${
-                              step1Form.formState.isValid
+                              step1Form.formState.isValid &&
+                              emailAvailable === true
                                 ? "text-white"
                                 : "text-[#9CA3AF]"
                             }`}
@@ -486,7 +651,8 @@ const SignUpForm = () => {
                           </span>
                           <ArrowRight
                             className={`w-5 h-5 ${
-                              step1Form.formState.isValid
+                              step1Form.formState.isValid &&
+                              emailAvailable === true
                                 ? "text-white"
                                 : "text-[#9CA3AF]"
                             }`}
@@ -551,14 +717,46 @@ const SignUpForm = () => {
                           control={hostStep1Form.control}
                           name="email"
                           render={({ field }) => (
-                            <FormInput
-                              id="email"
-                              label="Email Address"
-                              type="email"
-                              placeholder="Enter your email address"
-                              className="rounded-full border-gray-200 h-[56px] px-5"
-                              field={field}
-                            />
+                            <div>
+                              <FormInput
+                                id="email"
+                                label="Email Address"
+                                type="email"
+                                placeholder="Enter your email address"
+                                className={`rounded-full h-[56px] px-5 ${
+                                  emailAvailable === true
+                                    ? "border-green-500 border-2"
+                                    : emailAvailable === false
+                                      ? "border-red-500 border-2"
+                                      : "border-gray-200"
+                                }`}
+                                field={{
+                                  ...field,
+                                  onBlur: () => {
+                                    field.onBlur();
+                                    handleEmailBlur();
+                                  },
+                                }}
+                              />
+                              {emailCheckMsg && (
+                                <p
+                                  className={`text-[12px] mt-[-6px] ml-1 ${
+                                    emailAvailable
+                                      ? "text-green-500"
+                                      : "text-red-500"
+                                  }`}
+                                >
+                                  {isCheckingEmail
+                                    ? "Checking..."
+                                    : emailCheckMsg}
+                                </p>
+                              )}
+                              {isCheckingEmail && !emailCheckMsg && (
+                                <p className="text-[12px] mt-[-6px] ml-1 text-gray-400">
+                                  Checking...
+                                </p>
+                              )}
+                            </div>
                           )}
                         />
 
@@ -579,16 +777,21 @@ const SignUpForm = () => {
 
                         <button
                           type="submit"
-                          disabled={!hostStep1Form.formState.isValid}
+                          disabled={
+                            !hostStep1Form.formState.isValid ||
+                            emailAvailable !== true
+                          }
                           className={`w-full flex items-center justify-center gap-2 transition-colors rounded-full py-4 px-6 mt-8 ${
-                            hostStep1Form.formState.isValid
+                            hostStep1Form.formState.isValid &&
+                            emailAvailable === true
                               ? "bg-primary hover:bg-primary/90"
                               : "bg-[#F5F5F5] hover:bg-[#EBEBEB] cursor-not-allowed"
                           }`}
                         >
                           <span
                             className={`text-[16px] font-[500] ${
-                              hostStep1Form.formState.isValid
+                              hostStep1Form.formState.isValid &&
+                              emailAvailable === true
                                 ? "text-white"
                                 : "text-[#9CA3AF]"
                             }`}
@@ -597,7 +800,8 @@ const SignUpForm = () => {
                           </span>
                           <ArrowRight
                             className={`w-5 h-5 ${
-                              hostStep1Form.formState.isValid
+                              hostStep1Form.formState.isValid &&
+                              emailAvailable === true
                                 ? "text-white"
                                 : "text-[#9CA3AF]"
                             }`}
@@ -714,7 +918,15 @@ const SignUpForm = () => {
                         <label className="block text-[14px] font-[600] text-primary mb-2">
                           Phone Number
                         </label>
-                        <div className="flex items-center border border-gray-200 overflow-hidden rounded-full h-[56px] px-4 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary">
+                        <div
+                          className={`flex items-center overflow-hidden rounded-full h-[56px] px-4 focus-within:ring-2 focus-within:ring-primary/20 ${
+                            phoneAvailable === true
+                              ? "border-2 border-green-500"
+                              : phoneAvailable === false
+                                ? "border-2 border-red-500"
+                                : "border border-gray-200 focus-within:border-primary"
+                          }`}
+                        >
                           <div className="flex items-center gap-2 pr-3 border-r border-gray-200">
                             <span className="text-[20px]">🇳🇬</span>
                             <span className="text-[14px] text-[#9c9c9c]">
@@ -726,8 +938,26 @@ const SignUpForm = () => {
                             placeholder="80-11x-xxxxx"
                             className="flex-1 h-full pl-3 outline-none text-[14px]"
                             {...step2Form.register("phoneNumber")}
+                            onBlur={(e) => {
+                              step2Form.register("phoneNumber").onBlur(e);
+                              handlePhoneBlur();
+                            }}
                           />
                         </div>
+                        {phoneCheckMsg && (
+                          <p
+                            className={`text-[12px] mt-1 ml-1 ${
+                              phoneAvailable ? "text-green-500" : "text-red-500"
+                            }`}
+                          >
+                            {isCheckingPhone ? "Checking..." : phoneCheckMsg}
+                          </p>
+                        )}
+                        {isCheckingPhone && !phoneCheckMsg && (
+                          <p className="text-[12px] mt-1 ml-1 text-gray-400">
+                            Checking...
+                          </p>
+                        )}
                       </div>
 
                       {/* Password Field */}
@@ -865,11 +1095,13 @@ const SignUpForm = () => {
                         type="submit"
                         disabled={
                           !step2Form.formState.isValid ||
-                          (isHost && !termsAccepted)
+                          (isHost && !termsAccepted) ||
+                          phoneAvailable !== true
                         }
                         className={`w-full flex items-center justify-center gap-2 transition-colors rounded-full py-4 px-6 mt-8 ${
                           step2Form.formState.isValid &&
-                          (!isHost || termsAccepted)
+                          (!isHost || termsAccepted) &&
+                          phoneAvailable === true
                             ? "bg-primary hover:bg-primary/90"
                             : "bg-[#F5F5F5] hover:bg-[#EBEBEB] cursor-not-allowed"
                         }`}
@@ -877,7 +1109,8 @@ const SignUpForm = () => {
                         <span
                           className={`text-[16px] font-[500] ${
                             step2Form.formState.isValid &&
-                            (!isHost || termsAccepted)
+                            (!isHost || termsAccepted) &&
+                            phoneAvailable === true
                               ? "text-white"
                               : "text-[#9CA3AF]"
                           }`}
@@ -887,7 +1120,8 @@ const SignUpForm = () => {
                         <ArrowRight
                           className={`w-5 h-5 ${
                             step2Form.formState.isValid &&
-                            (!isHost || termsAccepted)
+                            (!isHost || termsAccepted) &&
+                            phoneAvailable === true
                               ? "text-white"
                               : "text-[#9CA3AF]"
                           }`}
@@ -1005,7 +1239,10 @@ const SignUpForm = () => {
                     </button>
                     {resendCountdown > 0 && (
                       <span className="text-[14px] text-[#9CA3AF] ml-2">
-                        00:{resendCountdown.toString().padStart(2, "0")}
+                        {Math.floor(resendCountdown / 60)
+                          .toString()
+                          .padStart(2, "0")}
+                        :{(resendCountdown % 60).toString().padStart(2, "0")}
                       </span>
                     )}
                   </div>

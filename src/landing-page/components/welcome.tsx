@@ -16,6 +16,14 @@ import Prembly from "@/assets/prembly.png";
 import Paystack from "@/assets/paystack.png";
 import Fleet from "@/assets/fleet.png";
 import { useRouter } from "next/navigation";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Car } from "lucide-react";
 
 // Partner logos
 const partners = [
@@ -71,6 +79,14 @@ const popularRides = [
     rating: 4.8,
     image: Highlander,
   },
+  {
+    id: 3,
+    name: "Toyota Highlander",
+    location: "Lagos, Nigeria",
+    price: 57000,
+    rating: 4.8,
+    image: Highlander,
+  },
 ];
 
 const CarCard = ({
@@ -109,7 +125,7 @@ const CarCard = ({
       className="rounded-[16px] overflow-hidden bg-white shadow-sm border border-gray-100 cursor-pointer"
     >
       {/* Image Container */}
-      <div className="relative h-[350px] w-full bg-gray-200">
+      <div className="relative h-[250px] sm:h-[200px] w-full bg-gray-200">
         <Image
           src={car.image}
           alt={car.name}
@@ -147,10 +163,10 @@ const CarCard = ({
           </span>
         </div>
         <div className="flex items-baseline gap-1">
-          <span className="text-[20px] md:text-[32px] font-[700] text-primary">
+          <span className="text-[20px] md:text-[28px] font-[700] text-primary">
             ₦{car.price.toLocaleString()}
           </span>
-          <span className="text-[14px] md:text-[20px] text-[#646464]">
+          <span className="text-[14px] md:text-[16px] text-[#646464]">
             /Day
           </span>
         </div>
@@ -240,10 +256,32 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                 </Button>
               </motion.div>
             </div>
-            <div className="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="mt-7 sm:grid hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {popularRides.map((car, index) => (
                 <CarCard key={car.id} car={car} index={index} />
               ))}
+            </div>
+
+            {/*carousel for mobile */}
+            <div className="mt-[40px] sm:hidden block">
+              <Carousel className="w-full">
+                <div className="flex items-center justify-end gap-7">
+                  <div className="relative rounded-full">
+                    <CarouselPrevious className="absolute top-0 right-0 z-10 bg-white rounded-full p-2 shadow-md" />
+                  </div>
+
+                  <div className="relative rounded-full">
+                    <CarouselNext className="absolute top-1/2 -translate-y-1/2 right-0 z-10 bg-white rounded-full p-2 shadow-md" />
+                  </div>
+                </div>
+                <CarouselContent className="mt-10">
+                  {popularRides.map((car, index) => (
+                    <CarouselItem key={car.id}>
+                      <CarCard car={car} index={index} />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
 
             {/* Partners Section */}
