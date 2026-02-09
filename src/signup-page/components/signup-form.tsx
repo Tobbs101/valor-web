@@ -285,7 +285,10 @@ const SignUpForm = () => {
       // Success - reset store and show modal
       resetStore();
       setOtp(["", "", "", ""]);
-      setShowSuccessModal(true);
+
+      setTimeout(() => {
+        setShowSuccessModal(true);
+      }, 1000);
     } catch (error: any) {
       setOtpError("Wrong code. Please try again or contact support.");
     } finally {

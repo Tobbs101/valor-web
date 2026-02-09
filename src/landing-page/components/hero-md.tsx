@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import JobListingModal from "./job-listing-modal";
+import GooglePlacesAutocomplete from "@/components/custom/google-places-autocomplete";
 
 const letterVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -34,6 +35,7 @@ const HeroMd = () => {
   const router = useRouter();
 
   const [search, setSearch] = useState("");
+  const [location, setLocation] = useState("");
   const [searchType, setSearchType] = useState("");
   const [isJobListingModalOpen, setIsJobListingModalOpen] = useState(false);
 
@@ -44,7 +46,7 @@ const HeroMd = () => {
         onClose={() => setIsJobListingModalOpen(false)}
       />
       <Container className="pt-[30px] sm:pt-[70px]">
-        <div className="w-full relative rounded-2xl py-20 overflow-hidden flex items-center justify-center flex-col gap-2">
+        <div className="w-full relative rounded-2xl py-5 overflow-hidden flex items-center justify-center flex-col gap-2">
           <div className="gap-5 w-full z-[5] flex items-center justify-center flex-col">
             <Container className="px-6 md:px-10 w-full">
               {/* <AnimatedText /> */}
@@ -53,7 +55,7 @@ const HeroMd = () => {
                 initial={{ y: "100%", opacity: 0 }}
                 animate={{ y: "0%", opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
-                className=" text-white mb-3 w-full text-center max-w-[98%] mx-auto text-[32px] md:text-[64px] md:font-[500] font-[700]"
+                className=" text-white mb-1 w-full text-center max-w-[98%] mx-auto text-[32px] md:text-[64px] md:font-[500] font-[700]"
               >
                 Hire any car with ease
               </motion.p>
@@ -75,23 +77,13 @@ const HeroMd = () => {
                 className="mt-5 lg:mt-7 w-[90%] max-w-[900px] mx-auto z-[1] p-2 sm:p-3 flex flex-col sm:flex-row items-center gap-3 rounded-3xl md:rounded-full shadow-xl bg-white"
               >
                 <div className="flex items-center gap-2 md:gap-3 flex-1 w-full">
-                  {/* Location Select */}
-                  <Select
-                    value={searchType}
-                    onValueChange={(value: string) => setSearchType(value)}
-                  >
-                    <SelectTrigger className="w-full sm:flex-1 h-[50px] rounded-full border border-gray-200 bg-gray-50/50 pl-5 pr-4 text-sm font-medium focus:ring-0 focus:ring-offset-0">
-                      <SelectValue placeholder="Location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="lagos" className="text-sm">
-                        Lagos
-                      </SelectItem>
-                      <SelectItem value="abuja" className="text-sm">
-                        Abuja
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                  {/* Location Search */}
+                  <GooglePlacesAutocomplete
+                    value={location}
+                    onChange={(value) => setLocation(value)}
+                    placeholder="Search location"
+                    className="w-full sm:flex-1"
+                  />
 
                   {/* Date Select */}
                   <Select>
@@ -135,7 +127,7 @@ const HeroMd = () => {
                 initial={{ y: "100%", opacity: 0 }}
                 animate={{ y: "0%", opacity: 1 }}
                 transition={{ duration: 0.7, delay: 1.2, ease: "easeOut" }}
-                className="max-w-[90%] w-full flex items-center justify-center mx-auto mt-[50px]"
+                className="max-w-[90%] mb-3 w-full flex items-center justify-center mx-auto mt-[50px]"
               >
                 <button
                   onClick={() => setIsJobListingModalOpen(true)}
