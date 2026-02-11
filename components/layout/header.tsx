@@ -145,6 +145,7 @@ const HeaderLink = ({
       >
         {item.label}
       </motion.span>
+
       <motion.span
         className={cn(
           "absolute left-0 -bottom-1.5 w-0 h-[2px] bg-primary group-hover:w-full transition-all duration-300",
@@ -156,6 +157,8 @@ const HeaderLink = ({
           {
             "bg-white": isWhite && pathname !== item.route,
           },
+
+          { "w-full": pathname === item.route },
         )}
       />
     </Link>

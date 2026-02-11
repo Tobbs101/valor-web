@@ -213,21 +213,8 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
       <Container className="py-[30px] sm:py-[70px]">
         <div className="flex flex-col items-center justify-center">
           <div className="w-full">
-            <motion.h1
-              ref={headerRef}
-              initial="hidden"
-              animate={headerInView ? "visible" : "hidden"}
-              variants={headerVariants}
-              className={cn(
-                "w-full sm:block hidden text-[24px] text-primary leading-[56px] md:mb-3 md:text-[48px] font-[700] text-left",
-                headerClass,
-              )}
-            >
-              Popular Rides
-            </motion.h1>
-
             <div className="sm:flex hidden items-start justify-between flex-col md:flex-row gap-3 md:gap-10">
-              <motion.p
+              {/* <motion.p
                 initial="hidden"
                 animate={headerInView ? "visible" : "hidden"}
                 variants={descriptionVariants}
@@ -236,7 +223,19 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                 Handpicked premium vehicles from trusted hosts across
                 Nigeria—&gt;Explore our Popular Rides, handpicked from the
                 vehicles most trusted and chosen by Valor users.
-              </motion.p>
+              </motion.p> */}
+              <motion.h1
+                ref={headerRef}
+                initial="hidden"
+                animate={headerInView ? "visible" : "hidden"}
+                variants={headerVariants}
+                className={cn(
+                  "w-full sm:block hidden text-[24px] text-primary leading-[56px] md:mb-3 md:text-[48px] font-[700] text-left",
+                  headerClass,
+                )}
+              >
+                Popular Rides
+              </motion.h1>
               <motion.div
                 initial="hidden"
                 animate={headerInView ? "visible" : "hidden"}

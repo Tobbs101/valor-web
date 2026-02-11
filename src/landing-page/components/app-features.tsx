@@ -94,8 +94,8 @@ const AppFeatures = () => {
               Safe transactions
             </h2>
             <p className="text-[14px] font-[400] md:text-[18px] text-[#535353] md:leading-[26px]">
-              Payment is not made to valor and only released to hosts when job
-              is completed
+              Payment is made to Valor and will only be released to the Host
+              once the job has been successfully completed.
             </p>
           </motion.div>
 
