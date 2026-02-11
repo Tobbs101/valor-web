@@ -12,7 +12,7 @@ const BecomeAHost = () => {
       <BecomeAHostHero />
       <HowToBecomeAHost />
       <OnboardYourDriver />
-      <WhatHostArewSaying />
+      <WhatHostAreSaying />
       <Footer />
     </PageLayout>
   );
