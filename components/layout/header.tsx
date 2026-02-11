@@ -251,6 +251,9 @@ const Header = ({
             onClick={() => {
               resetStore();
 
+              if (pathname === "/become-a-host")
+                return router.push("/sign-up?accountType=host");
+
               router.push("/sign-up");
             }}
             className={cn(
@@ -261,7 +264,7 @@ const Header = ({
               // },
             )}
           >
-            Sign Up
+            {pathname === "/become-a-host" ? "Host Sign Up" : "Sign Up"}
           </Button>
         </div>
       </motion.div>

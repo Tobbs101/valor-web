@@ -16,14 +16,7 @@ import Prembly from "@/assets/prembly.png";
 import Paystack from "@/assets/paystack.png";
 import Fleet from "@/assets/fleet.png";
 import { useRouter } from "next/navigation";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Car } from "lucide-react";
+import PopularRidesCarousel from "./popular-rides-carousel";
 
 // Partner logos
 const partners = [
@@ -226,18 +219,19 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
               animate={headerInView ? "visible" : "hidden"}
               variants={headerVariants}
               className={cn(
-                "w-full text-[24px] text-primary leading-[56px] md:mb-3 md:text-[48px] font-[700] text-left",
+                "w-full sm:block hidden text-[24px] text-primary leading-[56px] md:mb-3 md:text-[48px] font-[700] text-left",
                 headerClass,
               )}
             >
               Popular Rides
             </motion.h1>
-            <div className="flex items-start justify-between flex-col md:flex-row gap-3 md:gap-10">
+
+            <div className="sm:flex hidden items-start justify-between flex-col md:flex-row gap-3 md:gap-10">
               <motion.p
                 initial="hidden"
                 animate={headerInView ? "visible" : "hidden"}
                 variants={descriptionVariants}
-                className="w-full sm:block hidden md:w-[60%] text-[14px] text-[#323232] leading-[20px] md:leading-[28px] md:text-[20px] font-[400] md:text-base"
+                className="w-full  md:w-[60%] text-[14px] text-[#323232] leading-[20px] md:leading-[28px] md:text-[20px] font-[400] md:text-base"
               >
                 Handpicked premium vehicles from trusted hosts across
                 Nigeria—&gt;Explore our Popular Rides, handpicked from the
@@ -250,7 +244,7 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
               >
                 <Button
                   onClick={() => router.push("/search")}
-                  className="rounded-[36px] w-[139px] h-[49px] md:flex hidden text-[14px] text-center font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200"
+                  className="rounded-[36px] w-[139px] h-[49px] sm:flex hidden text-[14px] text-center font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200"
                 >
                   View All
                 </Button>
@@ -263,15 +257,30 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
             </div>
 
             {/*carousel for mobile */}
-            <div className="mt-[15px] sm:hidden block">
+            {/* <div className="mt-[15px] sm:hidden block">
               <Carousel className="w-full">
-                <div className="flex items-center justify-end gap-7">
-                  <div className="relative rounded-full">
-                    <CarouselPrevious className="absolute top-0 right-0 z-10 bg-white rounded-full p-2 shadow-md" />
-                  </div>
+                <div className=" w-full flex items-center justify-between">
+                  <motion.h1
+                    ref={headerRef}
+                    initial="hidden"
+                    animate={headerInView ? "visible" : "hidden"}
+                    variants={headerVariants}
+                    className={cn(
+                      "w-full text-[24px] text-primary leading-[56px] md:mb-3 md:text-[48px] font-[700] text-left",
+                      headerClass,
+                    )}
+                  >
+                    Popular Rides
+                  </motion.h1>
 
-                  <div className="relative rounded-full">
-                    <CarouselNext className="absolute top-1/2 -translate-y-1/2 right-0 z-10 bg-white rounded-full p-2 shadow-md" />
+                  <div className="flex items-center justify-end gap-7">
+                    <div className="relative rounded-full">
+                      <CarouselPrevious className="absolute top-0 right-0 z-10 bg-white rounded-full p-2 shadow-md" />
+                    </div>
+
+                    <div className="relative rounded-full">
+                      <CarouselNext className="absolute top-1/2 -translate-y-1/2 right-0 z-10 bg-white rounded-full p-2 shadow-md" />
+                    </div>
                   </div>
                 </div>
                 <CarouselContent className="mt-10">
@@ -282,7 +291,8 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                   ))}
                 </CarouselContent>
               </Carousel>
-            </div>
+            </div> */}
+            <PopularRidesCarousel popularRides={popularRides} />
 
             {/* Partners Section */}
             <motion.div

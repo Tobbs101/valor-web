@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 "use client";
 
 import React, { useState } from "react";
@@ -104,24 +105,46 @@ const FilterPanel = ({
   isMobile = false,
   onApplyFilters,
 }: FilterPanelProps) => {
-  // Filter states
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [selectedVehicleType, setSelectedVehicleType] = useState<string | null>(
-    null,
+  // Zustand filter state
+  const { filters, setFilters, resetFilters } =
+    require("@/store/search-store").useSearchStore();
+
+  // Local UI state for filters
+  const [minPrice, setMinPrice] = useState(filters.cost?.split(",")[0] || "");
+  const [maxPrice, setMaxPrice] = useState(filters.cost?.split(",")[1] || "");
+  const [selectedVehicleType, setSelectedVehicleType] = useState(
+    filters.carType?.[0] || null,
   );
-  const [selectedMake, setSelectedMake] = useState("All makes");
-  const [selectedModel, setSelectedModel] = useState("All models");
-  const [selectedTransmission, setSelectedTransmission] =
-    useState("All transmissions");
-  const [selectedYear, setSelectedYear] = useState("All Years");
-  const [selectedService, setSelectedService] = useState("All services");
-  const [selectedVehicleGlass, setSelectedVehicleGlass] = useState("All");
-  const [selectedVehicleCondition, setSelectedVehicleCondition] =
-    useState("All");
-  const [selectedVehicleColor, setSelectedVehicleColor] = useState("All");
-  const [selectedSeats, setSelectedSeats] = useState("All seats");
-  const [selectedDate, setSelectedDate] = useState("All dates");
+  const [selectedMake, setSelectedMake] = useState(
+    filters.carMake || "All makes",
+  );
+  const [selectedModel, setSelectedModel] = useState(
+    filters.carModel || "All models",
+  );
+  const [selectedTransmission, setSelectedTransmission] = useState(
+    filters.transmission || "All transmissions",
+  );
+  const [selectedYear, setSelectedYear] = useState(
+    filters.makeYear || "All Years",
+  );
+  const [selectedService, setSelectedService] = useState(
+    filters.availableFullDay || "All services",
+  );
+  const [selectedVehicleGlass, setSelectedVehicleGlass] = useState(
+    filters.carTint || "All",
+  );
+  const [selectedVehicleCondition, setSelectedVehicleCondition] = useState(
+    filters.upgrade || "All",
+  );
+  const [selectedVehicleColor, setSelectedVehicleColor] = useState(
+    filters.carColor || "All",
+  );
+  const [selectedSeats, setSelectedSeats] = useState(
+    filters.capacity || "All seats",
+  );
+  const [selectedDate, setSelectedDate] = useState(
+    filters.availableDates?.[0] || "All dates",
+  );
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<
     number | null
   >(null);
@@ -146,7 +169,61 @@ const FilterPanel = ({
 
   const activeFilterCount = getActiveFilterCount();
 
+  // Map UI state to API payload
   const handleApply = () => {
+    const apiFilters = {
+      sortOrder: filters.sortOrder || "DESC",
+      sortBy: filters.sortBy || "pricing.fullDay,vehicleRating",
+      page: filters.page || 1,
+      limit: filters.limit || 90,
+      // Map UI fields
+      cost: minPrice || maxPrice ? `${minPrice},${maxPrice}` : undefined,
+      carType: selectedVehicleType ? [selectedVehicleType] : undefined,
+      carMake: selectedMake !== "All makes" ? selectedMake : undefined,
+      carModel: selectedModel !== "All models" ? selectedModel : undefined,
+      transmission:
+        selectedTransmission !== "All transmissions"
+          ? selectedTransmission
+          : undefined,
+      makeYear: selectedYear !== "All Years" ? selectedYear : undefined,
+      availableFullDay:
+        selectedService !== "All services" ? selectedService : undefined,
+      carTint:
+        selectedVehicleGlass !== "All" ? selectedVehicleGlass : undefined,
+      upgrade:
+        selectedVehicleCondition !== "All"
+          ? selectedVehicleCondition
+          : undefined,
+      carColor:
+        selectedVehicleColor !== "All" ? selectedVehicleColor : undefined,
+      capacity:
+        selectedSeats !== "All seats"
+          ? selectedSeats.replace(" Seats", "")
+          : undefined,
+      availableDates: selectedDate !== "All dates" ? [selectedDate] : undefined,
+    };
+    setFilters(apiFilters);
+    onApplyFilters?.();
+    // onClose();
+  };
+
+  // Clear filters handler
+  const handleClear = () => {
+    resetFilters();
+    setMinPrice("");
+    setMaxPrice("");
+    setSelectedVehicleType(null);
+    setSelectedMake("All makes");
+    setSelectedModel("All models");
+    setSelectedTransmission("All transmissions");
+    setSelectedYear("All Years");
+    setSelectedService("All services");
+    setSelectedVehicleGlass("All");
+    setSelectedVehicleCondition("All");
+    setSelectedVehicleColor("All");
+    setSelectedSeats("All seats");
+    setSelectedDate("All dates");
+    setSelectedCalendarDate(null);
     onApplyFilters?.();
     onClose();
   };
@@ -469,11 +546,18 @@ const FilterPanel = ({
               </FilterSection>
             </div>
 
-            {/* Apply Button - Fixed at bottom */}
-            <div className="p-5 border-t border-gray-200">
+            {/* Apply & Clear Buttons - Fixed at bottom */}
+            <div className="p-5 border-t border-gray-200 flex gap-3">
+              <button
+                onClick={handleClear}
+                className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-primary rounded-full py-4 transition-colors"
+              >
+                <span className="text-[16px] font-[500]">Clear filters</span>
+                <X className="w-5 h-5" />
+              </button>
               <button
                 onClick={handleApply}
-                className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white rounded-full py-4 transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white rounded-full py-4 transition-colors"
               >
                 <span className="text-[16px] font-[500]">Apply filters</span>
                 <ArrowRight className="w-5 h-5" />
@@ -772,12 +856,18 @@ const FilterPanel = ({
         </div>
       </FilterSection>
 
-      <div className="p-5">
+      <div className="py-5 flex-wrap flex gap-3">
+        <button
+          onClick={handleClear}
+          className="flex-1 flex items-center justify-center gap-2 bg-transparent border border-primary text-primary rounded-full py-3 transition-colors"
+        >
+          <span className="text-[14px] font-[500]">Clear filters</span>
+        </button>
         <button
           onClick={handleApply}
-          className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white rounded-full py-3 transition-colors"
+          className="flex-1 flex items-center justify-center border border-primary gap-2 bg-primary hover:bg-primary/90 text-white rounded-full py-3 transition-colors"
         >
-          <span className="text-[16px] font-[500]">Apply filters</span>
+          <span className="text-[14px] font-[500]">Apply filters</span>
           <ArrowRight className="w-5 h-5" />
         </button>
       </div>

@@ -39,7 +39,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
   className,
 }) => {
   return (
-    <FormItem className="w-full flex-1 p-2">
+    <FormItem className="w-full flex-1 py-2">
       <FormLabel>{label}</FormLabel>
       <Select onValueChange={field.onChange} value={field.value}>
         <FormControl>

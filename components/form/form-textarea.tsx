@@ -31,7 +31,7 @@ const FormTextArea = ({
   rows?: number;
 }) => {
   return (
-    <FormItem className={cn("w-full flex-1 p-2", containerClassName)}>
+    <FormItem className={cn("w-full flex-1 py-2", containerClassName)}>
       <FormLabel>{label}</FormLabel>
       <FormControl>
         <Textarea
@@ -48,8 +48,8 @@ const FormTextArea = ({
           hasError
             ? "justify-between"
             : description
-            ? "justify-end"
-            : "justify-start"
+              ? "justify-end"
+              : "justify-start"
         }`}
       >
         <FormMessage className="text-xs" />

@@ -999,7 +999,7 @@ const AppFeatures = () => {
           <div className="flex flex-col lg:flex-row gap-10 max-w-[95%] mx-auto">
             {/* Individual Card */}
             <motion.div
-              className="flex-1 bg-[#D2F0FF] rounded-[24px] pt-6 md:pt-8 px-6 md:px-8 h-[610px] flex flex-col"
+              className="flex-1 bg-[#D2F0FF] rounded-[24px] pt-6 md:pt-8 px-6 md:px-8 flex flex-col"
               variants={{
                 hidden: { opacity: 0, y: 30 },
                 visible: {
@@ -1030,7 +1030,7 @@ const AppFeatures = () => {
               </button>
 
               {/* Phone mockup placeholder */}
-              <div className="flex-1 overflow-hidden relative flex items-end justify-center">
+              <div className="flex-1 h-[300px] overflow-hidden relative flex items-end justify-center">
                 <Image
                   src={HowItWorks}
                   alt="How it works"
@@ -1044,7 +1044,7 @@ const AppFeatures = () => {
 
             {/* Valor for Business Card */}
             <motion.div
-              className="flex-1 bg-[#FEFFEE] rounded-[24px] pt-6 md:pt-8 px-6 md:px-8 h-[610px] flex flex-col"
+              className="flex-1 bg-[#FEFFEE] rounded-[24px] pt-6 md:pt-8 px-6 md:px-8 flex flex-col"
               variants={{
                 hidden: { opacity: 0, y: 30 },
                 visible: {
@@ -1081,7 +1081,7 @@ const AppFeatures = () => {
               </button>
 
               {/* Phone mockup placeholder */}
-              <div className="flex-1 overflow-hidden relative flex items-end justify-center">
+              <div className="flex-1 h-[300px] overflow-hidden relative flex items-end justify-center">
                 <Image
                   src={ReportBug}
                   alt="Report Bug"
