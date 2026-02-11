@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Image, { StaticImageData } from "next/image";
 import { Icon } from "@iconify/react";
+import { useRouter } from "next/navigation";
+import { useSearchStore } from "@/store/search-store";
 import Sedan from "@/assets/sedan.svg";
 import Suv from "@/assets/suv.svg";
 import Luxury from "@/assets/luxury.svg";
@@ -19,22 +21,32 @@ import PaymentShield from "@/assets/security-padlock.png";
 // Car categories - replace placeholder images with actual images
 // Example: import SedanImg from "@/assets/sedan.png";
 const carCategories = [
-  { id: 1, name: "Sedan", image: Sedan },
-  { id: 2, name: "SUV", image: Suv },
-  { id: 3, name: "Luxury", image: Luxury },
-  { id: 4, name: "Bus", image: Bus },
-  { id: 5, name: "Vintage", image: Vintage },
-  { id: 6, name: "Pick Up", image: Pickup },
+  { id: 1, name: "Sedan", image: Sedan, filterValue: "Sedan" },
+  { id: 2, name: "SUV", image: Suv, filterValue: "SUV" },
+  { id: 3, name: "Luxury", image: Luxury, filterValue: "Luxury" },
+  { id: 4, name: "Bus", image: Bus, filterValue: "bus" },
+  { id: 5, name: "Vintage", image: Vintage, filterValue: "Vintage" },
+  { id: 6, name: "Pick Up", image: Pickup, filterValue: "Pick Up" },
 ];
 
 const CategoryCard = ({
   category,
+  onClick,
 }: {
-  category: { id: number; name: string; image: StaticImageData | null };
+  category: {
+    id: number;
+    name: string;
+    image: StaticImageData | null;
+    filterValue: string;
+  };
+  onClick: () => void;
 }) => {
   return (
-    <div className="flex-shrink-0 w-[150px] md:w-[260px]">
-      <div className="bg-[#EEF9FF] px-4 border border-[#C9D3D8] rounded-[12px] md:rounded-[30px] h-[150px] md:h-[220px] w-full flex items-center justify-center overflow-hidden">
+    <div
+      className="flex-shrink-0 w-[150px] md:w-[260px] cursor-pointer group"
+      onClick={onClick}
+    >
+      <div className="bg-[#EEF9FF] px-4 border border-[#C9D3D8] rounded-[12px] md:rounded-[30px] h-[150px] md:h-[220px] w-full flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-primary group-hover:shadow-md">
         {category.image ? (
           <Image
             src={category.image}
@@ -42,7 +54,7 @@ const CategoryCard = ({
             width={180}
             height={220}
             priority
-            className="object-contain"
+            className="object-contain transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="w-[150px] h-[150px] md:w-[260px] md:h-[220px] border-2 border-dashed border-[#023047]/30 rounded-lg flex items-center justify-center">
@@ -50,7 +62,7 @@ const CategoryCard = ({
           </div>
         )}
       </div>
-      <h3 className="mt-1 md:mt-3 text-[12px] md:text-[18px] font-[500] md:font-[700] text-[#323232]">
+      <h3 className="mt-1 md:mt-3 text-[12px] md:text-[18px] font-[500] md:font-[700] text-[#323232] group-hover:text-primary transition-colors">
         {category.name}
       </h3>
     </div>
@@ -58,8 +70,15 @@ const CategoryCard = ({
 };
 
 const CarSelection = () => {
+  const router = useRouter();
+  const { setFilters } = useSearchStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(3);
+
+  const handleCategoryClick = (filterValue: string) => {
+    setFilters({ carType: [filterValue] });
+    router.push("/search");
+  };
 
   // Responsive visible cards count
   useEffect(() => {
@@ -148,16 +167,25 @@ const CarSelection = () => {
             }}
           >
             {[
-              { name: "SUVs", icon: "mdi:car-suv" },
-              { name: "Sedan", icon: "mdi:car-saloon" },
-              { name: "Luxury", icon: "mdi:car-sports" },
-              { name: "Mini-van", icon: "mdi:van-passenger" },
-              { name: "Bus", icon: "mdi:bus" },
-              { name: "Pickup", icon: "mdi:car-pickup" },
+              { name: "SUVs", icon: "mdi:car-suv", filterValue: "SUV" },
+              { name: "Sedan", icon: "mdi:car-saloon", filterValue: "Sedan" },
+              { name: "Luxury", icon: "mdi:car-sports", filterValue: "Luxury" },
+              {
+                name: "Mini-van",
+                icon: "mdi:van-passenger",
+                filterValue: "Mini-van",
+              },
+              { name: "Bus", icon: "mdi:bus", filterValue: "bus" },
+              {
+                name: "Pickup",
+                icon: "mdi:car-pickup",
+                filterValue: "Pick Up",
+              },
             ].map((item, idx) => (
               <motion.div
                 key={idx}
-                className="bg-white border border-gray-200 rounded-[12px] p-3 flex flex-col items-center justify-center gap-2 hover:border-primary/30 transition-colors cursor-pointer"
+                onClick={() => handleCategoryClick(item.filterValue)}
+                className="bg-white border border-gray-200 rounded-[12px] p-3 flex flex-col items-center justify-center gap-2 hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer"
                 variants={{
                   hidden: { opacity: 0, scale: 0.8, y: 10 },
                   visible: {
@@ -561,6 +589,7 @@ const CarSelection = () => {
               <CategoryCard
                 key={`${category.id}-${index}`}
                 category={category}
+                onClick={() => handleCategoryClick(category.filterValue)}
               />
             ))}
           </motion.div>
