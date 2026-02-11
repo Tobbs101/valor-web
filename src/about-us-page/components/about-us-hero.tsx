@@ -38,6 +38,7 @@ const AboutUsHero = () => {
             src={Mission}
             alt="Mission"
             width={200}
+            priority
             className="w-[200px] object-contain"
           />
         </div>
@@ -53,6 +54,7 @@ const AboutUsHero = () => {
             src={Vision}
             alt="Vision"
             width={200}
+            priority
             className="w-[200px] mt-3 object-contain"
           />
         </div>
@@ -90,6 +92,7 @@ const AboutUsHero = () => {
             src={HeroBg}
             height={500}
             width={1440}
+            priority
             alt="About Us Hero Background"
             className="w-full h-[300px] md:rounded-[32px] md:h-[500px] object-cover"
           />

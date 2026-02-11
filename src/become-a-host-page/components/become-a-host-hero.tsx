@@ -27,6 +27,7 @@ const benefits = [
         <Image
           src={EarnExtraImage}
           alt="Earn Extra Income"
+          priority
           width={200}
           className="w-[200px] object-contain"
         />
@@ -43,6 +44,7 @@ const benefits = [
           src={FlexibleSchedulingImage}
           alt="Flexible Scheduling"
           width={200}
+          priority
           className="w-[200px] h-full mt-6 object-contain"
         />
       </div>
@@ -58,6 +60,7 @@ const benefits = [
           src={ContractImage}
           alt="Long term contracts"
           width={200}
+          priority
           className="w-[200px] h-full mr-5 object-contain"
         />
       </div>
@@ -73,6 +76,7 @@ const benefits = [
           src={SecurePayments}
           alt="Long term contracts"
           width={200}
+          priority
           className="w-[200px] mr-10 mb-3 object-contain"
         />
       </div>
@@ -88,6 +92,7 @@ const benefits = [
           src={SimpleManagement}
           alt="Long term contracts"
           width={200}
+          priority
           className="w-[200px] mr-10 object-contain"
         />
       </div>
