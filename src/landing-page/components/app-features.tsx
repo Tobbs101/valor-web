@@ -948,7 +948,12 @@ const AppFeatures = () => {
                 <p className="text-[15px] text-[#646464] leading-[24px] mb-6">
                   Reach out to us via whatsapp to get started
                 </p>
-                <button className="bg-white border border-[#C3C3C3] p-[10px_20px] rounded-[8px] text-[15px] font-[600] w-fit mb-8 hover:bg-gray-50 transition-colors flex items-center gap-2">
+                <a
+                  href="https://wa.me/2347031647277?text=Hello%2C%20I%27m%20interested%20in%20Valor%20for%20Business.%20I%27d%20like%20to%20learn%20more%20about%20your%20fleet%20management%20and%20vehicle%20leasing%20services."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white border border-[#C3C3C3] p-[10px_20px] rounded-[8px] text-[15px] font-[600] w-fit mb-8 hover:bg-gray-50 transition-colors flex items-center gap-2"
+                >
                   <Image
                     src={Whatsapp}
                     alt="WhatsApp"
@@ -956,7 +961,7 @@ const AppFeatures = () => {
                     width={80}
                     priority
                   />
-                </button>
+                </a>
 
                 {/* Phone mockup placeholder */}
                 <div className="flex-1 overflow-hidden relative flex items-end justify-center">
@@ -1070,7 +1075,12 @@ const AppFeatures = () => {
               <p className="text-[15px] text-[#646464] leading-[24px] mb-6">
                 Reach out to us via whatsapp to get started
               </p>
-              <button className="bg-white border border-[#C3C3C3] p-[10px_20px] rounded-[8px] text-[15px] font-[600] w-fit mb-0 hover:bg-gray-50 transition-colors flex items-center gap-2">
+              <a
+                href="https://wa.me/2347031647277?text=Hello%2C%20I%27m%20interested%20in%20Valor%20for%20Business.%20I%27d%20like%20to%20learn%20more%20about%20your%20fleet%20management%20and%20vehicle%20leasing%20services."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white border border-[#C3C3C3] p-[10px_20px] rounded-[8px] text-[15px] font-[600] w-fit mb-0 hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
                 <Image
                   src={Whatsapp}
                   alt="WhatsApp"
@@ -1078,7 +1088,7 @@ const AppFeatures = () => {
                   width={80}
                   priority
                 />
-              </button>
+              </a>
 
               {/* Phone mockup placeholder */}
               <div className="flex-1 h-[300px] overflow-hidden relative flex items-end justify-center">

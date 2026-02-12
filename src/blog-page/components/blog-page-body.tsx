@@ -337,8 +337,8 @@ const BlogPageBody = () => {
               Subscribe to our newsletter
             </h2>
             <p className="text-[14px] md:text-[16px] text-[#535353] mb-8">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Suspendisse varius enim in eros elementum tristique.
+              Get the latest updates on new car listings, exclusive offers, and
+              industry news delivered straight to your inbox.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
               <Input
