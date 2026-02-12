@@ -74,7 +74,7 @@ const vehicleTypes = [
   "Pickup",
 ];
 
-const jobTypes = ["Full Day", "Half Day", "Hourly"];
+const jobTypes = ["Full Day", "Airport Pickup", "Airport Drop-off"];
 
 const timeSlots = [
   "6:00 AM",

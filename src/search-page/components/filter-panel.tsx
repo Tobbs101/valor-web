@@ -21,6 +21,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import LoadingOverlay from "@/components/custom/loading-overlay";
+import "react-day-picker/style.css";
 
 const vehicleTypes = [
   { id: "Sedan", name: "Sedan", icon: "mdi:car-saloon" },
@@ -29,7 +30,48 @@ const vehicleTypes = [
   { id: "bus", name: "Bus", icon: "mdi:bus" },
   { id: "Vintage", name: "Vintage", icon: "mdi:car-sports" },
   { id: "Pick Up", name: "Pick Up", icon: "mdi:car-pickup" },
+  { id: "Mini-van", name: "Mini-van", icon: "mdi:van-passenger" },
 ];
+
+const transmissionOptions = ["All transmissions", "Manual", "Automatic"];
+
+const carMakeOptions = [
+  "All makes",
+  "Toyota",
+  "Mercedez",
+  "Lexus",
+  "Honda",
+  "BMW",
+  "Ford",
+  "Hyundai",
+  "Kia",
+  "Nissan",
+  "Chevrolet",
+];
+
+const carModelOptions = [
+  "All models",
+  "Camry",
+  "Corolla",
+  "Highlander",
+  "RAV4",
+  "Land Cruiser",
+  "Accord",
+  "Civic",
+  "CR-V",
+  "RX 350",
+  "ES 350",
+  "GX 460",
+];
+
+const yearOptions = (() => {
+  const currentYear = new Date().getFullYear();
+  const years = ["All Years"];
+  for (let year = currentYear; year >= 2000; year--) {
+    years.push(year.toString());
+  }
+  return years;
+})();
 
 const nigerianStates = [
   "Abia",
@@ -102,6 +144,17 @@ const seatOptions = [
   "7 Seats",
   "8+ Seats",
 ];
+
+const minYearOptions = (() => {
+  const currentYear = new Date().getFullYear();
+  const years = [""];
+  for (let year = currentYear; year >= 2000; year--) {
+    years.push(year.toString());
+  }
+  return years;
+})();
+
+const maxYearOptions = minYearOptions;
 
 interface FilterPanelProps {
   isOpen: boolean;
@@ -182,6 +235,10 @@ const FilterPanel = ({
   const [selectedYear, setSelectedYear] = useState(
     filters.makeYear || "All Years",
   );
+  const [minYear, setMinYear] = useState(filters.minYear || "");
+  const [maxYear, setMaxYear] = useState(filters.maxYear || "");
+  const [makeSearchQuery, setMakeSearchQuery] = useState("");
+  const [modelSearchQuery, setModelSearchQuery] = useState("");
   const [selectedService, setSelectedService] = useState(
     filters.availableFullDay || "All services",
   );
@@ -286,6 +343,13 @@ const FilterPanel = ({
     if (selectedYear !== "All Years") {
       activeFilters.push({ key: "year", label: "Year", value: selectedYear });
     }
+    if (minYear || maxYear) {
+      activeFilters.push({
+        key: "yearRange",
+        label: "Year Range",
+        value: `${minYear || "0"} - ${maxYear || "Present"}`,
+      });
+    }
     if (selectedService !== "All services") {
       activeFilters.push({
         key: "service",
@@ -337,6 +401,7 @@ const FilterPanel = ({
     if (selectedModel !== "All models") count++;
     if (selectedTransmission !== "All transmissions") count++;
     if (selectedYear !== "All Years") count++;
+    if (minYear || maxYear) count++;
     if (selectedService !== "All services") count++;
     if (selectedVehicleGlass !== "All") count++;
     if (selectedVehicleCondition !== "All") count++;
@@ -366,6 +431,8 @@ const FilterPanel = ({
           ? selectedTransmission
           : undefined,
       makeYear: selectedYear !== "All Years" ? selectedYear : undefined,
+      minYear: minYear || undefined,
+      maxYear: maxYear || undefined,
       availableFullDay:
         selectedService !== "All services" ? selectedService : undefined,
       carTint:
@@ -404,6 +471,10 @@ const FilterPanel = ({
     setSelectedModel("All models");
     setSelectedTransmission("All transmissions");
     setSelectedYear("All Years");
+    setMinYear("");
+    setMaxYear("");
+    setMakeSearchQuery("");
+    setModelSearchQuery("");
     setSelectedService("All services");
     setSelectedVehicleGlass("All");
     setSelectedVehicleCondition("All");
@@ -456,6 +527,26 @@ const FilterPanel = ({
 
               {/* Scrollable Filter Content */}
               <div className="flex-1 overflow-y-auto p-5">
+                {/* Price Filter */}
+                <FilterSection title="Price">
+                  <div className="flex flex-col flex-wrap gap-3">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(e.target.value)}
+                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
+                    />
+                  </div>
+                </FilterSection>
+
                 {/* State Filter */}
                 <FilterSection title="State">
                   <Select
@@ -540,26 +631,6 @@ const FilterPanel = ({
                   </Popover>
                 </FilterSection>
 
-                {/* Price Filter */}
-                <FilterSection title="Price">
-                  <div className="flex flex-col flex-wrap gap-3">
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
-                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Max"
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
-                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
-                    />
-                  </div>
-                </FilterSection>
-
                 {/* Vehicle Type Filter */}
                 <FilterSection title="Vehicle type">
                   <div className="grid grid-cols-3 gap-3">
@@ -586,6 +657,147 @@ const FilterPanel = ({
                         </span>
                       </button>
                     ))}
+                  </div>
+                </FilterSection>
+
+                {/* Transmission Filter */}
+                <FilterSection title="Transmission">
+                  <div className="space-y-3">
+                    {transmissionOptions.map((option) => (
+                      <label
+                        key={option}
+                        onClick={() => setSelectedTransmission(option)}
+                        className="flex items-center gap-3 cursor-pointer"
+                      >
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                            selectedTransmission === option
+                              ? "border-primary"
+                              : "border-gray-300"
+                          }`}
+                        >
+                          {selectedTransmission === option && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                          )}
+                        </div>
+                        <span className="text-[14px] text-[#646464]">
+                          {option}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </FilterSection>
+
+                {/* Car Make Filter */}
+                <FilterSection title="Car Make">
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search for car make"
+                        value={makeSearchQuery}
+                        onChange={(e) => setMakeSearchQuery(e.target.value)}
+                        className="w-full border border-gray-200 rounded-full px-4 py-3 text-[14px] outline-none focus:border-primary"
+                      />
+                    </div>
+                    <div className="max-h-[200px] overflow-y-auto space-y-2">
+                      {carMakeOptions
+                        .filter((make) =>
+                          make
+                            .toLowerCase()
+                            .includes(makeSearchQuery.toLowerCase()),
+                        )
+                        .map((make) => (
+                          <label
+                            key={make}
+                            onClick={() => setSelectedMake(make)}
+                            className="flex items-center gap-3 cursor-pointer"
+                          >
+                            <div
+                              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                selectedMake === make
+                                  ? "border-primary"
+                                  : "border-gray-300"
+                              }`}
+                            >
+                              {selectedMake === make && (
+                                <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                              )}
+                            </div>
+                            <span className="text-[14px] text-[#646464]">
+                              {make === "All makes" ? "Show all" : make}
+                            </span>
+                          </label>
+                        ))}
+                    </div>
+                  </div>
+                </FilterSection>
+
+                {/* Car Model Filter */}
+                <FilterSection title="Car Model">
+                  <div className="space-y-3">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search for car model"
+                        value={modelSearchQuery}
+                        onChange={(e) => setModelSearchQuery(e.target.value)}
+                        className="w-full border border-gray-200 rounded-full px-4 py-3 text-[14px] outline-none focus:border-primary"
+                      />
+                    </div>
+                    <div className="max-h-[200px] overflow-y-auto space-y-2">
+                      {carModelOptions
+                        .filter((model) =>
+                          model
+                            .toLowerCase()
+                            .includes(modelSearchQuery.toLowerCase()),
+                        )
+                        .map((model) => (
+                          <label
+                            key={model}
+                            onClick={() => setSelectedModel(model)}
+                            className="flex items-center gap-3 cursor-pointer"
+                          >
+                            <div
+                              className={`w-5 h-5 rounded-[4px] border-2 flex items-center justify-center ${
+                                selectedModel === model
+                                  ? "border-primary bg-primary"
+                                  : "border-gray-300"
+                              }`}
+                            >
+                              {selectedModel === model && (
+                                <Icon
+                                  icon="mdi:check"
+                                  className="text-white text-[14px]"
+                                />
+                              )}
+                            </div>
+                            <span className="text-[14px] text-[#646464]">
+                              {model === "All models" ? "Show All" : model}
+                            </span>
+                          </label>
+                        ))}
+                    </div>
+                  </div>
+                </FilterSection>
+
+                {/* Year of Manufacturing Filter */}
+                <FilterSection title="Year of Manufacturing">
+                  <div className="flex flex-col flex-wrap gap-3">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={minYear}
+                      onChange={(e) => setMinYear(e.target.value)}
+                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={maxYear}
+                      onChange={(e) => setMaxYear(e.target.value)}
+                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
+                    />
                   </div>
                 </FilterSection>
 
@@ -779,6 +991,26 @@ const FilterPanel = ({
           </button>
         </div>
 
+        {/* Price Filter */}
+        <FilterSection title="Price">
+          <div className="flex flex-col gap-3">
+            <input
+              type="number"
+              placeholder="Min"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
+            />
+            <input
+              type="number"
+              placeholder="Max"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
+            />
+          </div>
+        </FilterSection>
+
         {/* State Filter */}
         <FilterSection title="State">
           <Select value={selectedState} onValueChange={setSelectedState}>
@@ -838,7 +1070,7 @@ const FilterPanel = ({
                           {format(date, "MMM d, yyyy")}
                           <button
                             onClick={() => removeDate(date)}
-                            className="hover:bg-primary/20 rounded-full p-0.5"
+                            className="hover:bg-primary/20 rounded-full"
                           >
                             <X className="h-3 w-3" />
                           </button>
@@ -850,26 +1082,6 @@ const FilterPanel = ({
               </div>
             </PopoverContent>
           </Popover>
-        </FilterSection>
-
-        {/* Price Filter */}
-        <FilterSection title="Price">
-          <div className="flex flex-col gap-3">
-            <input
-              type="number"
-              placeholder="Min"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
-            />
-            <input
-              type="number"
-              placeholder="Max"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
-            />
-          </div>
         </FilterSection>
 
         {/* Vehicle Type Filter */}
@@ -893,6 +1105,141 @@ const FilterPanel = ({
                 <span className="text-[11px] text-[#646464]">{type.name}</span>
               </button>
             ))}
+          </div>
+        </FilterSection>
+
+        {/* Transmission Filter */}
+        <FilterSection title="Transmission">
+          <div className="space-y-2">
+            {transmissionOptions.map((option) => (
+              <label
+                key={option}
+                onClick={() => setSelectedTransmission(option)}
+                className="flex items-center gap-3 cursor-pointer"
+              >
+                <div
+                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    selectedTransmission === option
+                      ? "border-primary"
+                      : "border-gray-300"
+                  }`}
+                >
+                  {selectedTransmission === option && (
+                    <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                  )}
+                </div>
+                <span className="text-[14px] text-[#646464]">{option}</span>
+              </label>
+            ))}
+          </div>
+        </FilterSection>
+
+        {/* Car Make Filter */}
+        <FilterSection title="Car Make">
+          <div className="space-y-3">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search for car make"
+                value={makeSearchQuery}
+                onChange={(e) => setMakeSearchQuery(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
+              />
+            </div>
+            <div className="max-h-[180px] overflow-y-auto space-y-2">
+              {carMakeOptions
+                .filter((make) =>
+                  make.toLowerCase().includes(makeSearchQuery.toLowerCase()),
+                )
+                .map((make) => (
+                  <label
+                    key={make}
+                    onClick={() => setSelectedMake(make)}
+                    className="flex items-center gap-3 cursor-pointer"
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                        selectedMake === make
+                          ? "border-primary"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {selectedMake === make && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                      )}
+                    </div>
+                    <span className="text-[14px] text-[#646464]">
+                      {make === "All makes" ? "Show all" : make}
+                    </span>
+                  </label>
+                ))}
+            </div>
+          </div>
+        </FilterSection>
+
+        {/* Car Model Filter */}
+        <FilterSection title="Car Model">
+          <div className="space-y-3">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search for car model"
+                value={modelSearchQuery}
+                onChange={(e) => setModelSearchQuery(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
+              />
+            </div>
+            <div className="max-h-[180px] overflow-y-auto space-y-2">
+              {carModelOptions
+                .filter((model) =>
+                  model.toLowerCase().includes(modelSearchQuery.toLowerCase()),
+                )
+                .map((model) => (
+                  <label
+                    key={model}
+                    onClick={() => setSelectedModel(model)}
+                    className="flex items-center gap-3 cursor-pointer"
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-[4px] border-2 flex items-center justify-center ${
+                        selectedModel === model
+                          ? "border-primary bg-primary"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      {selectedModel === model && (
+                        <Icon
+                          icon="mdi:check"
+                          className="text-white text-[14px]"
+                        />
+                      )}
+                    </div>
+                    <span className="text-[14px] text-[#646464]">
+                      {model === "All models" ? "Show All" : model}
+                    </span>
+                  </label>
+                ))}
+            </div>
+          </div>
+        </FilterSection>
+
+        {/* Year of Manufacturing Filter */}
+        <FilterSection title="Year of Manufacturing">
+          <div className="flex flex-col gap-3">
+            <input
+              type="number"
+              placeholder="Min"
+              value={minYear}
+              onChange={(e) => setMinYear(e.target.value)}
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
+            />
+            <input
+              type="number"
+              placeholder="Max"
+              value={maxYear}
+              onChange={(e) => setMaxYear(e.target.value)}
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
+            />
           </div>
         </FilterSection>
 
