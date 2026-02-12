@@ -8,6 +8,8 @@ import { X, ChevronDown, ArrowRight, CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
+import { useQuery } from "react-query";
+import { fleet } from "@/apis/fleet";
 import {
   Select,
   SelectContent,
@@ -35,8 +37,7 @@ const vehicleTypes = [
 
 const transmissionOptions = ["All transmissions", "Manual", "Automatic"];
 
-const carMakeOptions = [
-  "All makes",
+const fallbackCarMakeOptions = [
   "Toyota",
   "Mercedez",
   "Lexus",
@@ -269,6 +270,26 @@ const FilterPanel = ({
   });
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isFilterLoading, setIsFilterLoading] = useState(false);
+
+  // Fetch vehicle makes from API
+  const { data: vehicleMakesData } = useQuery(
+    "vehicleMakes",
+    () => fleet.getVehicleMakes(),
+    {
+      staleTime: 1000 * 60 * 30, // Cache for 30 minutes
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  // Build car make options with API data or fallback
+  const carMakeOptions = [
+    "All makes",
+    ...(vehicleMakesData?.data?.length > 0
+      ? vehicleMakesData.data.map((make: { name: string } | string) =>
+          typeof make === "string" ? make : make.name,
+        )
+      : fallbackCarMakeOptions),
+  ];
 
   // Sync local state with global filters when they change
   useEffect(() => {

@@ -201,3 +201,8 @@ body::-webkit-scrollbar-thumb:hover {
   background-color: #0230471a;
   border-radius: 50%;
 }
+
+.rdp-chevron {
+  display: inline-block;
+  fill: #023047 !important;
+}

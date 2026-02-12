@@ -10,4 +10,7 @@ export const fleet = {
 
   getVehicleDetails: ({ carId }: { carId: string }) =>
     client.get(`explore/vehicles/${carId}`).then(({ data }: any) => data),
+
+  getVehicleMakes: () =>
+    client.get(`getVehicleMakes`).then(({ data }: any) => data),
 };

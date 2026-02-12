@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 
 interface GooglePlacesAutocompleteProps {
@@ -28,7 +28,12 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const [localValue, setLocalValue] = useState(value);
+
+  // Sync local value with external value
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
 
   useEffect(() => {
     // Check if Google Maps is already loaded
@@ -93,26 +98,91 @@ const GooglePlacesAutocomplete: React.FC<GooglePlacesAutocompleteProps> = ({
       const place = autocompleteRef.current?.getPlace();
       if (place) {
         const address = place.formatted_address || place.name || "";
-        onChange(address, place);
+        // Use setTimeout to ensure the event completes before updating state
+        setTimeout(() => {
+          onChange(address, place);
+        }, 0);
       }
     });
+
+    // Prevent clicks on autocomplete dropdown from closing parent dialogs
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (
+            node instanceof HTMLElement &&
+            node.classList.contains("pac-container")
+          ) {
+            node.addEventListener("mousedown", (e) => {
+              e.stopPropagation();
+            });
+            node.addEventListener("click", (e) => {
+              e.stopPropagation();
+            });
+          }
+        });
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+    };
   };
+
+  // Add global styles for Google Places autocomplete dropdown z-index
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.id = "google-places-autocomplete-styles";
+    style.textContent = `
+      .pac-container {
+        z-index: 100000 !important;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        margin-top: 4px;
+        font-family: inherit;
+      }
+      .pac-item {
+        padding: 10px 12px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .pac-item:hover {
+        background-color: #f3f4f6;
+      }
+      .pac-item-query {
+        font-size: 14px;
+        color: #1f2937;
+      }
+      .pac-matched {
+        font-weight: 600;
+      }
+    `;
+
+    // Only add if not already present
+    if (!document.getElementById("google-places-autocomplete-styles")) {
+      document.head.appendChild(style);
+    }
+
+    return () => {
+      // Don't remove on unmount as other instances may need it
+    };
+  }, []);
 
   return (
     <div className={`relative ${className}`}>
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 z-10">
         <Icon icon="mdi:map-marker" className="text-lg" />
       </div>
       <input
         ref={inputRef}
         type="text"
-        value={value}
+        value={localValue}
         onChange={(e) => {
           const val = e.target.value;
-          if (debounceRef.current) clearTimeout(debounceRef.current);
-          debounceRef.current = setTimeout(() => {
-            onChange(val);
-          }, 1000);
+          setLocalValue(val); // Update immediately for smooth typing
+          onChange(val); // Notify parent immediately
         }}
         placeholder={placeholder}
         className="w-full placeholder:text-xs sm:placeholder:text-sm placeholder:font-[400] h-[50px] rounded-full border border-gray-200 bg-gray-50/50 pl-10 pr-4 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
