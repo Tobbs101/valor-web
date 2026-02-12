@@ -14,7 +14,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, ChevronLeft, Clock, XIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  ArrowRight,
+  ChevronLeft,
+  Clock,
+  XIcon,
+  CalendarIcon,
+} from "lucide-react";
 import { useMutation } from "react-query";
 import {
   jobListing,
@@ -24,6 +35,10 @@ import {
 import GooglePlacesAutocomplete from "@/components/custom/google-places-autocomplete";
 import { toast } from "@/hooks/use-toast";
 import { useJobListingStore } from "@/store/job-listing-store";
+import { DayPicker } from "react-day-picker";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import "react-day-picker/style.css";
 
 interface JobListingModalProps {
   isOpen: boolean;
@@ -212,8 +227,19 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
   const [dropoffLocation, setDropoffLocation] = useState("");
   const [dropoffLocationData, setDropoffLocationData] =
     useState<LocationData | null>(null);
-  const [tripDates, setTripDates] = useState<string[]>([]);
-  const [tripDateInput, setTripDateInput] = useState("");
+  const [tripDates, setTripDates] = useState<Date[]>([]);
+
+  // Handler for DayPicker date selection
+  const handleDateSelect = (dates: Date[] | undefined) => {
+    setTripDates(dates || []);
+  };
+
+  // Remove a specific date from selection
+  const removeDate = (dateToRemove: Date) => {
+    setTripDates(
+      tripDates.filter((date) => date.getTime() !== dateToRemove.getTime()),
+    );
+  };
   const [timeOfFlight, setTimeOfFlight] = useState("");
   const [airportName, setAirportName] = useState("");
   const [itinerary, setItinerary] = useState("");
@@ -361,7 +387,6 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
     setDropoffLocation("");
     setDropoffLocationData(null);
     setTripDates([]);
-    setTripDateInput("");
     setTimeOfFlight("");
     setAirportName("");
     setItinerary("");
@@ -403,7 +428,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
           state,
           carType: vehicleType,
           tripType: tripTypeMap[jobType],
-          tripDate: tripDates,
+          tripDate: tripDates.map((date) => format(date, "yyyy-MM-dd")),
           pickUpTime: pickupTime,
           closingTime,
           pickUpLocation: pickupLocationData || {
@@ -669,22 +694,30 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                     Date
                   </label>
                   <div className="flex gap-3">
-                    <input
-                      type="date"
-                      placeholder="Start date"
-                      className="flex-1 border border-gray-200 rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px]"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
-                    />
-                    <input
-                      type="date"
-                      placeholder="End date"
-                      className="flex-1 border border-gray-200 rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px]"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      min={startDate || new Date().toISOString().split("T")[0]}
-                    />
+                    <div className="flex-1">
+                      <p className="text-[12px] ml-1 font-[500]">Start Date</p>
+                      <input
+                        type="date"
+                        placeholder="Start date"
+                        className="w-full border border-gray-200 rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px]"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        min={new Date().toISOString().split("T")[0]}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[12px] ml-1 font-[500]">End Date</p>
+                      <input
+                        type="date"
+                        placeholder="End date"
+                        className="w-full border border-gray-200 rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px]"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        min={
+                          startDate || new Date().toISOString().split("T")[0]
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               )}
@@ -883,57 +916,97 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                   <label className="block text-[14px] font-[600] text-primary mb-2">
                     Trip Date(s)
                   </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="date"
-                      className="flex-1 border border-gray-200 rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px]"
-                      value={tripDateInput}
-                      onChange={(e) => setTripDateInput(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
+                  <div className="w-full border border-gray-200 rounded-[36px] p-3">
+                    <DayPicker
+                      mode="multiple"
+                      selected={tripDates}
+                      onSelect={handleDateSelect}
+                      disabled={{ before: new Date() }}
+                      className=""
                     />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (
-                          tripDateInput &&
-                          !tripDates.includes(tripDateInput)
-                        ) {
-                          setTripDates([...tripDates, tripDateInput]);
-                          setTripDateInput("");
-                        }
-                      }}
-                      className="h-[50px] px-4 rounded-full bg-primary text-white text-[14px] font-[600] flex items-center gap-1 hover:bg-primary/90 transition-colors"
-                    >
-                      Add <span className="text-[18px]">+</span>
-                    </button>
                   </div>
+
                   {tripDates.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {tripDates.map((date, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-2 bg-[#CBEEFF] rounded-full px-4 py-2 text-[13px]"
-                        >
-                          {new Date(date).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setTripDates(
-                                tripDates.filter((_, i) => i !== index),
-                              )
-                            }
-                            className="text-gray-500 hover:text-red-600"
+                    <div className="border-t pt-3 mt-3">
+                      <p className="text-xs text-gray-500 mb-2">
+                        Selected dates:
+                      </p>
+                      <div className="flex w-full max-w-[320px] flex-wrap gap-1">
+                        {tripDates.map((date, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
                           >
-                            <XIcon strokeWidth={2} className="w-3 h-3" />
-                          </button>
-                        </span>
-                      ))}
+                            {format(date, "MMM d, yyyy")}
+                            <button
+                              type="button"
+                              onClick={() => removeDate(date)}
+                              className="hover:bg-primary/20 rounded-full p-0.5"
+                            >
+                              <XIcon className="h-3 w-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   )}
+                  {/* <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="w-full h-[50px] rounded-full border border-gray-200 bg-white px-5 text-[14px] flex items-center justify-between gap-2 hover:border-primary/50 transition-colors focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                        <span
+                          className={cn(
+                            "truncate",
+                            tripDates.length === 0 && "text-gray-400",
+                          )}
+                        >
+                          {tripDates.length === 0
+                            ? "Select trip dates"
+                            : tripDates.length === 1
+                              ? format(tripDates[0], "MMM d, yyyy")
+                              : `${tripDates.length} dates selected`}
+                        </span>
+                        <CalendarIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-0 z-[100000]"
+                      align="start"
+                    >
+                      <div className="p-3">
+                        <DayPicker
+                          mode="multiple"
+                          selected={tripDates}
+                          onSelect={handleDateSelect}
+                          disabled={{ before: new Date() }}
+                          className="rounded-md z-[1000000]"
+                        />
+                        {tripDates.length > 0 && (
+                          <div className="border-t pt-3 mt-3">
+                            <p className="text-xs text-gray-500 mb-2">
+                              Selected dates:
+                            </p>
+                            <div className="flex w-full max-w-[320px] flex-wrap gap-1">
+                              {tripDates.map((date, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
+                                >
+                                  {format(date, "MMM d, yyyy")}
+                                  <button
+                                    type="button"
+                                    onClick={() => removeDate(date)}
+                                    className="hover:bg-primary/20 rounded-full p-0.5"
+                                  >
+                                    <XIcon className="h-3 w-3" />
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </PopoverContent>
+                  </Popover> */}
                 </div>
               )}
 
