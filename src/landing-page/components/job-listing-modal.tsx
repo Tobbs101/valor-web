@@ -950,63 +950,6 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                       </div>
                     </div>
                   )}
-                  {/* <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="w-full h-[50px] rounded-full border border-gray-200 bg-white px-5 text-[14px] flex items-center justify-between gap-2 hover:border-primary/50 transition-colors focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                        <span
-                          className={cn(
-                            "truncate",
-                            tripDates.length === 0 && "text-gray-400",
-                          )}
-                        >
-                          {tripDates.length === 0
-                            ? "Select trip dates"
-                            : tripDates.length === 1
-                              ? format(tripDates[0], "MMM d, yyyy")
-                              : `${tripDates.length} dates selected`}
-                        </span>
-                        <CalendarIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-0 z-[100000]"
-                      align="start"
-                    >
-                      <div className="p-3">
-                        <DayPicker
-                          mode="multiple"
-                          selected={tripDates}
-                          onSelect={handleDateSelect}
-                          disabled={{ before: new Date() }}
-                          className="rounded-md z-[1000000]"
-                        />
-                        {tripDates.length > 0 && (
-                          <div className="border-t pt-3 mt-3">
-                            <p className="text-xs text-gray-500 mb-2">
-                              Selected dates:
-                            </p>
-                            <div className="flex w-full max-w-[320px] flex-wrap gap-1">
-                              {tripDates.map((date, index) => (
-                                <span
-                                  key={index}
-                                  className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
-                                >
-                                  {format(date, "MMM d, yyyy")}
-                                  <button
-                                    type="button"
-                                    onClick={() => removeDate(date)}
-                                    className="hover:bg-primary/20 rounded-full p-0.5"
-                                  >
-                                    <XIcon className="h-3 w-3" />
-                                  </button>
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </PopoverContent>
-                  </Popover> */}
                 </div>
               )}
 

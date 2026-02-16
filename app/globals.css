@@ -221,3 +221,7 @@ body::-webkit-scrollbar-thumb:hover {
   max-width: 100% !important;
   width: 100% !important;
 }
+
+.rdp-month {
+  width: 100% !important;
+}
