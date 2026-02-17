@@ -12,6 +12,10 @@ export default {
         protocol: "https",
         hostname: "valorpublicbucket.s3.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "valorrecentpublicbucket.s3.eu-west-1.amazonaws.com",
+      },
     ],
   },
 };

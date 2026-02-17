@@ -26,6 +26,22 @@ const SearchPageBody = () => {
   // Zustand store for filters
   const { filters, setFilters } = useSearchStore();
 
+  // Calculate active filter count from store
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (filters.cost) count++;
+    if (filters.carType?.length) count++;
+    if (filters.state) count++;
+    if (filters.availableDates?.length) count++;
+    if (filters.capacity) count++;
+    if (filters.makeYear) count++;
+    if (filters.availableFullDay) count++;
+    return count;
+  };
+  const activeFilterCount = getActiveFilterCount();
+
+  // console.log(activeFilterCount, "activeFilterCount");
+
   // Fetch vehicles with filters
   const {
     data: vehicles,
@@ -133,6 +149,11 @@ const SearchPageBody = () => {
                 className="text-primary text-lg"
               />
               <span className="text-[14px] text-primary">Filters</span>
+              {activeFilterCount > 0 && (
+                <span className="w-5 h-5 rounded-full bg-orange-500 text-white text-[12px] flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
             </button>
           </div>
         </div>

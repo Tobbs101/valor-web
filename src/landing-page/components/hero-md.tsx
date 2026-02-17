@@ -155,7 +155,7 @@ const HeroMd = () => {
                 transition={{ delay: 1.2, duration: 0.5, ease: "easeOut" }}
                 className="mt-5 lg:mt-7 w-[90%] max-w-[900px] mx-auto z-[1] p-2 sm:p-3 flex flex-col sm:flex-row items-center gap-3 rounded-3xl md:rounded-full shadow-xl bg-white"
               >
-                <div className="flex items-center gap-2 md:gap-3 flex-1 w-full">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3 flex-1 w-full">
                   {/* State Select */}
                   <Select
                     value={selectedState}

@@ -11,7 +11,7 @@ const OnboardYourDriver = () => {
     <div className="bg-white pt-[50px] md:pt-[80px] overflow-hidden">
       <Container className="px-5">
         <motion.div
-          className="mt-24 flex flex-col-reverse lg:flex-row items-center gap-10 lg:gap-16"
+          className="mt-24 flex flex-col lg:flex-row items-center gap-10 lg:gap-16"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -147,6 +147,38 @@ const OnboardYourDriver = () => {
                     </p>
                   </div>
                 </motion.div>
+              </div>
+            </div>
+            {/* Get the Driver's App */}
+            <div className="mt-10">
+              <h4 className="text-[16px] md:text-[18px] font-[600] text-primary mb-4">
+                Get the Driver's App
+              </h4>
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://apps.apple.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-transform hover:scale-105"
+                >
+                  <img
+                    src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                    alt="Download on the App Store"
+                    className="h-[44px]"
+                  />
+                </a>
+                <a
+                  href="https://play.google.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-transform hover:scale-105"
+                >
+                  <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                    alt="Get it on Google Play"
+                    className="h-[44px]"
+                  />
+                </a>
               </div>
             </div>
           </motion.div>

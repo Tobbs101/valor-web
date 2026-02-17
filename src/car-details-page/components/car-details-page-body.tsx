@@ -105,22 +105,22 @@ const CarDetailsPageBody = () => {
             Return to Search
           </span>
         </button>
-        <div className="flex gap-4 mb-8">
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
           {/* Main Image */}
-          <div className="flex-1 relative h-[400px] rounded-2xl overflow-hidden">
+          <div className="flex-1 relative h-[250px] md:h-[400px] rounded-2xl overflow-hidden">
             <Image
               src={Highlander}
               alt={carData.name}
               fill
-              sizes="(max-width: 768px) 100vw,"
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </div>
 
           {/* Side Images */}
-          <div className="w-[280px] flex flex-col gap-4">
+          <div className="w-full md:w-[280px] flex flex-row md:flex-col gap-4">
             {/* Top Image with Rating */}
-            <div className="relative h-[190px] rounded-2xl overflow-hidden">
+            <div className="relative flex-1 h-[140px] md:h-[190px] rounded-2xl overflow-hidden">
               <Image
                 src={Highlander}
                 alt={carData.name}
@@ -140,7 +140,7 @@ const CarDetailsPageBody = () => {
             </div>
 
             {/* Bottom Image with Photo Count */}
-            <div className="relative h-[190px] rounded-2xl overflow-hidden">
+            <div className="relative flex-1 h-[140px] md:h-[190px] rounded-2xl overflow-hidden">
               <Image
                 src={Highlander}
                 alt={carData.name}
@@ -159,15 +159,15 @@ const CarDetailsPageBody = () => {
         </div>
 
         {/* Content Section */}
-        <div className="flex gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Content */}
-          <div className="flex-1">
+          <div className="flex-1 order-2 lg:order-1">
             {/* Title & Location */}
-            <div className="mb-8">
-              <h1 className="text-[28px] font-[700] text-primary mb-3">
+            <div className="mb-6 md:mb-8">
+              <h1 className="text-[22px] md:text-[28px] font-[700] text-primary mb-2 md:mb-3">
                 {carData.name}
               </h1>
-              <div className="flex items-center gap-6 text-[14px] text-[#646464]">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-[13px] md:text-[14px] text-[#646464]">
                 <div className="flex items-center gap-2">
                   <Icon
                     icon="mdi:map-marker-outline"
@@ -186,11 +186,11 @@ const CarDetailsPageBody = () => {
             </div>
 
             {/* Technical Specification */}
-            <div className="border border-gray-200 rounded-xl p-6 mb-6">
-              <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-5">
+            <div className="border border-gray-200 rounded-xl p-4 md:p-6 mb-6">
+              <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-4 md:mb-5">
                 Technical Specification
               </h2>
-              <div className="grid grid-cols-3 gap-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-4 md:gap-y-6">
                 <div>
                   <p className="text-[12px] md:text-[14px] text-[#9CA3AF] mb-1">
                     Make
@@ -259,7 +259,7 @@ const CarDetailsPageBody = () => {
             </div>
 
             {/* Features */}
-            <div className="border border-gray-200 rounded-xl p-6 mb-6">
+            <div className="border border-gray-200 rounded-xl p-4 md:p-6 mb-6">
               <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-5">
                 Features
               </h2>
@@ -282,7 +282,7 @@ const CarDetailsPageBody = () => {
             </div>
 
             {/* Rental Terms */}
-            <div className="border border-gray-200 rounded-xl p-6 mb-6">
+            <div className="border border-gray-200 rounded-xl p-4 md:p-6 mb-6">
               <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-5">
                 Rental Terms
               </h2>
@@ -302,7 +302,7 @@ const CarDetailsPageBody = () => {
             </div>
 
             {/* Service */}
-            <div className="border border-gray-200 rounded-xl p-6">
+            <div className="border border-gray-200 rounded-xl p-4 md:p-6">
               <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-5">
                 Service
               </h2>
@@ -329,7 +329,7 @@ const CarDetailsPageBody = () => {
             </div>
 
             {/* Ratings and Review */}
-            <div className="border border-gray-200 rounded-xl p-6 mt-6">
+            <div className="border border-gray-200 rounded-xl p-4 md:p-6 mt-6">
               <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-2">
                 Ratings and Review
               </h2>
@@ -371,7 +371,7 @@ const CarDetailsPageBody = () => {
                     </div>
 
                     {/* User Info */}
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex flex-wrap items-center gap-2 mb-3">
                       <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
                         <Image
                           src={Highlander}
@@ -411,11 +411,11 @@ const CarDetailsPageBody = () => {
             </div>
 
             {/* Hosted By */}
-            <div className="border border-gray-200 rounded-xl p-6 mt-6">
-              <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-5">
+            <div className="border border-gray-200 rounded-xl p-4 md:p-6 mt-6">
+              <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-4 md:mb-5">
                 Hosted By
               </h2>
-              <div className="grid grid-cols-2 gap-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 md:gap-y-5">
                 <div>
                   <p className="text-[12px] md:text-[14px] text-[#9CA3AF] mb-1">
                     Name
@@ -461,21 +461,23 @@ const CarDetailsPageBody = () => {
           </div>
 
           {/* Right Sidebar - Price Card */}
-          <div className="w-[320px]">
-            <div className="border border-gray-200 rounded-xl p-6 sticky top-[100px]">
+          <div className="w-full lg:w-[320px] order-1 lg:order-2">
+            <div className="border border-gray-200 rounded-xl p-4 md:p-6 lg:sticky lg:top-[100px]">
               {/* Price */}
-              <div className="mb-5">
+              <div className="mb-4 md:mb-5">
                 <p className="text-[13px] text-[#9CA3AF] mb-1">From</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-[32px] font-[700] text-primary">
+                  <span className="text-[26px] md:text-[32px] font-[700] text-primary">
                     {carData.price}
                   </span>
-                  <span className="text-[14px] text-[#646464]">/day</span>
+                  <span className="text-[13px] md:text-[14px] text-[#646464]">
+                    /day
+                  </span>
                 </div>
               </div>
 
               {/* Inquiry Button */}
-              <button className="w-full flex h-[55px] items-center justify-center gap-2 bg-gradient-to-l from-[#023047] to-[#034a6b] text-white rounded-[36px] p-[22px_10px] mb-6 transition-colors">
+              <button className="w-full flex h-[50px] md:h-[55px] items-center justify-center gap-2 bg-gradient-to-l from-[#023047] to-[#034a6b] text-white rounded-[36px] p-[22px_10px] mb-4 md:mb-6 transition-colors">
                 <span className="text-[14px] font-[400]">Send an Inquiry</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
@@ -555,8 +557,8 @@ const CarDetailsPageBody = () => {
         </div>
 
         {/* More Recommendations */}
-        <div className="mt-16">
-          <h2 className="text-[28px] font-[700] text-primary mb-8">
+        <div className="mt-10 md:mt-16">
+          <h2 className="text-[22px] md:text-[28px] font-[700] text-primary mb-6 md:mb-8">
             More Recommendations
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

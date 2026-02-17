@@ -219,6 +219,17 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
   const [state, setState] = useState("");
   const [vehicleType, setVehicleType] = useState("");
   const [jobType, setJobType] = useState("Full Day");
+
+  // When switching to airport trip type, keep only the first date if multiple selected
+  const handleJobTypeChange = (newJobType: string) => {
+    setJobType(newJobType);
+    if (
+      (newJobType === "Airport Pickup" || newJobType === "Airport Drop-off") &&
+      tripDates.length > 1
+    ) {
+      setTripDates([tripDates[0]]);
+    }
+  };
   const [pickupTime, setPickupTime] = useState("");
   const [closingTime, setClosingTime] = useState("");
   const [pickupLocation, setPickupLocation] = useState("");
@@ -230,8 +241,15 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
   const [tripDates, setTripDates] = useState<Date[]>([]);
 
   // Handler for DayPicker date selection
-  const handleDateSelect = (dates: Date[] | undefined) => {
-    setTripDates(dates || []);
+  const handleDateSelect = (dates: Date | Date[] | undefined) => {
+    if (!dates) {
+      setTripDates([]);
+    } else if (Array.isArray(dates)) {
+      setTripDates(dates);
+    } else {
+      // Single date selection (for airport trips)
+      setTripDates([dates]);
+    }
   };
 
   // Remove a specific date from selection
@@ -693,7 +711,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                   <label className="block text-[14px] font-[600] text-primary mb-2">
                     Date
                   </label>
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 flex-wrap">
                     <div className="flex-1">
                       <p className="text-[12px] ml-1 font-[500]">Start Date</p>
                       <input
@@ -848,7 +866,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                   <label className="block text-[14px] font-[600] text-primary mb-2">
                     Job Type
                   </label>
-                  <Select value={jobType} onValueChange={setJobType}>
+                  <Select value={jobType} onValueChange={handleJobTypeChange}>
                     <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary">
                       <SelectValue placeholder="Select job type" />
                     </SelectTrigger>
@@ -914,16 +932,31 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
               {isShortTerm && (
                 <div>
                   <label className="block text-[14px] font-[600] text-primary mb-2">
-                    Trip Date(s)
+                    Trip Date{!isAirportRelated && "(s)"}
                   </label>
+                  {isAirportRelated ? (
+                    <p className="text-xs text-gray-500 mb-2">
+                      Only one date allowed for airport trips
+                    </p>
+                  ) : null}
                   <div className="w-full border border-gray-200 rounded-[36px] p-3">
-                    <DayPicker
-                      mode="multiple"
-                      selected={tripDates}
-                      onSelect={handleDateSelect}
-                      disabled={{ before: new Date() }}
-                      className=""
-                    />
+                    {isAirportRelated ? (
+                      <DayPicker
+                        mode="single"
+                        selected={tripDates[0]}
+                        onSelect={handleDateSelect}
+                        disabled={{ before: new Date() }}
+                        className=""
+                      />
+                    ) : (
+                      <DayPicker
+                        mode="multiple"
+                        selected={tripDates}
+                        onSelect={handleDateSelect}
+                        disabled={{ before: new Date() }}
+                        className=""
+                      />
+                    )}
                   </div>
 
                   {tripDates.length > 0 && (

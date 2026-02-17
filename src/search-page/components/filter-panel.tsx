@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/popover";
 import LoadingOverlay from "@/components/custom/loading-overlay";
 import "react-day-picker/style.css";
+import { is } from "date-fns/locale";
 
 const vehicleTypes = [
   { id: "Sedan", name: "Sedan", icon: "mdi:car-saloon" },
@@ -434,7 +435,7 @@ const FilterPanel = ({
   const activeFilterCount = getActiveFilterCount();
 
   // Map UI state to API payload
-  const handleApply = async () => {
+  const handleApply = async (isMobile?: boolean) => {
     setIsFilterLoading(true);
     const apiFilters = {
       sortOrder: filters.sortOrder || "DESC",
@@ -476,11 +477,12 @@ const FilterPanel = ({
     setFilters(apiFilters);
     await onApplyFilters?.();
     setIsFilterLoading(false);
-    // onClose();
+
+    if (isMobile) return onClose();
   };
 
   // Clear filters handler
-  const handleClear = async () => {
+  const handleClear = async (isMobile?: boolean) => {
     setIsFilterLoading(true);
     resetFilters();
     setMinPrice("");
@@ -505,7 +507,8 @@ const FilterPanel = ({
     setSelectedCalendarDate(null);
     await onApplyFilters?.();
     setIsFilterLoading(false);
-    // onClose();
+
+    if (isMobile) return onClose();
   };
 
   // Mobile fullscreen filter
@@ -577,7 +580,7 @@ const FilterPanel = ({
                     <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 bg-gray-50/50 pl-5 pr-4 text-sm font-medium focus:ring-0 focus:ring-offset-0">
                       <SelectValue placeholder="Select State" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[300px]">
+                    <SelectContent className="max-h-[300px] z-[10000]">
                       {nigerianStates.map((state) => (
                         <SelectItem
                           key={state}
@@ -615,7 +618,10 @@ const FilterPanel = ({
                         <CalendarIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
                       </button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent
+                      className="w-auto p-0 z-[10000]"
+                      align="start"
+                    >
                       <div className="p-3">
                         <DayPicker
                           mode="multiple"
@@ -908,38 +914,44 @@ const FilterPanel = ({
 
                 {/* Vehicle Color Filter */}
                 <FilterSection title="Vehicle Color">
-                  <div className="relative">
-                    <select
-                      value={selectedVehicleColor}
-                      onChange={(e) => setSelectedVehicleColor(e.target.value)}
-                      className="w-full border border-gray-200 rounded-lg px-4 py-3 text-[14px] outline-none focus:border-primary appearance-none bg-white cursor-pointer"
-                    >
+                  <Select
+                    value={selectedVehicleColor}
+                    onValueChange={setSelectedVehicleColor}
+                  >
+                    <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 bg-gray-50/50 pl-5 pr-4 text-sm font-medium focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Select Color" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px] z-[10000]">
                       {vehicleColors.map((color) => (
-                        <option key={color} value={color}>
+                        <SelectItem
+                          key={color}
+                          value={color}
+                          className="text-sm"
+                        >
                           {color}
-                        </option>
+                        </SelectItem>
                       ))}
-                    </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
-                  </div>
+                    </SelectContent>
+                  </Select>
                 </FilterSection>
 
                 {/* Number of Seats Filter */}
                 <FilterSection title="Number of Seats">
-                  <div className="relative">
-                    <select
-                      value={selectedSeats}
-                      onChange={(e) => setSelectedSeats(e.target.value)}
-                      className="w-full border border-gray-200 rounded-lg px-4 py-3 text-[14px] outline-none focus:border-primary appearance-none bg-white cursor-pointer"
-                    >
+                  <Select
+                    value={selectedSeats}
+                    onValueChange={setSelectedSeats}
+                  >
+                    <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 bg-gray-50/50 pl-5 pr-4 text-sm font-medium focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Select Seats" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px] z-[10000]">
                       {seatOptions.map((seat) => (
-                        <option key={seat} value={seat}>
+                        <SelectItem key={seat} value={seat} className="text-sm">
                           {seat}
-                        </option>
+                        </SelectItem>
                       ))}
-                    </select>
-                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
-                  </div>
+                    </SelectContent>
+                  </Select>
                 </FilterSection>
               </div>
 
@@ -966,14 +978,14 @@ const FilterPanel = ({
               {/* Apply & Clear Buttons - Fixed at bottom */}
               <div className="p-5 border-t border-gray-200 flex gap-3">
                 <button
-                  onClick={handleClear}
+                  onClick={() => handleClear(true)}
                   className="flex-1 flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-primary rounded-full py-4 transition-colors"
                 >
                   <span className="text-[16px] font-[500]">Clear filters</span>
                   <X className="w-5 h-5" />
                 </button>
                 <button
-                  onClick={handleApply}
+                  onClick={() => handleApply(true)}
                   className="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white rounded-full py-4 transition-colors"
                 >
                   <span className="text-[16px] font-[500]">Apply filters</span>
@@ -1344,38 +1356,37 @@ const FilterPanel = ({
 
         {/* Vehicle Color Filter */}
         <FilterSection title="Vehicle Color">
-          <div className="relative">
-            <select
-              value={selectedVehicleColor}
-              onChange={(e) => setSelectedVehicleColor(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-[14px] outline-none focus:border-primary appearance-none bg-white cursor-pointer"
-            >
+          <Select
+            value={selectedVehicleColor}
+            onValueChange={setSelectedVehicleColor}
+          >
+            <SelectTrigger className="w-full h-[44px] rounded-lg border border-gray-200 bg-gray-50/50 px-4 text-sm font-medium focus:ring-0 focus:ring-offset-0">
+              <SelectValue placeholder="Select Color" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
               {vehicleColors.map((color) => (
-                <option key={color} value={color}>
+                <SelectItem key={color} value={color} className="text-sm">
                   {color}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
-          </div>
+            </SelectContent>
+          </Select>
         </FilterSection>
 
         {/* Number of Seats Filter */}
         <FilterSection title="Number of Seats">
-          <div className="relative">
-            <select
-              value={selectedSeats}
-              onChange={(e) => setSelectedSeats(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-[14px] outline-none focus:border-primary appearance-none bg-white cursor-pointer"
-            >
+          <Select value={selectedSeats} onValueChange={setSelectedSeats}>
+            <SelectTrigger className="w-full h-[44px] rounded-lg border border-gray-200 bg-gray-50/50 px-4 text-sm font-medium focus:ring-0 focus:ring-offset-0">
+              <SelectValue placeholder="Select Seats" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
               {seatOptions.map((seat) => (
-                <option key={seat} value={seat}>
+                <SelectItem key={seat} value={seat} className="text-sm">
                   {seat}
-                </option>
+                </SelectItem>
               ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9CA3AF] pointer-events-none" />
-          </div>
+            </SelectContent>
+          </Select>
         </FilterSection>
 
         {/* Selected Filters Display */}
@@ -1400,13 +1411,13 @@ const FilterPanel = ({
 
         <div className="py-5 flex-wrap flex gap-3">
           <button
-            onClick={handleClear}
+            onClick={() => handleClear()}
             className="flex-1 flex items-center justify-center gap-2 bg-transparent border border-primary text-primary rounded-full py-3 transition-colors"
           >
             <span className="text-[14px] font-[500]">Clear filters</span>
           </button>
           <button
-            onClick={handleApply}
+            onClick={() => handleApply()}
             className="flex-1 flex items-center justify-center border border-primary gap-2 bg-primary hover:bg-primary/90 text-white rounded-full py-3 transition-colors"
           >
             <span className="text-[14px] font-[500]">Apply filters</span>
