@@ -83,6 +83,9 @@ const SignUpForm = () => {
   // Step 2 Error State
   const [step2Error, setStep2Error] = useState("");
 
+  // Google Sign-In Error State
+  const [googleSignInError, setGoogleSignInError] = useState("");
+
   // Terms checkbox state (for hosts)
   const [termsAccepted, setTermsAccepted] = useState(
     signupData.termsAccepted || false,
@@ -92,6 +95,7 @@ const SignUpForm = () => {
   const { mutateAsync: SignUp } = useMutation(auth.signUp);
   const { mutateAsync: CheckEmailExists } = useMutation(auth.checkEmailExists);
   const { mutateAsync: CheckPhoneExists } = useMutation(auth.checkPhoneExists);
+  const { mutateAsync: GoogleSignIn } = useMutation(auth.googleSignIn);
 
   // Email & Phone availability state: null = not checked, true = available, false = taken
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
@@ -172,6 +176,7 @@ const SignUpForm = () => {
 
     setIsLoading(true);
     setLoadingMessage("Connecting to Google...");
+    setGoogleSignInError(""); // Clear any previous error
 
     // @ts-expect-error - Google Identity Services types
     const client = window.google.accounts.oauth2.initTokenClient({
@@ -181,57 +186,41 @@ const SignUpForm = () => {
         if (response.error) {
           setIsLoading(false);
           setLoadingMessage("");
+          setGoogleSignInError(
+            "Google sign-in was cancelled or failed. Please try again.",
+          );
           console.error("Google Sign-In error:", response.error);
           return;
         }
 
         try {
-          setLoadingMessage("Getting your information...");
+          setLoadingMessage("Signing you in...");
 
-          // Get user info from Google
-          const userInfoResponse = await fetch(
-            "https://www.googleapis.com/oauth2/v2/userinfo",
-            {
-              headers: { Authorization: `Bearer ${response.access_token}` },
+          // Call the googleSignIn API with the access token
+          const signInResponse = await GoogleSignIn({
+            payload: {
+              accessToken: response.access_token,
+              deviceToken: "web",
             },
-          );
-          const userInfo = await userInfoResponse.json();
-
-          // Map Google data to form fields
-          const firstName = userInfo.given_name || "";
-          const lastName = userInfo.family_name || "";
-          const email = userInfo.email || "";
-
-          // Pre-fill the Step 1 form
-          step1Form.setValue("firstName", firstName);
-          step1Form.setValue("lastName", lastName);
-          step1Form.setValue("email", email);
-
-          // Also update the signup store
-          setSignupData({
-            firstName,
-            lastName,
-            email,
           });
 
-          // Validate the email
-          setLoadingMessage("Validating email...");
-          try {
-            await CheckEmailExists({ payload: { email } });
-            // Email is available - auto-proceed to step 2
-            setEmailAvailable(true);
-            setEmailCheckMsg("Email is available");
-            setStep(2);
-          } catch (emailError: any) {
-            // Email is taken - show error on step 1
-            setEmailAvailable(false);
-            setEmailCheckMsg(
-              emailError?.response?.data?.message ||
-                "This email is already registered. Please sign in instead.",
-            );
+          // If we get a JWT token back, show success modal
+          if (
+            signInResponse?.token ||
+            signInResponse?.jwt ||
+            signInResponse?.data?.token
+          ) {
+            setShowSuccessModal(true);
+          } else {
+            // If no token but successful, still show success
+            setShowSuccessModal(true);
           }
         } catch (error: any) {
           console.error("Google Sign-In error:", error);
+          setGoogleSignInError(
+            error?.response?.data?.message ||
+              "Google sign-up failed. Please try again.",
+          );
         } finally {
           setIsLoading(false);
           setLoadingMessage("");
@@ -240,7 +229,7 @@ const SignUpForm = () => {
     });
 
     client.requestAccessToken();
-  }, [googleClientId, step1Form, setSignupData, setStep, CheckEmailExists]);
+  }, [googleClientId, GoogleSignIn]);
 
   // Company name state for hosts (optional field in step 2)
   const [companyName, setCompanyName] = useState(signupData.companyName || "");
@@ -632,7 +621,7 @@ const SignUpForm = () => {
                       <button
                         type="button"
                         onClick={handleGoogleSignIn}
-                        className="w-full flex items-center justify-center gap-3 bg-[#F5F5F5] hover:bg-[#EBEBEB] transition-colors rounded-full py-4 px-6 mb-6"
+                        className="w-full flex items-center justify-center gap-3 bg-[#F5F5F5] hover:bg-[#EBEBEB] transition-colors rounded-full py-4 px-6 mb-3"
                       >
                         <svg width="24" height="24" viewBox="0 0 24 24">
                           <path
@@ -656,6 +645,13 @@ const SignUpForm = () => {
                           Continue with Google
                         </span>
                       </button>
+
+                      {/* Google Sign-In Error */}
+                      {googleSignInError && (
+                        <p className="text-red-500 text-[13px] font-[600] text-center mb-3">
+                          {googleSignInError}
+                        </p>
+                      )}
 
                       {/* Divider */}
                       <div className="flex items-center gap-4 mb-6">

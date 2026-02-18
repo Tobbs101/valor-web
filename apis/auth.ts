@@ -15,4 +15,7 @@ export const auth = {
 
   checkEmailExists: ({ payload }: { payload: any }) =>
     client.post(`checkEmailExists`, payload).then(({ data }: any) => data),
+
+  googleSignIn: ({ payload }: { payload: any }) =>
+    client.post(`googleSignIn`, payload).then(({ data }: any) => data),
 };
