@@ -138,10 +138,10 @@ const CarDetailsPageBody = () => {
     isLoading: loadingCarData,
     isError,
   } = useQuery(
-    ["vehicle data", params.car_id],
-    () => fleet.getVehicleDetails({ carId: (params.car_id as string) || "" }),
+    ["vehicle data", params?.car_id],
+    () => fleet.getVehicleDetails({ carId: (params?.car_id as string) || "" }),
     {
-      enabled: !!params.car_id,
+      enabled: !!params?.car_id,
       refetchOnWindowFocus: false,
     },
   );
@@ -151,10 +151,10 @@ const CarDetailsPageBody = () => {
     isLoading: loadingCarReviews,
     isError: reviewsError,
   } = useQuery(
-    ["vehicle reviews", params.car_id],
-    () => fleet.getVehicleReviews({ carId: (params.car_id as string) || "" }),
+    ["vehicle reviews", params?.car_id],
+    () => fleet.getVehicleReviews({ carId: (params?.car_id as string) || "" }),
     {
-      enabled: !!params.car_id,
+      enabled: !!params?.car_id,
       refetchOnWindowFocus: false,
     },
   );

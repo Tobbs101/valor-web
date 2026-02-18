@@ -67,7 +67,6 @@ const SearchPageBody = () => {
     data: vehicles,
     isLoading,
     isError,
-    error,
     refetch,
   } = useQuery(
     ["vehicles", filters],

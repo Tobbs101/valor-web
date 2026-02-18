@@ -56,7 +56,7 @@ const SignUpForm = () => {
     useSignupStore();
 
   const searchParams = useSearchParams();
-  const accountType = searchParams.get("accountType") || "customer";
+  const accountType = searchParams?.get("accountType") || "customer";
   const isHost = accountType === "host";
   const totalSteps = 2; // Both have 2 steps now
 
