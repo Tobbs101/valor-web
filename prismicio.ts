@@ -24,6 +24,18 @@ const routes: prismic.ClientConfig["routes"] = [
     type: "site_settings",
     path: "/",
   },
+  {
+    type: "blog_post",
+    path: "/blog/:uid",
+  },
+  {
+    type: "blog_listing_page",
+    path: "/blog",
+  },
+  {
+    type: "contact_us_page",
+    path: "/contact-us",
+  },
   // Add this route once the document type is created in Prismic:
   // {
   //   type: "privacy_policy_page",

@@ -62,3 +62,68 @@ export async function getSiteSettings() {
     return null;
   }
 }
+
+/**
+ * Fetch the Blog Listing page settings from Prismic
+ */
+export async function getBlogListingPage() {
+  const client = createClient();
+
+  try {
+    const blogListing = await client.getSingle("blog_listing_page");
+    return blogListing;
+  } catch (error) {
+    console.error("Error fetching blog listing page from Prismic:", error);
+    return null;
+  }
+}
+
+/**
+ * Fetch all published blog posts from Prismic
+ */
+export async function getAllBlogPosts() {
+  const client = createClient();
+
+  try {
+    const blogPosts = await client.getAllByType("blog_post", {
+      orderings: [
+        { field: "my.blog_post.publish_date", direction: "desc" },
+        { field: "document.first_publication_date", direction: "desc" },
+      ],
+    });
+    return blogPosts;
+  } catch (error) {
+    console.error("Error fetching blog posts from Prismic:", error);
+    return [];
+  }
+}
+
+/**
+ * Fetch a single blog post by UID (slug)
+ */
+export async function getBlogPostByUID(uid: string) {
+  const client = createClient();
+
+  try {
+    const blogPost = await client.getByUID("blog_post", uid);
+    return blogPost;
+  } catch (error) {
+    console.error(`Error fetching blog post "${uid}" from Prismic:`, error);
+    return null;
+  }
+}
+
+/**
+ * Fetch the Contact Us page from Prismic
+ */
+export async function getContactUsPage() {
+  const client = createClient();
+
+  try {
+    const contactPage = await client.getSingle("contact_us_page");
+    return contactPage;
+  } catch (error) {
+    console.error("Error fetching contact us page from Prismic:", error);
+    return null;
+  }
+}

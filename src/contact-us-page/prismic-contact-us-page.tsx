@@ -14,6 +14,29 @@ import { motion } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import ExperienceValor from "@/components/shared/experience-valor";
+import { KeyTextField, ImageField } from "@prismicio/client";
+
+// Types for Prismic data
+interface ContactUsPageData {
+  title?: KeyTextField;
+  description?: KeyTextField;
+  phone_label?: KeyTextField;
+  phone_number?: KeyTextField;
+  email_label?: KeyTextField;
+  email_address?: KeyTextField;
+  address_label?: KeyTextField;
+  address?: KeyTextField;
+  social_title?: KeyTextField;
+  map_embed_url?: KeyTextField;
+  meta_title?: KeyTextField;
+  meta_description?: KeyTextField;
+  meta_keywords?: KeyTextField;
+  og_image?: ImageField;
+}
+
+interface PrismicContactUsPageProps {
+  data: ContactUsPageData;
+}
 
 const contactFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -32,7 +55,7 @@ const inquiryOptions = [
   { id: 5, title: "Other", value: "other" },
 ];
 
-const socialLinks = [
+const defaultSocialLinks = [
   {
     icon: "mdi:whatsapp",
     href: "https://wa.me/2347031647277",
@@ -55,7 +78,7 @@ const socialLinks = [
   },
 ];
 
-const ContactUsPageBody = () => {
+const PrismicContactUsPage = ({ data }: PrismicContactUsPageProps) => {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -66,10 +89,14 @@ const ContactUsPageBody = () => {
     },
   });
 
-  const onSubmit = (data: ContactFormValues) => {
-    console.log(data);
+  const onSubmit = (formData: ContactFormValues) => {
+    console.log(formData);
     // Handle form submission here
   };
+
+  // Google Maps embed URL with API key
+  const defaultMapUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&q=6.4459777,3.4789411&zoom=16`;
+  const mapUrl = data.map_embed_url || defaultMapUrl;
 
   return (
     <div className="bg-white pt-[30px] md:pt-[60px] pb-[0px] md:pb-[80px] overflow-hidden">
@@ -85,11 +112,11 @@ const ContactUsPageBody = () => {
           {/* Left Side - Title and Description */}
           <div className="flex-1 ">
             <h1 className="text-[28px] md:text-[40px] font-[700] text-primary leading-[36px] md:leading-[48px] mb-4">
-              We&apos;d Love to Hear from You!
+              {data.title || "We'd Love to Hear from You!"}
             </h1>
             <p className="text-[14px] md:text-[16px] text-[#535353] leading-[24px]">
-              Whether you have a question, need assistance, or want to share
-              your feedback, we are here to help.
+              {data.description ||
+                "Whether you have a question, need assistance, or want to share your feedback, we are here to help."}
             </p>
           </div>
 
@@ -160,7 +187,7 @@ const ContactUsPageBody = () => {
                     type="submit"
                     className="w-full sm:w-auto px-10 h-[48px] rounded-full bg-primary hover:bg-primary/90 text-white font-[500]"
                   >
-                    Sign Up
+                    Submit
                   </Button>
                 </div>
               </form>
@@ -184,30 +211,31 @@ const ContactUsPageBody = () => {
             {/* Phone */}
             <div>
               <h4 className="text-[16px] font-[700] text-primary mb-2">
-                Phone
+                {data.phone_label || "Phone"}
               </h4>
               <p className="text-[14px] md:text-[16px] text-[#535353]">
-                +234 703 164 7277
+                {data.phone_number || "+234 703 164 7277"}
               </p>
             </div>
 
             {/* Email */}
             <div>
               <h4 className="text-[16px] font-[700] text-primary mb-2">
-                Email
+                {data.email_label || "Email"}
               </h4>
               <p className="text-[14px] md:text-[16px] text-[#535353]">
-                info@valorhire.com (Customer Support)
+                {data.email_address || "info@valorhire.com (Customer Support)"}
               </p>
             </div>
 
             {/* Address */}
             <div>
               <h4 className="text-[16px] font-[700] text-primary mb-2">
-                Address
+                {data.address_label || "Address"}
               </h4>
               <p className="text-[14px] md:text-[16px] text-[#535353]">
-                30b Oyibo, Adjahor Street, Lekki Phase 1, Lagos Nigeria
+                {data.address ||
+                  "30b Oyibo, Adjahor Street, Lekki Phase 1, Lagos Nigeria"}
               </p>
             </div>
           </div>
@@ -222,11 +250,11 @@ const ContactUsPageBody = () => {
           className="mt-12 md:mt-16"
         >
           <h2 className="text-[24px] md:text-[32px] font-[700] text-primary mb-6">
-            Follow Us on Social Media
+            {data.social_title || "Follow Us on Social Media"}
           </h2>
 
           <div className="flex gap-4">
-            {socialLinks.map((social) => (
+            {defaultSocialLinks.map((social) => (
               <Link
                 key={social.label}
                 href={social.href}
@@ -251,7 +279,7 @@ const ContactUsPageBody = () => {
         >
           <div className="w-full h-[300px] md:h-[400px] rounded-[16px] overflow-hidden">
             <iframe
-              src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&q=6.4459777,3.4789411&zoom=16`}
+              src={mapUrl}
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -271,4 +299,4 @@ const ContactUsPageBody = () => {
   );
 };
 
-export default ContactUsPageBody;
+export default PrismicContactUsPage;
