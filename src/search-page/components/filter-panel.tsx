@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronDown, ArrowRight, CalendarIcon } from "lucide-react";
@@ -24,17 +24,44 @@ import {
 } from "@/components/ui/popover";
 import LoadingOverlay from "@/components/custom/loading-overlay";
 import "react-day-picker/style.css";
-import { is } from "date-fns/locale";
 
-const vehicleTypes = [
-  { id: "Sedan", name: "Sedan", icon: "mdi:car-saloon" },
+// Vehicle type interface
+interface VehicleType {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+// Fallback vehicle types with icons
+const fallbackVehicleTypes: VehicleType[] = [
+  { id: "Sedan", name: "Sedan", icon: "mdi:car-sedan" },
   { id: "SUV", name: "SUV", icon: "mdi:car-suv" },
   { id: "Luxury", name: "Luxury", icon: "mdi:car-sports" },
-  { id: "bus", name: "Bus", icon: "mdi:bus" },
-  { id: "Vintage", name: "Vintage", icon: "mdi:car-sports" },
+  { id: "Vintage", name: "Vintage", icon: "mdi:car-convertible" },
   { id: "Pick Up", name: "Pick Up", icon: "mdi:car-pickup" },
   { id: "Mini-van", name: "Mini-van", icon: "mdi:van-passenger" },
 ];
+
+// Icon mapping for car types from API
+const carTypeIconMap: Record<string, string> = {
+  // Sedan: "mdi:car-sedan",
+  SUV: "mdi:car-suv",
+  Truck: "mdi:truck",
+  Van: "mdi:van-utility",
+  // Coupe: "mdi:car-coupe",
+  Convertible: "mdi:car-convertible",
+  Hatchback: "mdi:car-hatchback",
+  Wagon: "mdi:car-estate",
+  Minivan: "mdi:van-passenger",
+  Crossover: "mdi:car-suv",
+  Luxury: "mdi:car-sports",
+  "Sports Car": "mdi:car-sports",
+  Electric: "mdi:car-electric",
+  Hybrid: "mdi:car-electric-outline",
+  Vintage: "mdi:car-convertible",
+  Bus: "mdi:bus",
+  "Pick Up": "mdi:car-pickup",
+};
 
 const transmissionOptions = ["All transmissions", "Manual", "Automatic"];
 
@@ -51,20 +78,19 @@ const fallbackCarMakeOptions = [
   "Chevrolet",
 ];
 
-const carModelOptions = [
-  "All models",
-  "Camry",
-  "Corolla",
-  "Highlander",
-  "RAV4",
-  "Land Cruiser",
-  "Accord",
-  "Civic",
-  "CR-V",
-  "RX 350",
-  "ES 350",
-  "GX 460",
-];
+// const fallbackCarModelOptions = [
+//   "Camry",
+//   "Corolla",
+//   "Highlander",
+//   "RAV4",
+//   "Land Cruiser",
+//   "Accord",
+//   "Civic",
+//   "CR-V",
+//   "RX 350",
+//   "ES 350",
+//   "GX 460",
+// ];
 
 const yearOptions = (() => {
   const currentYear = new Date().getFullYear();
@@ -127,8 +153,7 @@ const vehicleGlassOptions = ["All", "Tinted", "Not tinted"];
 
 const vehicleConditionOptions = ["All", "Upgraded", "Not Upgraded"];
 
-const vehicleColors = [
-  "All",
+const fallbackVehicleColors = [
   "Black",
   "White",
   "Silver",
@@ -272,6 +297,11 @@ const FilterPanel = ({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isFilterLoading, setIsFilterLoading] = useState(false);
 
+  // Debounce timer refs
+  const priceDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const yearDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const isInitialMount = useRef(true);
+
   // Fetch vehicle makes from API
   const { data: vehicleMakesData } = useQuery(
     "vehicleMakes",
@@ -282,24 +312,240 @@ const FilterPanel = ({
     },
   );
 
+  // Fetch vehicle makes from API
+  const { data: vehicleModelsData } = useQuery(
+    ["vehicleModels", selectedMake, makeSearchQuery],
+    () =>
+      fleet.getVehicleModels(
+        makeSearchQuery
+          ? { make: makeSearchQuery?.toLowerCase() }
+          : {
+              make:
+                selectedMake !== "All makes" ? selectedMake?.toLowerCase() : "",
+            },
+      ),
+    {
+      staleTime: 1000 * 60 * 30, // Cache for 30 minutes
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const { data: carTypes } = useQuery("carTypes", () => fleet.getCarTypes(), {
+    staleTime: 1000 * 60 * 30, // Cache for 30 minutes
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: carColors } = useQuery("carColors", () => fleet.getColor(), {
+    staleTime: 1000 * 60 * 30, // Cache for 30 minutes
+    refetchOnWindowFocus: false,
+  });
+
+  // Build vehicle types with API data or fallback
+  const vehicleTypes: VehicleType[] =
+    carTypes?.data?.length > 0
+      ? carTypes.data.map(
+          (item: { _id: string; carType: string; createdBy: string }) => ({
+            id: item.carType,
+            name: item.carType,
+            icon: carTypeIconMap[item.carType] || "mdi:car-sports",
+          }),
+        )
+      : fallbackVehicleTypes;
+
   // Build car make options with API data or fallback
   const carMakeOptions = [
     "All makes",
     ...(vehicleMakesData?.data?.length > 0
-      ? vehicleMakesData.data.map((make: { name: string } | string) =>
-          typeof make === "string" ? make : make.name,
+      ? vehicleMakesData.data.map(
+          (item: { _id: string; make: string; status: string }) => item.make,
         )
       : fallbackCarMakeOptions),
   ];
 
-  // Sync local state with global filters when they change
+  // Build car model options with API data or fallback
+  const carModelOptions = [
+    "All models",
+    ...(vehicleModelsData?.data?.length > 0
+      ? vehicleModelsData.data.map(
+          (item: {
+            _id: string;
+            model: string;
+            makeId: { _id: string; make: string };
+            status: string;
+          }) => item.model,
+        )
+      : []),
+  ];
+
+  // Build vehicle colors with API data or fallback
+  const vehicleColors = [
+    "All",
+    ...(carColors?.data?.length > 0
+      ? carColors.data.map(
+          (item: { _id: string; color: string; createdBy: string }) =>
+            item.color,
+        )
+      : fallbackVehicleColors),
+  ];
+
+  // Sync local state with global filters when they change (except dates to avoid infinite loop)
   useEffect(() => {
     setSelectedVehicleType(filters.carType?.[0] || null);
     setSelectedState(filters.state || "");
-    if (filters.availableDates?.length) {
-      setSelectedDates(filters.availableDates.map((d: string) => new Date(d)));
+  }, [filters.carType, filters.state]);
+
+  // Auto-apply function with loading overlay
+  const autoApply = useCallback(async () => {
+    setIsFilterLoading(true);
+
+    // Map transmission to lowercase
+    const transmissionValue =
+      selectedTransmission === "Manual"
+        ? "manual"
+        : selectedTransmission === "Automatic"
+          ? "automatic"
+          : undefined;
+
+    // Map vehicle glass to API format
+    const vehicleGlassValue =
+      selectedVehicleGlass === "Tinted"
+        ? "tinted"
+        : selectedVehicleGlass === "Not tinted"
+          ? "none_tinted"
+          : undefined;
+
+    // Map vehicle condition to API format
+    const conditionValue =
+      selectedVehicleCondition === "Upgraded"
+        ? "upgraded"
+        : selectedVehicleCondition === "Not Upgraded"
+          ? "not_upgraded"
+          : undefined;
+
+    // Map availableFullDay: "Full day" -> "yes", other services -> "no"
+    const availableFullDayValue =
+      selectedService === "All services"
+        ? undefined
+        : selectedService === "Full day"
+          ? "yes"
+          : "no";
+
+    // Combine minYear and maxYear into makeYear format
+    const makeYearValue =
+      minYear && maxYear ? `${minYear},${maxYear}` : undefined;
+
+    const apiFilters = {
+      sortOrder: filters.sortOrder || "",
+      sortBy: filters.sortBy || "",
+      page: filters.page || 1,
+      limit: filters.limit || 90,
+      cost: minPrice || maxPrice ? `${minPrice},${maxPrice}` : undefined,
+      carType: selectedVehicleType ? [selectedVehicleType] : undefined,
+      state: selectedState || undefined,
+      carMake: selectedMake !== "All makes" ? selectedMake : undefined,
+      carModel: selectedModel !== "All models" ? selectedModel : undefined,
+      transmission: transmissionValue,
+      makeYear: makeYearValue,
+      availableFullDay: availableFullDayValue,
+      vehicleGlass: vehicleGlassValue,
+      condition: conditionValue,
+      carColor:
+        selectedVehicleColor !== "All"
+          ? selectedVehicleColor.toLowerCase()
+          : undefined,
+      capacity:
+        selectedSeats !== "All seats"
+          ? selectedSeats.replace(" Seats", "").replace("+", "")
+          : undefined,
+      availableDates:
+        selectedDates.length > 0
+          ? selectedDates.map((d) => format(d, "yyyy-MM-dd"))
+          : undefined,
+    };
+    setFilters(apiFilters);
+    await onApplyFilters?.();
+    setIsFilterLoading(false);
+  }, [
+    filters.sortOrder,
+    filters.sortBy,
+    filters.page,
+    filters.limit,
+    minPrice,
+    maxPrice,
+    selectedVehicleType,
+    selectedState,
+    selectedMake,
+    selectedModel,
+    selectedTransmission,
+    minYear,
+    maxYear,
+    selectedService,
+    selectedVehicleGlass,
+    selectedVehicleCondition,
+    selectedVehicleColor,
+    selectedSeats,
+    selectedDates,
+    setFilters,
+    onApplyFilters,
+  ]);
+
+  // Auto-apply for non min/max fields
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
     }
-  }, [filters.carType, filters.state, filters.availableDates]);
+    autoApply();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    selectedVehicleType,
+    selectedState,
+    selectedMake,
+    selectedModel,
+    selectedTransmission,
+    selectedService,
+    selectedVehicleGlass,
+    selectedVehicleCondition,
+    selectedVehicleColor,
+    selectedSeats,
+    selectedDates,
+  ]);
+
+  // Debounced auto-apply for price fields (only when both have values)
+  useEffect(() => {
+    if (isInitialMount.current) return;
+    if (priceDebounceRef.current) {
+      clearTimeout(priceDebounceRef.current);
+    }
+    if (minPrice && maxPrice) {
+      priceDebounceRef.current = setTimeout(() => {
+        autoApply();
+      }, 500);
+    }
+    return () => {
+      if (priceDebounceRef.current) {
+        clearTimeout(priceDebounceRef.current);
+      }
+    };
+  }, [minPrice, maxPrice, autoApply]);
+
+  // Debounced auto-apply for year fields (only when both have values)
+  useEffect(() => {
+    if (isInitialMount.current) return;
+    if (yearDebounceRef.current) {
+      clearTimeout(yearDebounceRef.current);
+    }
+    if (minYear && maxYear) {
+      yearDebounceRef.current = setTimeout(() => {
+        autoApply();
+      }, 500);
+    }
+    return () => {
+      if (yearDebounceRef.current) {
+        clearTimeout(yearDebounceRef.current);
+      }
+    };
+  }, [minYear, maxYear, autoApply]);
 
   const handleDateSelect = (dates: Date[] | undefined) => {
     setSelectedDates(dates || []);
@@ -437,9 +683,46 @@ const FilterPanel = ({
   // Map UI state to API payload
   const handleApply = async (isMobile?: boolean) => {
     setIsFilterLoading(true);
+
+    // Map transmission to lowercase
+    const transmissionValue =
+      selectedTransmission === "Manual"
+        ? "manual"
+        : selectedTransmission === "Automatic"
+          ? "automatic"
+          : undefined;
+
+    // Map vehicle glass to API format
+    const vehicleGlassValue =
+      selectedVehicleGlass === "Tinted"
+        ? "tinted"
+        : selectedVehicleGlass === "Not tinted"
+          ? "none_tinted"
+          : undefined;
+
+    // Map vehicle condition to API format
+    const conditionValue =
+      selectedVehicleCondition === "Upgraded"
+        ? "upgraded"
+        : selectedVehicleCondition === "Not Upgraded"
+          ? "not_upgraded"
+          : undefined;
+
+    // Map availableFullDay: "Full day" -> "yes", other services -> "no"
+    const availableFullDayValue =
+      selectedService === "All services"
+        ? undefined
+        : selectedService === "Full day"
+          ? "yes"
+          : "no";
+
+    // Combine minYear and maxYear into makeYear format
+    const makeYearValue =
+      minYear && maxYear ? `${minYear},${maxYear}` : undefined;
+
     const apiFilters = {
-      sortOrder: filters.sortOrder || "DESC",
-      sortBy: filters.sortBy || "pricing.fullDay,vehicleRating",
+      sortOrder: filters.sortOrder || "",
+      sortBy: filters.sortBy || "",
       page: filters.page || 1,
       limit: filters.limit || 90,
       // Map UI fields
@@ -448,26 +731,18 @@ const FilterPanel = ({
       state: selectedState || undefined,
       carMake: selectedMake !== "All makes" ? selectedMake : undefined,
       carModel: selectedModel !== "All models" ? selectedModel : undefined,
-      transmission:
-        selectedTransmission !== "All transmissions"
-          ? selectedTransmission
-          : undefined,
-      makeYear: selectedYear !== "All Years" ? selectedYear : undefined,
-      minYear: minYear || undefined,
-      maxYear: maxYear || undefined,
-      availableFullDay:
-        selectedService !== "All services" ? selectedService : undefined,
-      carTint:
-        selectedVehicleGlass !== "All" ? selectedVehicleGlass : undefined,
-      upgrade:
-        selectedVehicleCondition !== "All"
-          ? selectedVehicleCondition
-          : undefined,
+      transmission: transmissionValue,
+      makeYear: makeYearValue,
+      availableFullDay: availableFullDayValue,
+      vehicleGlass: vehicleGlassValue,
+      condition: conditionValue,
       carColor:
-        selectedVehicleColor !== "All" ? selectedVehicleColor : undefined,
+        selectedVehicleColor !== "All"
+          ? selectedVehicleColor.toLowerCase()
+          : undefined,
       capacity:
         selectedSeats !== "All seats"
-          ? selectedSeats.replace(" Seats", "")
+          ? selectedSeats.replace(" Seats", "").replace("+", "")
           : undefined,
       availableDates:
         selectedDates.length > 0
@@ -1119,7 +1394,7 @@ const FilterPanel = ({
 
         {/* Vehicle Type Filter */}
         <FilterSection title="Vehicle type">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 max-h-[200px] p-3 overflow-y-scroll gap-2">
             {vehicleTypes.map((type) => (
               <button
                 key={type.id}

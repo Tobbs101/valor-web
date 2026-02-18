@@ -7,7 +7,6 @@ const SearchPage = () => {
   return (
     <PageLayout className="min-h-screen overflow-x-hidden w-full">
       <SearchPageBody />
-
       <Footer />
     </PageLayout>
   );

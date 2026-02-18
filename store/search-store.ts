@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface SearchFilters {
-  sortOrder: "ASC" | "DESC";
+  sortOrder: "ASC" | "DESC" | "";
   sortBy: string;
   page: number;
   limit: number;
@@ -27,8 +27,8 @@ interface SearchStore {
 }
 
 const defaultFilters: SearchFilters = {
-  sortOrder: "DESC",
-  sortBy: "pricing.fullDay,vehicleRating",
+  sortOrder: "",
+  sortBy: "",
   page: 1,
   limit: 90,
 };

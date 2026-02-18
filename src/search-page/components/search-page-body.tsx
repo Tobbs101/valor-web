@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import Highlander from "@/assets/highlander.png";
+
 import FilterPanel from "./filter-panel";
 import { useRouter } from "next/navigation";
 import { useQuery } from "react-query";
@@ -14,11 +14,31 @@ import { useSearchStore } from "@/store/search-store";
 import JobListingModal from "@/src/landing-page/components/job-listing-modal";
 
 const sortOptions = [
-  "Relevance",
-  "Price: low to high",
-  "Price: high to low",
-  "Ratings: low to high",
-  "Ratings: high to low",
+  { label: "Relevance", sortBy: "", sortOrder: "" as const, disabled: true },
+  {
+    label: "Price: low to high",
+    sortBy: "price",
+    sortOrder: "ASC" as const,
+    disabled: false,
+  },
+  {
+    label: "Price: high to low",
+    sortBy: "price",
+    sortOrder: "DESC" as const,
+    disabled: false,
+  },
+  {
+    label: "Ratings: low to high",
+    sortBy: "ratings",
+    sortOrder: "ASC" as const,
+    disabled: false,
+  },
+  {
+    label: "Ratings: high to low",
+    sortBy: "ratings",
+    sortOrder: "DESC" as const,
+    disabled: false,
+  },
 ];
 
 const SearchPageBody = () => {
@@ -57,13 +77,22 @@ const SearchPageBody = () => {
       refetchOnWindowFocus: false,
     },
   );
+
   const [showMobileFilter, setShowMobileFilter] = useState(false);
   const [selectedSort, setSelectedSort] = useState("Relevance");
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [isSorting, setIsSorting] = useState(false);
 
   const [isJobListingModalOpen, setIsJobListingModalOpen] = useState(false);
 
   const router = useRouter();
+
+  // Reset sorting state when loading finishes
+  useEffect(() => {
+    if (!isLoading && isSorting) {
+      setIsSorting(false);
+    }
+  }, [isLoading, isSorting]);
 
   // console.log(vehicles, "vehicles");
 
@@ -121,18 +150,27 @@ const SearchPageBody = () => {
                 >
                   {sortOptions.map((option) => (
                     <button
-                      key={option}
+                      key={option.label}
+                      disabled={option.disabled}
                       onClick={() => {
-                        setSelectedSort(option);
+                        if (option.disabled) return;
+                        setSelectedSort(option.label);
+                        setIsSorting(true);
+                        setFilters({
+                          sortBy: option.sortBy,
+                          sortOrder: option.sortOrder as "ASC" | "DESC",
+                        });
                         setShowSortDropdown(false);
                       }}
-                      className={`w-full text-left px-4 py-2.5 text-[14px] hover:bg-gray-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                        selectedSort === option
-                          ? "text-primary font-[500]"
-                          : "text-[#646464]"
+                      className={`w-full text-left px-4 py-2.5 text-[14px] transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                        option.disabled
+                          ? "text-gray-400 cursor-not-allowed"
+                          : selectedSort === option.label
+                            ? "text-primary font-[500]"
+                            : "text-[#646464] hover:bg-gray-50"
                       }`}
                     >
-                      {option}
+                      {option.label}
                     </button>
                   ))}
                 </motion.div>
@@ -189,7 +227,7 @@ const SearchPageBody = () => {
             )}
             {isLoading && (
               <div className="text-center py-10 text-primary font-bold">
-                Loading vehicles...
+                {isSorting ? "Sorting..." : "Loading vehicles..."}
               </div>
             )}
             {isError && (
@@ -219,14 +257,14 @@ const SearchPageBody = () => {
                       <Image
                         src={
                           car.carImages?.frontView?.url ||
-                          car.carImages?.rearView?.url ||
-                          Highlander
+                          car.carImages?.rearView?.url
                         }
                         alt={
                           car.carDetails?.carMake && car.carDetails?.carModel
                             ? `${car.carDetails.carMake} ${car.carDetails.carModel}`
                             : "Car image"
                         }
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />

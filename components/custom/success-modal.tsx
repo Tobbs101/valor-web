@@ -39,38 +39,40 @@ const SuccessModalCard = ({
       />
 
       {/* Modal Content */}
-      <div className="relative bg-white rounded-lg shadow-2xl md:w-[450px] w-[95%] p-10 flex flex-col">
+      <div className="relative bg-white rounded-lg shadow-2xl md:w-[525px] w-[95%] p-10 flex flex-col">
         <div className="cta flex flex-col flex-1 justify-between mb-[46px] items-center">
-          <h2 className="text-[20px] text-center font-medium text-green-600">
-            {title}
-          </h2>
-
-          <div className="w-[80px] mt-5 h-[80px] rounded-full bg-green-100 flex items-center justify-center">
+          <div className=" mt-5 rounded-full flex items-center justify-center">
             <Icon
               icon="material-symbols:check-circle-rounded"
-              className="w-[50px] h-[50px] text-green-600"
+              className="w-[100px] h-[100px] md:h-[150px] md:w-[150px] text-primary"
             />
           </div>
 
-          <span className="text-[15px] mt-3 text-center text-gray-700">
+          <h2 className="text-[30px] md:text-[36px] md:font-[700] text-center font-medium text-primary">
+            {title}
+          </h2>
+
+          <span className="text-[13px] md:text-[15px] w-full mt-3 text-center text-gray-700">
             {info}
           </span>
         </div>
 
-        <div className="flex items-center justify-center">
-          <Button
-            className="rounded-lg py-5 text-white px-10 text-sm transition-all active:scale-95 font-medium bg-green-600 hover:bg-green-700"
-            onClick={() => {
-              onProceed?.();
-              onClose?.();
-            }}
-          >
-            {primaryBtnLabel}
-          </Button>
-        </div>
+        {primaryBtnLabel && (
+          <div className="flex items-center justify-center">
+            <Button
+              className="rounded-lg w-full text-white h-[45px] p-[20px_30px] text-sm transition-all active:scale-95 font-medium bg-primary hover:bg-primary/80"
+              onClick={() => {
+                onProceed?.();
+                onClose?.();
+              }}
+            >
+              {primaryBtnLabel}
+            </Button>
+          </div>
+        )}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

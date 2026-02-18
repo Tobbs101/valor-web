@@ -225,3 +225,36 @@ body::-webkit-scrollbar-thumb:hover {
 .rdp-month {
   width: 100% !important;
 }
+
+/* Phone Input Custom Styles */
+.phone-input-wrapper .PhoneInputCountry {
+  display: flex;
+  align-items: center;
+  padding-right: 12px;
+  border-right: 1px solid #e5e7eb;
+  margin-right: 0;
+}
+
+.phone-input-wrapper .PhoneInputCountryIcon {
+  width: 24px;
+  height: 18px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.phone-input-wrapper .PhoneInputCountrySelectArrow {
+  margin-left: 6px;
+  width: 8px;
+  height: 8px;
+  border-color: #9c9c9c;
+}
+
+.phone-input-wrapper .PhoneInputInput {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.phone-input-wrapper .PhoneInputInput::placeholder {
+  color: #9c9c9c;
+}
