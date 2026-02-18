@@ -11,10 +11,13 @@ import {
   X,
 } from "lucide-react";
 import Highlander from "@/assets/highlander.png";
+import ValorLogo from "@/assets/vw.png";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "react-query";
 import { fleet } from "@/apis/fleet";
 import { format, getDaysInMonth, startOfMonth, getDay } from "date-fns";
+import MakeEnquiriesModal from "./make-enquiries-modal";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Skeleton component for loading state
 const Skeleton = ({ className }: { className?: string }) => (
@@ -97,6 +100,274 @@ const PhotoGalleryModal = ({
   );
 };
 
+// Host Details Modal Component
+const HostDetailsModal = ({
+  isOpen,
+  onClose,
+  hostData,
+  vehicleRating,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  hostData: any;
+  vehicleRating: number;
+}) => {
+  if (!hostData) return null;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={onClose}
+          />
+
+          {/* Modal Content */}
+          <motion.div
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative w-full md:max-w-md bg-white rounded-t-[24px] md:rounded-2xl max-h-[80vh] overflow-y-auto"
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between">
+              <h2 className="text-[18px] font-[600] text-primary">
+                Host Details
+              </h2>
+              <button
+                onClick={onClose}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-[#9CA3AF]" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-5 space-y-4">
+              {/* Host Name */}
+              <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                <span className="text-[14px] text-[#9CA3AF]">Name</span>
+                <span className="text-[14px] font-[500] text-primary">
+                  {hostData?.fName && hostData?.lName
+                    ? `${hostData.fName} ${hostData.lName}`
+                    : hostData?.businessName || "N/A"}
+                </span>
+              </div>
+
+              {/* Host Type */}
+              <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                <span className="text-[14px] text-[#9CA3AF]">Host Type</span>
+                <span className="text-[14px] font-[500] text-primary capitalize">
+                  {hostData?.hostAccountType || "N/A"}
+                </span>
+              </div>
+
+              {/* Location */}
+              <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                <span className="text-[14px] text-[#9CA3AF]">Location</span>
+                <span className="text-[14px] font-[500] text-primary text-right max-w-[200px]">
+                  {hostData?.address?.address || "N/A"}
+                </span>
+              </div>
+
+              {/* Host Rating */}
+              <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                <span className="text-[14px] text-[#9CA3AF]">Host Rating</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[14px] font-[500] text-primary">
+                    {hostData?.hostRating ?? vehicleRating ?? "N/A"}
+                  </span>
+                  <Icon icon="mdi:star" className="text-orange-400 text-sm" />
+                </div>
+              </div>
+
+              {/* Driver Rating */}
+              <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                <span className="text-[14px] text-[#9CA3AF]">
+                  Driver Rating
+                </span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[14px] font-[500] text-primary">
+                    {hostData?.driverRating ?? "N/A"}
+                  </span>
+                  <Icon icon="mdi:star" className="text-orange-400 text-sm" />
+                </div>
+              </div>
+
+              {/* Delivery Rating */}
+              <div className="flex items-center justify-between py-3">
+                <span className="text-[14px] text-[#9CA3AF]">
+                  Delivery Rate
+                </span>
+                <span className="text-[14px] font-[500] text-primary">
+                  {hostData?.deliveryRating !== undefined
+                    ? `${hostData.deliveryRating}%`
+                    : "N/A"}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// Reviews Modal Component
+const ReviewsModal = ({
+  isOpen,
+  onClose,
+  reviews,
+  vehicleRating,
+  isLoading,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  reviews: any;
+  vehicleRating: number;
+  isLoading: boolean;
+}) => {
+  const reviewsList = reviews?.data || reviews || [];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={onClose}
+          />
+
+          {/* Modal Content */}
+          <motion.div
+            initial={{ y: "100%", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative w-full md:max-w-lg bg-white rounded-t-[24px] md:rounded-2xl max-h-[85vh] overflow-hidden flex flex-col"
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-gray-100 px-5 py-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-[18px] font-[600] text-primary">
+                  Ratings & Reviews
+                </h2>
+                <div className="flex items-center gap-1 mt-1">
+                  <span className="text-[24px] font-[700] text-primary">
+                    {vehicleRating || 0}
+                  </span>
+                  <Icon icon="mdi:star" className="text-orange-400 text-lg" />
+                  <span className="text-[13px] text-[#9CA3AF] ml-1">
+                    ({Array.isArray(reviewsList) ? reviewsList.length : 0}{" "}
+                    reviews)
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-[#9CA3AF]" />
+              </button>
+            </div>
+
+            {/* Reviews List */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-10">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : Array.isArray(reviewsList) && reviewsList.length > 0 ? (
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                reviewsList.map((review: any, idx: number) => (
+                  <div
+                    key={review._id || idx}
+                    className="border border-gray-200 rounded-xl p-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-[14px] font-[600] text-primary">
+                          {review.userName?.charAt(0) ||
+                            review.user?.fName?.charAt(0) ||
+                            "U"}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-[14px] font-[600] text-primary mb-1">
+                          {review.userName ||
+                            (review.user?.fName && review.user?.lName
+                              ? `${review.user.fName} ${review.user.lName}`
+                              : "Anonymous")}
+                        </p>
+                        {/* Star Rating */}
+                        <div className="flex items-center gap-0.5 mb-2">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Icon
+                              key={star}
+                              icon={
+                                star <= (review.rating || 0)
+                                  ? "mdi:star"
+                                  : "mdi:star-outline"
+                              }
+                              className={`text-sm ${
+                                star <= (review.rating || 0)
+                                  ? "text-orange-400"
+                                  : "text-[#D1D5DB]"
+                              }`}
+                            />
+                          ))}
+                          {review.createdAt && (
+                            <span className="text-[11px] text-[#9CA3AF] ml-2">
+                              {format(
+                                new Date(review.createdAt),
+                                "MMM d, yyyy",
+                              )}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[13px] text-[#646464] leading-relaxed">
+                          {review.comment ||
+                            review.review ||
+                            "No comment provided"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-10">
+                  <Icon
+                    icon="mdi:message-text-outline"
+                    className="text-[48px] text-[#D1D5DB] mb-3"
+                  />
+                  <p className="text-[14px] text-[#9CA3AF]">No reviews yet</p>
+                  <p className="text-[12px] text-[#D1D5DB]">
+                    Be the first to review this vehicle
+                  </p>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
 const CarDetailsPageBody = () => {
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -105,9 +376,38 @@ const CarDetailsPageBody = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
+  const [mobileCarouselIndex, setMobileCarouselIndex] = useState(0);
+  const [isHostModalOpen, setIsHostModalOpen] = useState(false);
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [isEnquiriesModalOpen, setIsEnquiriesModalOpen] = useState(false);
 
   const monthDropdownRef = useRef<HTMLDivElement>(null);
   const yearDropdownRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+
+  // Handle mobile carousel swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const diff = touchStartX.current - touchEndX.current;
+    const threshold = 50;
+    const maxIndex = Math.min(carImages.length, 5) - 1;
+
+    if (diff > threshold && mobileCarouselIndex < maxIndex) {
+      // Swipe left - next image
+      setMobileCarouselIndex(mobileCarouselIndex + 1);
+    } else if (diff < -threshold && mobileCarouselIndex > 0) {
+      // Swipe right - previous image
+      setMobileCarouselIndex(mobileCarouselIndex - 1);
+    }
+  };
 
   const router = useRouter();
   const params = useParams();
@@ -413,7 +713,666 @@ const CarDetailsPageBody = () => {
         currentIndex={currentImageIndex}
         setCurrentIndex={setCurrentImageIndex}
       />
-      <div className="min-h-screen bg-white">
+
+      <HostDetailsModal
+        isOpen={isHostModalOpen}
+        onClose={() => setIsHostModalOpen(false)}
+        hostData={vehicleData?.host}
+        vehicleRating={vehicleData?.vehicleRating || 0}
+      />
+
+      <ReviewsModal
+        isOpen={isReviewsModalOpen}
+        onClose={() => setIsReviewsModalOpen(false)}
+        reviews={currentCarReviews}
+        vehicleRating={vehicleData?.vehicleRating || 0}
+        isLoading={loadingCarReviews}
+      />
+
+      <MakeEnquiriesModal
+        isOpen={isEnquiriesModalOpen}
+        onClose={() => setIsEnquiriesModalOpen(false)}
+        carId={(params?.car_id as string) || ""}
+        hostId={vehicleData?.host?._id || ""}
+        carName={capitalizedCarName}
+      />
+
+      {/* Mobile View */}
+      <div className="md:hidden min-h-screen bg-white">
+        {/* Mobile Hero Carousel */}
+        <div
+          className="relative h-[350px] w-full"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* Back Button */}
+          <button
+            onClick={() => router.push("/search")}
+            className="absolute top-4 left-4 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm"
+          >
+            <ArrowLeft className="w-5 h-5 text-primary" />
+          </button>
+
+          {/* Rating Badge */}
+          <div className="absolute top-4 right-4 z-10 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1">
+            <span className="text-[14px] font-[600] text-primary">
+              {vehicleData.vehicleRating || 0}
+            </span>
+            <Icon icon="mdi:star" className="text-orange-400 text-sm" />
+          </div>
+
+          {/* Carousel Image */}
+          <Image
+            src={carImages[mobileCarouselIndex]?.url || Highlander}
+            alt={capitalizedCarName}
+            fill
+            priority
+            className="object-cover"
+          />
+
+          {/* Carousel Dots */}
+          <div className="absolute bottom-[40px] w-full items-center justify-center px-5 left-1/2 -translate-x-1/2 z-10 flex gap-2.5">
+            {carImages.slice(0, Math.min(carImages.length, 5)).map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setMobileCarouselIndex(idx)}
+                className={`h-1.5 flex-1 rounded-full transition-all ${
+                  mobileCarouselIndex === idx ? " bg-white" : " bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile Content Card */}
+        <div className="relative -mt-6 bg-white rounded-t-[24px] px-5 pt-6 pb-8">
+          {/* Car Name & Location */}
+          <h1 className="text-[22px] font-[700] text-primary mb-2">
+            {capitalizedCarName}
+          </h1>
+          <div className="flex items-center gap-2 text-[14px] text-[#646464] mb-1">
+            <Icon icon="mdi:map-marker-outline" className="text-orange-500" />
+            <span>{vehicleData.carDetails?.city || "Nigeria"}</span>
+          </div>
+          {vehicleData.carImages?.datePictureTaken && (
+            <div className="flex items-center gap-2 text-[13px]  mb-6">
+              <Icon icon="mdi:calendar-outline" className="text-orange-500" />
+              <span className="text-[#646464]">
+                Date picture taken:{" "}
+                <span className="text-[#323232] font-[500]">
+                  {format(
+                    new Date(vehicleData.carImages.datePictureTaken),
+                    "MMMM do, yyyy",
+                  )}
+                </span>
+              </span>
+            </div>
+          )}
+
+          {/* Technical Specification */}
+          <div className="mb-6">
+            <h2 className="text-[18px] font-[600] text-primary mb-4">
+              Technical Specification
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              <div className="border border-gray-100 rounded-lg p-3">
+                <p className="text-[11px] text-[#9CA3AF] mb-0.5">Make</p>
+                <p className="text-[14px] font-[600] text-primary capitalize">
+                  {vehicleData.carDetails?.carMake || "-"}
+                </p>
+              </div>
+              <div className="border border-gray-100 rounded-lg p-3">
+                <p className="text-[11px] text-[#9CA3AF] mb-0.5">Model</p>
+                <p className="text-[14px] font-[600] text-primary capitalize">
+                  {vehicleData.carDetails?.carModel || "-"}
+                </p>
+              </div>
+              <div className="border border-gray-100 rounded-lg p-3">
+                <p className="text-[11px] text-[#9CA3AF] mb-0.5">
+                  Year Manufactured
+                </p>
+                <p className="text-[14px] font-[600] text-primary">
+                  {vehicleData.carDetails?.yearString || "-"}
+                </p>
+              </div>
+              <div className="border border-gray-100 rounded-lg p-3">
+                <p className="text-[11px] text-[#9CA3AF] mb-0.5">Upgraded</p>
+                <p className="text-[14px] font-[600] text-primary">
+                  {vehicleData.carDetails?.upgrade === "yes" ? "Yes" : "No"}
+                </p>
+              </div>
+              <div className="border border-gray-100 rounded-lg p-3">
+                <p className="text-[11px] text-[#9CA3AF] mb-0.5">Glass Thin</p>
+                <p className="text-[14px] font-[600] text-primary">
+                  {vehicleData.carDetails?.carTint === "yes" ? "Yes" : "No"}
+                </p>
+              </div>
+              <div className="border border-gray-100 rounded-lg p-3">
+                <p className="text-[11px] text-[#9CA3AF] mb-0.5">Color</p>
+                <p className="text-[14px] font-[600] text-primary capitalize">
+                  {vehicleData.carDetails?.carColor || "-"}
+                </p>
+              </div>
+              <div className="border border-gray-100 rounded-lg p-3">
+                <p className="text-[11px] text-[#9CA3AF] mb-0.5">
+                  Transmission
+                </p>
+                <p className="text-[14px] font-[600] text-primary capitalize">
+                  {vehicleData.carDetails?.transmission || "-"}
+                </p>
+              </div>
+              <div className="border border-gray-100 rounded-lg p-3">
+                <p className="text-[11px] text-[#9CA3AF] mb-0.5">Capacity</p>
+                <p className="text-[14px] font-[600] text-primary">
+                  {vehicleData.carDetails?.capacity || "-"} seater
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Features */}
+          <div className="mb-6">
+            <h2 className="text-[18px] font-[600] text-primary mb-4">
+              Features
+            </h2>
+            <div className="flex gap-3 overflow-x-auto pb-2">
+              {features.length > 0 ? (
+                features.map((feature, idx) => (
+                  <div
+                    key={idx}
+                    className="flex-shrink-0 flex flex-col items-center justify-center border border-[#F4F4F4] bg-[#F4F4F4] rounded-xl p-4 min-w-[100px]"
+                  >
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2">
+                      <Icon
+                        icon={feature.icon}
+                        className="text-[#FF8B00] text-2xl"
+                      />
+                    </div>
+                    <span className="text-[12px] text-center text-[#646464]">
+                      {feature.name}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <span className="text-[13px] text-[#9CA3AF]">
+                  No features listed
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Rental Terms */}
+          <div className="mb-6">
+            <h2 className="text-[18px] font-[600] text-primary mb-4">
+              Rental Terms
+            </h2>
+            <div className="space-y-3">
+              {/* Default terms based on design */}
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0">
+                  <Icon icon="mdi:check" className="text-[#FB8500] text-sm" />
+                </div>
+                <span className="text-[14px] text-[#646464]">
+                  No refund cancellation policy
+                </span>
+              </div>
+              {rentalTerms.map((term, idx) => (
+                <div key={idx} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0">
+                    <Icon icon="mdi:check" className="text-[#FB8500] text-sm" />
+                  </div>
+                  <span className="text-[14px] text-[#646464]">{term}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Service */}
+          <div className="mb-6">
+            <h2 className="text-[18px] font-[600] text-primary mb-4">
+              Service
+            </h2>
+            <div className="flex gap-3 overflow-x-auto pb-2">
+              {/* Full Day - Always show */}
+              <div
+                className={`flex-shrink-0 flex flex-col items-center justify-center rounded-xl p-4 min-w-[100px] ${
+                  vehicleData.pricing?.fullDay?.available === "yes"
+                    ? "border border-orange-200 bg-orange-50"
+                    : "border border-gray-200 bg-gray-50"
+                }`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
+                    vehicleData.pricing?.fullDay?.available === "yes"
+                      ? "bg-orange-100"
+                      : "bg-gray-100"
+                  }`}
+                >
+                  <Icon
+                    icon="mdi:weather-sunny"
+                    className={`text-xl ${
+                      vehicleData.pricing?.fullDay?.available === "yes"
+                        ? "text-[#FB8500]"
+                        : "text-gray-400"
+                    }`}
+                  />
+                </div>
+                <span
+                  className={`text-[12px] text-center ${
+                    vehicleData.pricing?.fullDay?.available === "yes"
+                      ? "text-[#646464]"
+                      : "text-gray-400 line-through"
+                  }`}
+                >
+                  Full day
+                </span>
+              </div>
+
+              {/* Airport Drop-off */}
+              <div
+                className={`flex-shrink-0 flex flex-col items-center justify-center rounded-xl p-4 min-w-[100px] ${
+                  vehicleData.pricing?.airportDrop?.available === "yes"
+                    ? "border border-orange-200 bg-orange-50"
+                    : "border border-gray-200 bg-gray-50"
+                }`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
+                    vehicleData.pricing?.airportDrop?.available === "yes"
+                      ? "bg-orange-100"
+                      : "bg-gray-100"
+                  }`}
+                >
+                  <Icon
+                    icon="mdi:airplane-landing"
+                    className={`text-xl ${
+                      vehicleData.pricing?.airportDrop?.available === "yes"
+                        ? "text-orange-500"
+                        : "text-gray-400"
+                    }`}
+                  />
+                </div>
+                <span
+                  className={`text-[12px] text-center ${
+                    vehicleData.pricing?.airportDrop?.available === "yes"
+                      ? "text-[#646464]"
+                      : "text-gray-400 line-through"
+                  }`}
+                >
+                  Airport drop-off
+                </span>
+              </div>
+
+              {/* Airport Pick-up */}
+              <div
+                className={`flex-shrink-0 flex flex-col items-center justify-center rounded-xl p-4 min-w-[100px] ${
+                  vehicleData.pricing?.airportPickUp?.available === "yes"
+                    ? "border border-orange-200 bg-orange-50"
+                    : "border border-gray-200 bg-gray-50"
+                }`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
+                    vehicleData.pricing?.airportPickUp?.available === "yes"
+                      ? "bg-orange-100"
+                      : "bg-gray-100"
+                  }`}
+                >
+                  <Icon
+                    icon="mdi:airplane-takeoff"
+                    className={`text-xl ${
+                      vehicleData.pricing?.airportPickUp?.available === "yes"
+                        ? "text-orange-500"
+                        : "text-gray-400"
+                    }`}
+                  />
+                </div>
+                <span
+                  className={`text-[12px] text-center ${
+                    vehicleData.pricing?.airportPickUp?.available === "yes"
+                      ? "text-[#646464]"
+                      : "text-gray-400 line-through"
+                  }`}
+                >
+                  Airport pick-up
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Hosted By */}
+          <div className="mb-6">
+            <h2 className="text-[18px] font-[600] text-primary mb-4">
+              Hosted By
+            </h2>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[#9CA3AF]">Name:</span>
+                <span className="text-[14px] font-[500] text-primary">
+                  {vehicleData?.host?.fName && vehicleData?.host?.lName
+                    ? `${vehicleData.host.fName} ${vehicleData.host.lName}`
+                    : vehicleData?.host?.businessName || "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[#9CA3AF]">Host:</span>
+                <span className="text-[14px] font-[500] text-primary capitalize">
+                  {vehicleData?.host?.hostAccountType || "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[#9CA3AF] w-[120px]">
+                  Location:
+                </span>
+                <span className="text-[14px] text-right font-[500] text-primary">
+                  {vehicleData?.host?.address?.address ||
+                    vehicleData?.carDetails?.city ||
+                    "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[#9CA3AF]">
+                  Delivery Rate:
+                </span>
+                <span className="text-[14px] font-[500] text-primary">
+                  {vehicleData?.host?.deliveryRating
+                    ? `${vehicleData.host.deliveryRating}%`
+                    : "N/A"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[#9CA3AF]">Rating:</span>
+                <span className="text-[14px] font-[500] text-primary">
+                  {vehicleData?.host?.hostRating ??
+                    vehicleData?.vehicleRating ??
+                    "N/A"}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsHostModalOpen(true)}
+              className="w-full mt-4 border border-[#969696] rounded-3xl py-3 text-[14px] font-[500] text-primary hover:bg-gray-50 transition-colors"
+            >
+              See more
+            </button>
+          </div>
+
+          {/* Date Available */}
+          <div className="mb-6">
+            <h2 className="text-[18px] font-[600] text-primary mb-4">
+              Date Available
+            </h2>
+            {/* Date Range Display */}
+            <div className="flex items-center justify-between bg-[#F8F9FA] rounded-lg px-4 py-3 mb-4">
+              <div className="flex items-center gap-2">
+                <Icon icon="mdi:calendar-outline" className="text-[#9CA3AF]" />
+                <span className="text-[14px] text-primary">
+                  {selectedDate
+                    ? format(
+                        new Date(currentYear, currentMonth, selectedDate),
+                        "EEE, d MMMM",
+                      )
+                    : `${months[currentMonth].slice(0, 3)}, ${currentYear}`}
+                </span>
+              </div>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => {
+                    if (currentMonth === 0) {
+                      setCurrentMonth(11);
+                      setCurrentYear(currentYear - 1);
+                    } else {
+                      setCurrentMonth(currentMonth - 1);
+                    }
+                  }}
+                  className="p-2 bg-white border border-gray-200 hover:bg-gray-50 rounded-full transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4 text-customOrange" />
+                </button>
+                <button
+                  onClick={() => {
+                    if (currentMonth === 11) {
+                      setCurrentMonth(0);
+                      setCurrentYear(currentYear + 1);
+                    } else {
+                      setCurrentMonth(currentMonth + 1);
+                    }
+                  }}
+                  className="p-2 bg-white border border-gray-200 hover:bg-gray-50 rounded-full transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4 text-customOrange" />
+                </button>
+              </div>
+            </div>
+
+            {/* Calendar */}
+            <div className="border border-gray-200 rounded-lg p-4">
+              {/* Month Display */}
+              <h3 className="text-[16px] font-[600] text-primary mb-4">
+                {months[currentMonth]}
+              </h3>
+
+              {/* Calendar Days Header */}
+              <div className="grid grid-cols-7 gap-1 text-center text-[12px] mb-2">
+                {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+                  (day) => (
+                    <span key={day} className="text-[#9CA3AF] font-medium">
+                      {day}
+                    </span>
+                  ),
+                )}
+              </div>
+
+              {/* Calendar Days - Adjusted for Monday start */}
+              <div className="grid grid-cols-7 gap-1 text-center text-[13px]">
+                {(() => {
+                  const year = currentYear;
+                  const month = currentMonth;
+                  const daysInMonth = getDaysInMonth(new Date(year, month));
+                  const firstDayOfMonth = getDay(
+                    startOfMonth(new Date(year, month)),
+                  );
+                  // Convert Sunday=0 to Monday=0 format
+                  const adjustedFirstDay =
+                    firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+                  const days: React.ReactNode[] = [];
+                  const today = new Date();
+
+                  // Add empty slots
+                  for (let i = 0; i < adjustedFirstDay; i++) {
+                    days.push(<span key={`empty-${i}`} />);
+                  }
+
+                  // Add actual days
+                  for (let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = format(
+                      new Date(year, month, day),
+                      "yyyy-MM-dd",
+                    );
+                    const isUnavailable = unavailableDates.has(dateStr);
+                    const isSelected = selectedDate === day;
+                    const isToday =
+                      today.getDate() === day &&
+                      today.getMonth() === month &&
+                      today.getFullYear() === year;
+
+                    days.push(
+                      <button
+                        key={day}
+                        disabled={isUnavailable}
+                        onClick={() => !isUnavailable && setSelectedDate(day)}
+                        className={`py-2 rounded-full transition-colors ${
+                          isUnavailable
+                            ? "text-[#D1D5DB] cursor-not-allowed"
+                            : isSelected
+                              ? "bg-primary text-white"
+                              : isToday
+                                ? "bg-[#FB8500] text-white"
+                                : "text-[#646464] hover:bg-gray-100"
+                        }`}
+                      >
+                        {day}
+                      </button>,
+                    );
+                  }
+
+                  return days;
+                })()}
+              </div>
+            </div>
+          </div>
+
+          {/* Ratings and Reviews */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-[18px] font-[600] text-primary">
+                Ratings and Reviews
+              </h2>
+              <button
+                onClick={() => setIsReviewsModalOpen(true)}
+                className="text-[14px] font-[500] text-orange-500"
+              >
+                See all
+              </button>
+            </div>
+            {/* Review Card */}
+            <div className="border-b border-gray-200 pb-4">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
+                  <Image
+                    src={Highlander}
+                    alt="User"
+                    width={40}
+                    height={40}
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[14px] font-[600] text-primary mb-1">
+                    Akintomiwa Odusanya
+                  </p>
+                  {/* Star Rating */}
+                  <div className="flex items-center gap-0.5 mb-2">
+                    <Icon icon="mdi:star" className="text-orange-400 text-sm" />
+                    <Icon icon="mdi:star" className="text-orange-400 text-sm" />
+                    <Icon icon="mdi:star" className="text-orange-400 text-sm" />
+                    <Icon
+                      icon="mdi:star-outline"
+                      className="text-[#D1D5DB] text-sm"
+                    />
+                    <Icon
+                      icon="mdi:star-outline"
+                      className="text-[#D1D5DB] text-sm"
+                    />
+                  </div>
+                  <p className="text-[13px] text-[#646464] leading-relaxed">
+                    This was a good experience, I would do this again and would
+                    also recommend this vehicle.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* More Recommendations */}
+          {similarVehicles.length > 0 && (
+            <div className="mb-6">
+              <h2 className="text-[18px] font-[600] text-primary mb-4">
+                More Recommendations
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {similarVehicles.slice(0, 4).map((car: any, idx: number) => (
+                  <div
+                    key={car._id || idx}
+                    className="cursor-pointer"
+                    onClick={() => router.push(`/search/${car._id}`)}
+                  >
+                    {/* Car Image */}
+                    <div className="relative h-[120px] rounded-xl overflow-hidden mb-2">
+                      <Image
+                        src={car.carImages?.frontView?.url || Highlander}
+                        alt={`${car.carDetails?.carMake || ""} ${car.carDetails?.carModel || ""}`}
+                        fill
+                        className="object-cover"
+                      />
+                      {/* Heart Icon */}
+                      <button className="absolute top-2 right-2 w-7 h-7 bg-primary/80 rounded-full flex items-center justify-center">
+                        <Icon
+                          icon="mdi:heart-outline"
+                          className="text-white text-sm"
+                        />
+                      </button>
+                    </div>
+
+                    {/* Car Info */}
+                    <h3 className="text-[14px] font-[600] text-primary mb-0.5 capitalize">
+                      {car.carDetails?.carMake} {car.carDetails?.carModel}
+                    </h3>
+                    <p className="text-[13px] text-primary mb-1">
+                      <span className="font-[700]">
+                        ₦
+                        {(
+                          car.pricing?.fullDay?.cost ||
+                          car.pricing?.airportDrop?.cost ||
+                          0
+                        ).toLocaleString()}
+                      </span>
+                      <span className="text-[#646464]">/Day</span>
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Icon
+                          icon="mdi:navigation-variant"
+                          className="text-orange-400 text-[12px]"
+                        />
+                        <span className="text-[11px] text-[#646464]">
+                          {car.carDetails?.city || "N/A"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-0.5">
+                        <span className="text-[11px] text-primary font-[500]">
+                          {car.vehicleRating || "0.0"}
+                        </span>
+                        <Icon
+                          icon="mdi:star"
+                          className="text-orange-400 text-[11px]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Mobile Price & CTA */}
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-5 py-4 z-50">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[12px] text-[#9CA3AF]">From</p>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-[22px] font-[700] text-primary">
+                    ₦{minPrice.toLocaleString()}
+                  </span>
+                  <span className="text-[13px] text-[#646464]">/hr</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsEnquiriesModalOpen(true)}
+                className="flex items-center gap-2 bg-gradient-to-l from-[#023047] to-[#034a6b] text-white rounded-full px-6 py-3"
+              >
+                <span className="text-[14px] font-[500]">Send an Inquiry</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop View */}
+      <div className="hidden md:block min-h-screen bg-white">
         <div className="max-w-[1200px] mx-auto py-20 px-5">
           {/* Image Gallery */}
 
@@ -639,7 +1598,7 @@ const CarDetailsPageBody = () => {
                         <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
                           <Icon
                             icon="mdi:check"
-                            className="text-orange-500 text-sm"
+                            className="text-[#FB8500] text-sm"
                           />
                         </div>
                         <span className="text-[14px] text-[#646464]">
@@ -686,16 +1645,26 @@ const CarDetailsPageBody = () => {
 
               {/* Ratings and Review */}
               <div className="border border-gray-200 rounded-xl p-4 md:p-6 mt-6">
-                <h2 className="text-[16px] md:text-[20px] font-[600] text-primary mb-2">
-                  Ratings and Review
-                </h2>
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-[16px] md:text-[20px] font-[600] text-primary">
+                    Ratings and Review
+                  </h2>
+                  <button
+                    onClick={() => setIsReviewsModalOpen(true)}
+                    className="text-[14px] font-[500] text-orange-500 hover:underline"
+                  >
+                    See all
+                  </button>
+                </div>
                 <div className="flex items-center gap-1 mb-1">
                   <span className="text-[28px] font-[700] text-primary">
-                    4.8
+                    {vehicleData?.vehicleRating || 0}
                   </span>
                   <Icon icon="mdi:star" className="text-orange-400 text-xl" />
                 </div>
-                <p className="text-[13px] text-[#9CA3AF] mb-5">50 ratings</p>
+                <p className="text-[13px] text-[#9CA3AF] mb-5">
+                  {currentCarReviews?.data?.length || 0} ratings
+                </p>
 
                 {/* Review List */}
                 <div className="space-y-4">
@@ -762,7 +1731,10 @@ const CarDetailsPageBody = () => {
 
                 {/* See More Button */}
                 <div className="flex justify-center mt-5">
-                  <button className="border border-gray-300 rounded-lg px-6 py-2.5 text-[13px] font-[500] text-primary hover:bg-gray-50 transition-colors">
+                  <button
+                    onClick={() => setIsReviewsModalOpen(true)}
+                    className="border border-gray-300 rounded-lg px-6 py-2.5 text-[13px] font-[500] text-primary hover:bg-gray-50 transition-colors"
+                  >
                     See More
                   </button>
                 </div>
@@ -822,6 +1794,12 @@ const CarDetailsPageBody = () => {
                     </p>
                   </div>
                 </div>
+                <button
+                  onClick={() => setIsHostModalOpen(true)}
+                  className="mt-4 border border-gray-300 rounded-lg px-6 py-2.5 text-[13px] font-[500] text-primary hover:bg-gray-50 transition-colors"
+                >
+                  See more
+                </button>
               </div>
             </div>
 
@@ -842,7 +1820,10 @@ const CarDetailsPageBody = () => {
                 </div>
 
                 {/* Inquiry Button */}
-                <button className="w-full flex h-[50px] md:h-[55px] items-center justify-center gap-2 bg-gradient-to-l from-[#023047] to-[#034a6b] text-white rounded-[36px] p-[22px_10px] mb-4 md:mb-6 transition-colors">
+                <button
+                  onClick={() => setIsEnquiriesModalOpen(true)}
+                  className="w-full flex h-[50px] md:h-[55px] items-center justify-center gap-2 bg-gradient-to-l from-[#023047] to-[#034a6b] text-white rounded-[36px] p-[22px_10px] mb-4 md:mb-6 transition-colors"
+                >
                   <span className="text-[14px] font-[400]">
                     Send an Inquiry
                   </span>

@@ -74,6 +74,11 @@ const config: Config = {
           DEFAULT: "#AC72AF",
           foreground: "#FFFFFF",
         },
+        customOrange: {
+          DEFAULT: "#FB8500",
+          foreground: "#FFFFFF",
+        },
+
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
