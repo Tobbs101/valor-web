@@ -94,8 +94,8 @@ const PrismicContactUsPage = ({ data }: PrismicContactUsPageProps) => {
     // Handle form submission here
   };
 
-  // Google Maps embed URL with API key
-  const defaultMapUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY}&q=6.4459777,3.4789411&zoom=16`;
+  // Google Maps embed URL (no API key required)
+  const defaultMapUrl = `https://www.google.com/maps?q=6.4459777,3.4789411&z=16&output=embed`;
   const mapUrl = data.map_embed_url || defaultMapUrl;
 
   return (
