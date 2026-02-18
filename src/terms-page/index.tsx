@@ -5,7 +5,7 @@ import TermsPageBody from "./components/terms-page-body";
 
 const TermsPage = () => {
   return (
-    <PageLayout>
+    <PageLayout className="min-h-screen overflow-x-hidden w-full">
       <TermsPageBody />
       <Footer />
     </PageLayout>

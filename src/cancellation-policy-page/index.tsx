@@ -5,7 +5,7 @@ import CancellationPolicyPageBody from "./components/cancellation-policy-page-bo
 
 const CancellationPolicyPage = () => {
   return (
-    <PageLayout>
+    <PageLayout className="min-h-screen overflow-x-hidden w-full">
       <CancellationPolicyPageBody />
       <Footer />
     </PageLayout>

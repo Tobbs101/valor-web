@@ -4,7 +4,7 @@ const CancellationPolicyPageBody = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-[#023047] py-16 md:py-24">
+      <div className="bg-[#023047] py-20 md:py-32">
         <div className="max-w-[900px] mx-auto px-5 text-center">
           <h1 className="text-[32px] md:text-[42px] font-[700] text-white mb-4">
             Cancellation Policy
