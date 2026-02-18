@@ -612,7 +612,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                 </div>
 
                 {/* Date */}
-                <div>
+                <div className="">
                   <label className="block text-[14px] font-[600] text-primary mb-2">
                     Date
                   </label>
@@ -621,7 +621,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                     min={format(new Date(), "yyyy-MM-dd")}
-                    className={`w-full border rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && date === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                    className={`w-[88%] border bg-white shadow-md rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && date === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                   />
                 </div>
 
