@@ -23,8 +23,11 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import client from "@/apis/client";
+import { jobListing } from "@/apis/job-listing";
 import Image from "next/image";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/style.css";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 interface MakeEnquiriesModalProps {
   isOpen: boolean;
@@ -45,64 +48,17 @@ interface LocationData {
   };
 }
 
-// Nigerian Airports
-const nigerianAirports = [
-  "Murtala Muhammed International Airport",
-  "Nnamdi Azikiwe International Airport",
-  "Port Harcourt International Airport",
-  "Mallam Aminu Kano International Airport",
-  "Akanu Ibiam International Airport",
-  "Margaret Ekpo International Airport",
-  "Sam Mbakwe International Airport",
-  "Ilorin International Airport",
-  "Ibadan Airport",
-  "Benin Airport",
-  "Kaduna Airport",
-  "Jos Airport",
-  "Maiduguri International Airport",
-  "Sokoto Airport",
-  "Yola Airport",
-];
-
-// Time slots
-const timeSlots = [
-  "6:00am",
-  "6:30am",
-  "7:00am",
-  "7:30am",
-  "8:00am",
-  "8:30am",
-  "9:00am",
-  "9:30am",
-  "10:00am",
-  "10:30am",
-  "11:00am",
-  "11:30am",
-  "12:00pm",
-  "12:30pm",
-  "1:00pm",
-  "1:30pm",
-  "2:00pm",
-  "2:30pm",
-  "3:00pm",
-  "3:30pm",
-  "4:00pm",
-  "4:30pm",
-  "5:00pm",
-  "5:30pm",
-  "6:00pm",
-  "6:30pm",
-  "7:00pm",
-  "7:30pm",
-  "8:00pm",
-  "8:30pm",
-  "9:00pm",
-  "9:30pm",
-  "10:00pm",
-  "10:30pm",
-  "11:00pm",
-  "11:30pm",
-];
+// Helper to convert 24h time ("09:00") to API format ("9 am")
+const formatTimeForApi = (time24h: string): string => {
+  if (!time24h) return "";
+  const [hours, minutes] = time24h.split(":").map(Number);
+  const period = hours >= 12 ? "pm" : "am";
+  const hours12 = hours % 12 || 12;
+  if (minutes === 0) {
+    return `${hours12} ${period}`;
+  }
+  return `${hours12}:${minutes.toString().padStart(2, "0")} ${period}`;
+};
 
 const jobTypes = ["Full Day", "Airport Pickup", "Airport Drop"];
 
@@ -128,36 +84,30 @@ const EnquirySuccessContent = ({ onClose }: { onClose: () => void }) => {
 
         {/* Icon */}
         <div className="w-[100px] h-[100px] rounded-full bg-primary flex items-center justify-center mb-6">
-          <div className="w-[60px] h-[30px] bg-primary rounded-full" />
+          <Icon
+            icon="material-symbols:check-circle"
+            className="w-[100px] h-[100px] md:h-[150px] md:w-[150px] text-white"
+          />
         </div>
 
         <h2 className="text-[28px] md:text-[36px] font-[700] text-center text-primary mb-4">
           Enquiry sent successfully
         </h2>
 
-        <p className="text-[14px] md:text-[16px] text-center text-[#646464] mb-8 max-w-[400px]">
+        <p className="text-[14px] md:text-[16px] text-center text-[#646464] mb-8 max-w-[500px]">
           We&apos;ve notified the host, their estimate will be sent shortly.
           Download the app to get instant feedback and better experience
         </p>
 
         {/* App Store Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center flex-wrap justify-center gap-3">
           <a
             href="https://apps.apple.com/app/valor"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-black text-white rounded-lg px-4 py-2.5"
+            className="flex items-center justify-center gap-2 bg-black w-[200px] text-white rounded-lg px-8 py-2.5"
           >
-            <Image
-              src="/images/apple-logo.png"
-              alt="Apple"
-              width={20}
-              height={24}
-              className="object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
+            <Icon icon={"mdi:apple"} className="text-white w-[24px] h-auto" />
             <div className="flex flex-col">
               <span className="text-[10px] text-white/80">Download on the</span>
               <span className="text-[14px] font-[600]">App Store</span>
@@ -167,18 +117,9 @@ const EnquirySuccessContent = ({ onClose }: { onClose: () => void }) => {
             href="https://play.google.com/store/apps/details?id=com.valor"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-black text-white rounded-lg px-4 py-2.5"
+            className="flex items-center justify-center gap-2 bg-black w-[200px] text-white rounded-lg px-8 py-2.5"
           >
-            <Image
-              src="/images/google-play-logo.png"
-              alt="Google Play"
-              width={20}
-              height={24}
-              className="object-contain"
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
+            <Icon icon={"logos:google-play-icon"} />
             <div className="flex flex-col">
               <span className="text-[10px] text-white/80">GET IT ON</span>
               <span className="text-[14px] font-[600]">Google Play</span>
@@ -209,9 +150,9 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
 
   // Step 2 fields
   const [jobType, setJobType] = useState("Full Day");
-  const [date, setDate] = useState("");
-  const [pickupTime, setPickupTime] = useState("6:00am");
-  const [closingTime, setClosingTime] = useState("6:00am");
+  const [tripDates, setTripDates] = useState<Date[]>([]);
+  const [pickupTime, setPickupTime] = useState("06:00");
+  const [closingTime, setClosingTime] = useState("18:00");
   const [pickupLocation, setPickupLocation] = useState("");
   const [pickupLocationData, setPickupLocationData] =
     useState<LocationData | null>(null);
@@ -219,9 +160,44 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
   const [dropoffLocationData, setDropoffLocationData] =
     useState<LocationData | null>(null);
   const [itinerary, setItinerary] = useState("");
-  const [airportName, setAirportName] = useState(nigerianAirports[0]);
+  const [note, setNote] = useState("");
+  const [airportName, setAirportName] = useState("");
   const [timeOfFlight, setTimeOfFlight] = useState("");
   const [advertiseToHosts, setAdvertiseToHosts] = useState(true);
+
+  const isAirportRelated =
+    jobType === "Airport Pickup" || jobType === "Airport Drop";
+
+  // Handler for job type change
+  const handleJobTypeChange = (newJobType: string) => {
+    setJobType(newJobType);
+    // Reset to single date if switching to airport trip with multiple dates selected
+    if (
+      (newJobType === "Airport Pickup" || newJobType === "Airport Drop") &&
+      tripDates.length > 1
+    ) {
+      setTripDates([tripDates[0]]);
+    }
+  };
+
+  // Handler for DayPicker date selection
+  const handleDateSelect = (dates: Date | Date[] | undefined) => {
+    if (!dates) {
+      setTripDates([]);
+    } else if (Array.isArray(dates)) {
+      setTripDates(dates);
+    } else {
+      // Single date selection (for airport trips)
+      setTripDates([dates]);
+    }
+  };
+
+  // Remove a specific date from selection
+  const removeDate = (dateToRemove: Date) => {
+    setTripDates(
+      tripDates.filter((date) => date.getTime() !== dateToRemove.getTime()),
+    );
+  };
 
   // Refs
   const firstNameRef = useRef<HTMLInputElement>(null);
@@ -259,7 +235,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
 
   // Step 2 validation based on job type
   const isStep2Valid = (): boolean => {
-    if (date === "") return false;
+    if (tripDates.length === 0) return false;
 
     if (jobType === "Full Day") {
       return (
@@ -322,15 +298,16 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
     setEmail("");
     setPhoneNumber("");
     setJobType("Full Day");
-    setDate("");
-    setPickupTime("6:00am");
-    setClosingTime("6:00am");
+    setTripDates([]);
+    setPickupTime("06:00");
+    setClosingTime("18:00");
     setPickupLocation("");
     setPickupLocationData(null);
     setDropoffLocation("");
     setDropoffLocationData(null);
     setItinerary("");
-    setAirportName(nigerianAirports[0]);
+    setNote("");
+    setAirportName("");
     setTimeOfFlight("");
     setAdvertiseToHosts(true);
   };
@@ -343,11 +320,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
   // API mutation
   const enquiryMutation = useMutation(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (payload: any) =>
-      client
-        .post(`bookings/guest/create-enquiry`, payload)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .then(({ data }: any) => data),
+    (payload: any) => jobListing.makeEnquiry({ payload }),
     {
       onSuccess: () => {
         handleClose();
@@ -384,31 +357,35 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
         lName: lastName,
         email,
         phoneNumber,
-        carId,
-        hostId,
         tripType: tripTypeMap[jobType],
-        tripDate: date,
-        pickUpTime: pickupTime,
-        closingTime: jobType === "Full Day" ? closingTime : undefined,
+        tripDate: tripDates.map((date) => format(date, "yyyy-MM-dd")),
+        pickUpTime: formatTimeForApi(pickupTime),
+        closingTime:
+          jobType === "Full Day" ? formatTimeForApi(closingTime) : undefined,
+        timeOfFlight:
+          jobType === "Airport Pickup"
+            ? formatTimeForApi(timeOfFlight)
+            : undefined,
         pickUpLocation: pickupLocationData || {
           address: pickupLocation,
-          state: "",
+          state: "lagos",
           country: "nigeria",
           coordinates: { longitude: 0, latitude: 0, coordinates: [0, 0] },
         },
         dropOffLocation: dropoffLocationData || {
           address: dropoffLocation,
-          state: "",
+          state: "lagos",
           country: "nigeria",
           coordinates: { longitude: 0, latitude: 0, coordinates: [0, 0] },
         },
         itinerary: jobType === "Full Day" ? itinerary : undefined,
+        note: note || undefined,
         airportName:
           jobType === "Airport Pickup" || jobType === "Airport Drop"
             ? airportName
             : undefined,
-        timeOfFlight: jobType === "Airport Pickup" ? timeOfFlight : undefined,
-        advertiseToAllHosts: advertiseToHosts,
+        vehicleId: carId,
+        isPublicRequest: advertiseToHosts,
       };
 
       await enquiryMutation.mutateAsync(payload);
@@ -597,7 +574,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                   <label className="block text-[14px] font-[600] text-primary mb-2">
                     Job Type
                   </label>
-                  <Select value={jobType} onValueChange={setJobType}>
+                  <Select value={jobType} onValueChange={handleJobTypeChange}>
                     <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary">
                       <SelectValue placeholder="Select job type" />
                     </SelectTrigger>
@@ -611,18 +588,66 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                   </Select>
                 </div>
 
-                {/* Date */}
-                <div className="">
+                {/* Trip Date(s) */}
+                <div>
                   <label className="block text-[14px] font-[600] text-primary mb-2">
-                    Date
+                    Trip Date{!isAirportRelated && "(s)"}
                   </label>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    min={format(new Date(), "yyyy-MM-dd")}
-                    className={`w-[88%] border bg-white shadow-md rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && date === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
-                  />
+                  {isAirportRelated && (
+                    <p className="text-xs text-gray-500 mb-2">
+                      Only one date allowed for airport trips
+                    </p>
+                  )}
+                  <div
+                    className={`w-full overflow-x-auto border rounded-[16px] p-3 ${
+                      showValidation && tripDates.length === 0
+                        ? "border-red-400 bg-red-50"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    <div className="w-full min-w-[280px]">
+                      {isAirportRelated ? (
+                        <DayPicker
+                          mode="single"
+                          selected={tripDates[0]}
+                          onSelect={handleDateSelect}
+                          disabled={{ before: new Date() }}
+                        />
+                      ) : (
+                        <DayPicker
+                          mode="multiple"
+                          selected={tripDates}
+                          onSelect={handleDateSelect}
+                          disabled={{ before: new Date() }}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {tripDates.length > 0 && (
+                    <div className="border-t pt-3 mt-3">
+                      <p className="text-xs text-gray-500 mb-2">
+                        Selected dates:
+                      </p>
+                      <div className="flex w-full flex-wrap gap-1">
+                        {tripDates.map((date, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
+                          >
+                            {format(date, "MMM d, yyyy")}
+                            <button
+                              type="button"
+                              onClick={() => removeDate(date)}
+                              className="hover:bg-primary/20 rounded-full p-0.5"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Full Day Fields */}
@@ -633,18 +658,12 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Pick-up Time
                       </label>
-                      <Select value={pickupTime} onValueChange={setPickupTime}>
-                        <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                          <SelectValue placeholder="Select pick-up time" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[10000] max-h-[200px]">
-                          {timeSlots.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <input
+                        type="time"
+                        value={pickupTime}
+                        onChange={(e) => setPickupTime(e.target.value)}
+                        className="w-full h-[50px] rounded-full bg-white border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                      />
                     </div>
 
                     {/* Closing Time */}
@@ -652,21 +671,12 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Closing Time
                       </label>
-                      <Select
+                      <input
+                        type="time"
                         value={closingTime}
-                        onValueChange={setClosingTime}
-                      >
-                        <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                          <SelectValue placeholder="Select closing time" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[10000] max-h-[200px]">
-                          {timeSlots.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        onChange={(e) => setClosingTime(e.target.value)}
+                        className="w-full h-[50px] rounded-full bg-white border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                      />
                     </div>
 
                     {/* Pick-up Location */}
@@ -701,6 +711,19 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         className={`w-full border rounded-2xl min-h-[100px] p-4 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] resize-none ${showValidation && itinerary === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                       />
                     </div>
+
+                    {/* Note */}
+                    <div>
+                      <label className="block text-[14px] font-[600] text-primary mb-2">
+                        Note (Optional)
+                      </label>
+                      <textarea
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="Any additional notes for the driver"
+                        className="w-full border border-gray-200 rounded-2xl min-h-[80px] p-4 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] resize-none"
+                      />
+                    </div>
                   </>
                 )}
 
@@ -712,21 +735,13 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Airport Name
                       </label>
-                      <Select
+                      <input
+                        type="text"
+                        placeholder="e.g. MM2"
+                        className={`w-full border rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && airportName === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                         value={airportName}
-                        onValueChange={setAirportName}
-                      >
-                        <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                          <SelectValue placeholder="Select airport" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[10000] max-h-[200px]">
-                          {nigerianAirports.map((airport) => (
-                            <SelectItem key={airport} value={airport}>
-                              {airport}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        onChange={(e) => setAirportName(e.target.value)}
+                      />
                     </div>
 
                     {/* Time of Flight */}
@@ -734,23 +749,12 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Time of Flight
                       </label>
-                      <Select
+                      <input
+                        type="time"
                         value={timeOfFlight}
-                        onValueChange={setTimeOfFlight}
-                      >
-                        <SelectTrigger
-                          className={`w-full h-[50px] rounded-full border px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary ${showValidation && timeOfFlight === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
-                        >
-                          <SelectValue placeholder="Select time of your flight" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[10000] max-h-[200px]">
-                          {timeSlots.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        onChange={(e) => setTimeOfFlight(e.target.value)}
+                        className={`w-full h-[50px] bg-wwhite rounded-full border px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none ${showValidation && timeOfFlight === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                      />
                     </div>
 
                     {/* Pick-up Time */}
@@ -758,18 +762,12 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Pick-up Time
                       </label>
-                      <Select value={pickupTime} onValueChange={setPickupTime}>
-                        <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                          <SelectValue placeholder="Select your pick-up location" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[10000] max-h-[200px]">
-                          {timeSlots.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <input
+                        type="time"
+                        value={pickupTime}
+                        onChange={(e) => setPickupTime(e.target.value)}
+                        className="w-full h-[50px] rounded-full bg-white border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                      />
                     </div>
 
                     {/* Drop-off Location */}
@@ -788,7 +786,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                           }
                         }}
                         placeholder="Select your drop-off location"
-                        className={`w-full border rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && dropoffLocation === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                        className={`w-full rounded-full h-[50px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && dropoffLocation === "" ? "border border-red-400 bg-red-50" : ""}`}
                       />
                     </div>
                   </>
@@ -812,8 +810,8 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                             );
                           }
                         }}
-                        placeholder="Select your drop-off location"
-                        className={`w-full border rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && pickupLocation === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                        placeholder="Select your pick-up location"
+                        className={`w-full rounded-full h-[50px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && pickupLocation === "" ? "border border-red-400 bg-red-50" : ""}`}
                       />
                     </div>
 
@@ -822,18 +820,12 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Pick-up Time
                       </label>
-                      <Select value={pickupTime} onValueChange={setPickupTime}>
-                        <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                          <SelectValue placeholder="Select your pick-up location" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[10000] max-h-[200px]">
-                          {timeSlots.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <input
+                        type="time"
+                        value={pickupTime}
+                        onChange={(e) => setPickupTime(e.target.value)}
+                        className="w-full h-[50px] rounded-full bg-white border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                      />
                     </div>
 
                     {/* Airport Name */}
@@ -841,21 +833,13 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Airport Name
                       </label>
-                      <Select
+                      <input
+                        type="text"
+                        placeholder="e.g. MM2"
+                        className={`w-full border rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && airportName === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                         value={airportName}
-                        onValueChange={setAirportName}
-                      >
-                        <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                          <SelectValue placeholder="Select airport" />
-                        </SelectTrigger>
-                        <SelectContent className="z-[10000] max-h-[200px]">
-                          {nigerianAirports.map((airport) => (
-                            <SelectItem key={airport} value={airport}>
-                              {airport}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        onChange={(e) => setAirportName(e.target.value)}
+                      />
                     </div>
                   </>
                 )}

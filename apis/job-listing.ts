@@ -69,4 +69,9 @@ export const jobListing = {
     client
       .post(`bookings/guest/create-long-term-leasing`, payload)
       .then(({ data }: any) => data),
+
+  makeEnquiry: ({ payload }: { payload: any }) =>
+    client
+      .post(`bookings/guest/create-request`, payload)
+      .then(({ data }: any) => data),
 };
