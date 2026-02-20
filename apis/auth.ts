@@ -18,4 +18,13 @@ export const auth = {
 
   googleSignIn: ({ payload }: { payload: any }) =>
     client.post(`googleSignIn`, payload).then(({ data }: any) => data),
+
+  getPhoneOtp: ({ payload }: { payload: any }) =>
+    client.post(`sendPhoneOtp`, payload).then(({ data }: any) => data),
+
+  validatePhoneOtp: ({ payload }: { payload: any }) =>
+    client.post(`validatePhoneOtp`, payload).then(({ data }: any) => data),
+
+  signIn: ({ payload }: { payload: any }) =>
+    client.post(`login`, payload).then(({ data }: any) => data),
 };

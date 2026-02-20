@@ -16,6 +16,10 @@ export default {
         protocol: "https",
         hostname: "valorrecentpublicbucket.s3.eu-west-1.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "images.prismic.io",
+      },
     ],
   },
 };

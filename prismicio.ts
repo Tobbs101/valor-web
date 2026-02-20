@@ -36,6 +36,14 @@ const routes: prismic.ClientConfig["routes"] = [
     type: "contact_us_page",
     path: "/contact-us",
   },
+  {
+    type: "about_us_page",
+    path: "/about-us",
+  },
+  {
+    type: "become_a_host_page",
+    path: "/become-a-host",
+  },
   // Add this route once the document type is created in Prismic:
   // {
   //   type: "privacy_policy_page",

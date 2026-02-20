@@ -19,6 +19,85 @@ import { format, getDaysInMonth, startOfMonth, getDay } from "date-fns";
 import MakeEnquiriesModal from "./make-enquiries-modal";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Extract city/state from a full address string like "Zone 4, 1 ladi Kwali St, Wuse, Abuja 900001, Federal Capital Territory, Nigeria"
+// Iterates through the states list (ordered by priority — major cities first) and returns the first match found in the text.
+const formatShortAddress = (fullAddress?: string): string => {
+  if (!fullAddress) return "N/A";
+
+  // Ordered by priority: major cities/state capitals first, then neighborhoods/areas
+  const nigerianStates = [
+    "Abuja",
+    "Lagos",
+    "Kano",
+    "Ibadan",
+    "Port Harcourt",
+    "Benin City",
+    "Kaduna",
+    "Enugu",
+    "Ilorin",
+    "Jos",
+    "Aba",
+    "Abeokuta",
+    "Onitsha",
+    "Warri",
+    "Calabar",
+    "Uyo",
+    "Asaba",
+    "Owerri",
+    "Akure",
+    "Bauchi",
+    "Osogbo",
+    "Minna",
+    "Lafia",
+    "Makurdi",
+    "Yola",
+    "Gombe",
+    "Sokoto",
+    "Damaturu",
+    "Maiduguri",
+    "Lokoja",
+    "Abakaliki",
+    "Jalingo",
+    "Birnin Kebbi",
+    "Dutse",
+    "Gusau",
+    "Ado Ekiti",
+    "Ikeja",
+    "Lekki",
+    "Victoria Island",
+    "Ajah",
+    "Ikoyi",
+    "Surulere",
+    "Yaba",
+    "Festac",
+    "Ikotun",
+    "Wuse",
+    "Garki",
+    "Maitama",
+    "Gwarinpa",
+    "Jabi",
+    "Kubwa",
+    "Nyanya",
+    "Abia",
+    "Adamawa",
+    "Akwa Ibom",
+    "Anambra",
+    "Bauchi",
+  ];
+
+  const lowerAddress = fullAddress.toLowerCase();
+
+  // Search the full address text for the first matching state/city (priority order)
+  for (const state of nigerianStates) {
+    if (lowerAddress.includes(state.toLowerCase())) {
+      return `${state}, Nigeria`;
+    }
+  }
+
+  // Fallback: return the full address as-is
+  return fullAddress;
+};
+
 // Skeleton component for loading state
 const Skeleton = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
@@ -115,6 +194,8 @@ const HostDetailsModal = ({
 }) => {
   if (!hostData) return null;
 
+  // console.log(hostData);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -174,7 +255,7 @@ const HostDetailsModal = ({
               <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <span className="text-[14px] text-[#9CA3AF]">Location</span>
                 <span className="text-[14px] font-[500] text-primary text-right max-w-[200px]">
-                  {hostData?.address?.address || "N/A"}
+                  {formatShortAddress(hostData?.address?.address)}
                 </span>
               </div>
 
@@ -385,14 +466,20 @@ const CarDetailsPageBody = () => {
   const yearDropdownRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
+  const isSwiping = useRef<boolean>(false);
 
-  // Handle mobile carousel swipe
+  // Handle mobile carousel swipe vs tap
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+    isSwiping.current = false;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     touchEndX.current = e.touches[0].clientX;
+    if (Math.abs(touchStartX.current - touchEndX.current) > 10) {
+      isSwiping.current = true;
+    }
   };
 
   const handleTouchEnd = () => {
@@ -406,6 +493,14 @@ const CarDetailsPageBody = () => {
     } else if (diff < -threshold && mobileCarouselIndex > 0) {
       // Swipe right - previous image
       setMobileCarouselIndex(mobileCarouselIndex - 1);
+    }
+  };
+
+  const handleMobileCarouselTap = () => {
+    // Only open gallery if there was no swipe
+    if (!isSwiping.current) {
+      setCurrentImageIndex(mobileCarouselIndex);
+      setIsGalleryOpen(true);
     }
   };
 
@@ -640,6 +735,8 @@ const CarDetailsPageBody = () => {
     return vehicleData?.similarVehicles || [];
   }, [vehicleData?.similarVehicles]);
 
+  // console.log("Vehicle Data:", vehicleData);
+
   // Loading skeleton
   if (loadingCarData) {
     return (
@@ -768,7 +865,8 @@ const CarDetailsPageBody = () => {
             alt={capitalizedCarName}
             fill
             priority
-            className="object-cover"
+            className="object-cover cursor-pointer"
+            onClick={handleMobileCarouselTap}
           />
 
           {/* Carousel Dots */}
@@ -967,6 +1065,12 @@ const CarDetailsPageBody = () => {
                 >
                   Full day
                 </span>
+                {vehicleData.pricing?.fullDay?.available === "yes" &&
+                  vehicleData.pricing?.fullDay?.cost > 0 && (
+                    <span className="text-[11px] font-[600] text-orange-600 mt-1">
+                      ₦{vehicleData.pricing.fullDay.cost.toLocaleString()}
+                    </span>
+                  )}
               </div>
 
               {/* Airport Drop-off */}
@@ -1002,6 +1106,12 @@ const CarDetailsPageBody = () => {
                 >
                   Airport drop-off
                 </span>
+                {vehicleData.pricing?.airportDrop?.available === "yes" &&
+                  vehicleData.pricing?.airportDrop?.cost > 0 && (
+                    <span className="text-[11px] font-[600] text-orange-600 mt-1">
+                      ₦{vehicleData.pricing.airportDrop.cost.toLocaleString()}
+                    </span>
+                  )}
               </div>
 
               {/* Airport Pick-up */}
@@ -1037,6 +1147,12 @@ const CarDetailsPageBody = () => {
                 >
                   Airport pick-up
                 </span>
+                {vehicleData.pricing?.airportPickUp?.available === "yes" &&
+                  vehicleData.pricing?.airportPickUp?.cost > 0 && (
+                    <span className="text-[11px] font-[600] text-orange-600 mt-1">
+                      ₦{vehicleData.pricing.airportPickUp.cost.toLocaleString()}
+                    </span>
+                  )}
               </div>
             </div>
           </div>
@@ -1066,9 +1182,10 @@ const CarDetailsPageBody = () => {
                   Location:
                 </span>
                 <span className="text-[14px] text-right font-[500] text-primary">
-                  {vehicleData?.host?.address?.address ||
-                    vehicleData?.carDetails?.city ||
-                    "N/A"}
+                  {formatShortAddress(
+                    vehicleData?.host?.address?.address ||
+                      vehicleData?.carDetails?.city,
+                  )}
                 </span>
               </div>
               <div className="flex items-center justify-between">
@@ -1387,7 +1504,13 @@ const CarDetailsPageBody = () => {
           </button>
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             {/* Main Image */}
-            <div className="flex-1 relative h-[250px] md:h-[400px] rounded-2xl overflow-hidden">
+            <div
+              onClick={() => {
+                setCurrentImageIndex(0);
+                setIsGalleryOpen(true);
+              }}
+              className="flex-1 cursor-pointer relative h-[250px] md:h-[400px] rounded-2xl overflow-hidden"
+            >
               <Image
                 src={carImages[0]?.url || Highlander}
                 alt={capitalizedCarName}
@@ -1401,7 +1524,13 @@ const CarDetailsPageBody = () => {
             {/* Side Images */}
             <div className="w-full md:w-[280px] flex flex-row md:flex-col gap-4">
               {/* Top Image with Rating */}
-              <div className="relative flex-1 h-[140px] md:h-[190px] rounded-2xl overflow-hidden">
+              <div
+                onClick={() => {
+                  setCurrentImageIndex(1);
+                  setIsGalleryOpen(true);
+                }}
+                className="relative cursor-pointer flex-1 h-[140px] md:h-[190px] rounded-2xl overflow-hidden"
+              >
                 <Image
                   src={carImages[1]?.url || Highlander}
                   alt={capitalizedCarName}
@@ -1423,7 +1552,13 @@ const CarDetailsPageBody = () => {
               </div>
 
               {/* Bottom Image with Photo Count */}
-              <div className="relative flex-1 h-[140px] md:h-[190px] rounded-2xl overflow-hidden">
+              <div
+                onClick={() => {
+                  setCurrentImageIndex(0);
+                  setIsGalleryOpen(true);
+                }}
+                className="relative cursor-pointer flex-1 h-[140px] md:h-[190px] rounded-2xl overflow-hidden"
+              >
                 <Image
                   src={carImages[2]?.url || Highlander}
                   alt={capitalizedCarName}
@@ -1769,10 +1904,11 @@ const CarDetailsPageBody = () => {
                       Location
                     </p>
                     <p className="text-[14px] md:text-[16px] font-[600] text-primary">
-                      {vehicleData?.host?.address?.address ||
-                        vehicleData?.carDetails?.city ||
-                        vehicleData?.carDetails?.address ||
-                        "N/A"}
+                      {formatShortAddress(
+                        vehicleData?.host?.address?.address ||
+                          vehicleData?.carDetails?.city ||
+                          vehicleData?.carDetails?.address,
+                      )}
                     </p>
                   </div>
                   <div>
@@ -1998,7 +2134,10 @@ const CarDetailsPageBody = () => {
                 {similarVehicles.slice(0, 3).map((car: any, idx: number) => (
                   <div key={car._id || idx} className="group cursor-pointer">
                     {/* Car Image */}
-                    <div className="relative h-[200px] rounded-2xl overflow-hidden mb-4">
+                    <div
+                      onClick={() => router.push(`/search/${car._id}`)}
+                      className="relative h-[200px] rounded-2xl overflow-hidden mb-4"
+                    >
                       <Image
                         src={car.carImages?.frontView?.url || Highlander}
                         alt={`${car.carDetails?.carMake || ""} ${car.carDetails?.carModel || ""}`}

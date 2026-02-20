@@ -127,3 +127,33 @@ export async function getContactUsPage() {
     return null;
   }
 }
+
+/**
+ * Fetch the About Us page from Prismic
+ */
+export async function getAboutUsPage() {
+  const client = createClient();
+
+  try {
+    const aboutPage = await client.getSingle("about_us_page");
+    return aboutPage;
+  } catch (error) {
+    console.error("Error fetching about us page from Prismic:", error);
+    return null;
+  }
+}
+
+/**
+ * Fetch the Become a Host page from Prismic
+ */
+export async function getBecomeAHostPage() {
+  const client = createClient();
+
+  try {
+    const hostPage = await client.getSingle("become_a_host_page");
+    return hostPage;
+  } catch (error) {
+    console.error("Error fetching become a host page from Prismic:", error);
+    return null;
+  }
+}

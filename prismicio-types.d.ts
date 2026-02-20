@@ -69,6 +69,827 @@ type ContentRelationshipFieldWithData<
   >;
 }[Exclude<TCustomType[number], string>["id"]];
 
+/**
+ * Item in *About Us Page → Values*
+ */
+export interface AboutUsPageDocumentDataValuesItem {
+  /**
+   * Value Title field in *About Us Page → Values*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.values[].value_title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  value_title: prismic.KeyTextField;
+
+  /**
+   * Value Description field in *About Us Page → Values*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.values[].value_description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  value_description: prismic.KeyTextField;
+}
+
+/**
+ * Item in *About Us Page → Testimonials*
+ */
+export interface AboutUsPageDocumentDataTestimonialsItem {
+  /**
+   * Testimonial Name field in *About Us Page → Testimonials*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.testimonials[].testimonial_name
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  testimonial_name: prismic.KeyTextField;
+
+  /**
+   * Testimonial Quote field in *About Us Page → Testimonials*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.testimonials[].testimonial_quote
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  testimonial_quote: prismic.KeyTextField;
+}
+
+type AboutUsPageDocumentDataSlicesSlice = never;
+
+/**
+ * Content for About Us Page documents
+ */
+interface AboutUsPageDocumentData {
+  /**
+   * Hero Title field in *About Us Page*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.hero_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  hero_title: prismic.RichTextField;
+
+  /**
+   * Hero Subtitle field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.hero_subtitle
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  hero_subtitle: prismic.KeyTextField;
+
+  /**
+   * Hero image field in *About Us Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.hero_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  hero_image: prismic.ImageField<never>;
+
+  /**
+   * Mission & Vision Title field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.mission_vision_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  mission_vision_title: prismic.KeyTextField;
+
+  /**
+   * Mission Title field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.mission_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  mission_title: prismic.KeyTextField;
+
+  /**
+   * Vision Title field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.vision_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  vision_title: prismic.KeyTextField;
+
+  /**
+   * Mission Image field in *About Us Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.mission_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  mission_image: prismic.ImageField<never>;
+
+  /**
+   * Mission Description field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.mission_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  mission_description: prismic.KeyTextField;
+
+  /**
+   * Vision Description field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.vision_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  vision_description: prismic.KeyTextField;
+
+  /**
+   * Vision Image field in *About Us Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.vision_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  vision_image: prismic.ImageField<never>;
+
+  /**
+   * Why Valor Title field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.why_valor_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  why_valor_title: prismic.KeyTextField;
+
+  /**
+   * Why Valor Description field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.why_valor_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  why_valor_description: prismic.KeyTextField;
+
+  /**
+   * Why Valor Image field in *About Us Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.why_valor_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  why_valor_image: prismic.ImageField<never>;
+
+  /**
+   * Our Story Title field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.our_story_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  our_story_title: prismic.KeyTextField;
+
+  /**
+   * Our Story Description field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.our_story_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  our_story_description: prismic.KeyTextField;
+
+  /**
+   * Our Story Image field in *About Us Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.our_story_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  our_story_image: prismic.ImageField<never>;
+
+  /**
+   * Our Values Title field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.our_values_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  our_values_title: prismic.KeyTextField;
+
+  /**
+   * Our Values Image field in *About Us Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.our_values_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  our_values_image: prismic.ImageField<never>;
+
+  /**
+   * Values field in *About Us Page*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.values[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  values: prismic.GroupField<Simplify<AboutUsPageDocumentDataValuesItem>>;
+
+  /**
+   * Testimonials title field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.testimonials_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  testimonials_title: prismic.KeyTextField;
+
+  /**
+   * Testimonials field in *About Us Page*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.testimonials[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  testimonials: prismic.GroupField<
+    Simplify<AboutUsPageDocumentDataTestimonialsItem>
+  >;
+
+  /**
+   * Slice Zone field in *About Us Page*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/slices
+   */
+  slices: prismic.SliceZone<AboutUsPageDocumentDataSlicesSlice>; /**
+   * Meta Title field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A title of the page used for social media and search engines
+   * - **API ID Path**: about_us_page.meta_title
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_title: prismic.KeyTextField;
+
+  /**
+   * Meta Description field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A brief summary of the page
+   * - **API ID Path**: about_us_page.meta_description
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_description: prismic.KeyTextField;
+
+  /**
+   * OG Image field in *About Us Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.og_image
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  og_image: prismic.ImageField<never>;
+
+  /**
+   * Meta Keywords field in *About Us Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: about_us_page.meta_keywords
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_keywords: prismic.KeyTextField;
+}
+
+/**
+ * About Us Page document from Prismic
+ *
+ * - **API ID**: `about_us_page`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type AboutUsPageDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<AboutUsPageDocumentData>,
+    "about_us_page",
+    Lang
+  >;
+
+/**
+ * Item in *Become A Host Page → Benefits*
+ */
+export interface BecomeAHostPageDocumentDataBenefitsItem {
+  /**
+   * Benefit Title field in *Become A Host Page → Benefits*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.benefits[].benefit_title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  benefit_title: prismic.KeyTextField;
+
+  /**
+   * Benefit Description field in *Become A Host Page → Benefits*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.benefits[].benefit_description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  benefit_description: prismic.KeyTextField;
+}
+
+/**
+ * Item in *Become A Host Page → How To Steps*
+ */
+export interface BecomeAHostPageDocumentDataHowToStepsItem {
+  /**
+   * Step Title field in *Become A Host Page → How To Steps*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.how_to_steps[].step_title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  step_title: prismic.KeyTextField;
+
+  /**
+   * Step Description field in *Become A Host Page → How To Steps*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.how_to_steps[].step_description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  step_description: prismic.KeyTextField;
+}
+
+/**
+ * Item in *Become A Host Page → Onboard Steps*
+ */
+export interface BecomeAHostPageDocumentDataOnboardStepsItem {
+  /**
+   * Step Title field in *Become A Host Page → Onboard Steps*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.onboard_steps[].step_title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  step_title: prismic.KeyTextField;
+
+  /**
+   * Step Description field in *Become A Host Page → Onboard Steps*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.onboard_steps[].step_description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  step_description: prismic.KeyTextField;
+}
+
+/**
+ * Item in *Become A Host Page → Testimonials*
+ */
+export interface BecomeAHostPageDocumentDataTestimonialsItem {
+  /**
+   * Testimonial Name field in *Become A Host Page → Testimonials*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.testimonials[].testimonial_name
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  testimonial_name: prismic.KeyTextField;
+
+  /**
+   * Testimonial Quote field in *Become A Host Page → Testimonials*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.testimonials[].testimonial_quote
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  testimonial_quote: prismic.KeyTextField;
+}
+
+/**
+ * Item in *Become A Host Page → Top Hosts*
+ */
+export interface BecomeAHostPageDocumentDataTopHostsItem {
+  /**
+   * Host Name field in *Become A Host Page → Top Hosts*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.top_hosts[].host_name
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  host_name: prismic.KeyTextField;
+
+  /**
+   * Host Trips field in *Become A Host Page → Top Hosts*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.top_hosts[].host_trips
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  host_trips: prismic.NumberField;
+
+  /**
+   * Host Since field in *Become A Host Page → Top Hosts*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.top_hosts[].host_since
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  host_since: prismic.NumberField;
+
+  /**
+   * Host Rating field in *Become A Host Page → Top Hosts*
+   *
+   * - **Field Type**: Number
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.top_hosts[].host_rating
+   * - **Documentation**: https://prismic.io/docs/fields/number
+   */
+  host_rating: prismic.NumberField;
+}
+
+type BecomeAHostPageDocumentDataSlicesSlice = never;
+
+/**
+ * Content for Become A Host Page documents
+ */
+interface BecomeAHostPageDocumentData {
+  /**
+   * Hero Title field in *Become A Host Page*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.hero_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/rich-text
+   */
+  hero_title: prismic.RichTextField;
+
+  /**
+   * Hero Subtitle field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.hero_subtitle
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  hero_subtitle: prismic.KeyTextField;
+
+  /**
+   * Benefits Title field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.benefits_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  benefits_title: prismic.KeyTextField;
+
+  /**
+   * Benefits Subtitle field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.benefits_subtitle
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  benefits_subtitle: prismic.KeyTextField;
+
+  /**
+   * Benefits field in *Become A Host Page*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.benefits[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  benefits: prismic.GroupField<
+    Simplify<BecomeAHostPageDocumentDataBenefitsItem>
+  >;
+
+  /**
+   * How To Title field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.how_to_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  how_to_title: prismic.KeyTextField;
+
+  /**
+   * How To Subtitle field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.how_to_subtitle
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  how_to_subtitle: prismic.KeyTextField;
+
+  /**
+   * How To Image field in *Become A Host Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.how_to_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  how_to_image: prismic.ImageField<never>;
+
+  /**
+   * How To Steps field in *Become A Host Page*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.how_to_steps[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  how_to_steps: prismic.GroupField<
+    Simplify<BecomeAHostPageDocumentDataHowToStepsItem>
+  >;
+
+  /**
+   * Onboard Title field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.onboard_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  onboard_title: prismic.KeyTextField;
+
+  /**
+   * Onboard Subtitle field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.onboard_subtitle
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  onboard_subtitle: prismic.KeyTextField;
+
+  /**
+   * Onboard Image field in *Become A Host Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.onboard_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  onboard_image: prismic.ImageField<never>;
+
+  /**
+   * Onboard Steps field in *Become A Host Page*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.onboard_steps[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  onboard_steps: prismic.GroupField<
+    Simplify<BecomeAHostPageDocumentDataOnboardStepsItem>
+  >;
+
+  /**
+   * Driver App Title field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.driver_app_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  driver_app_title: prismic.KeyTextField;
+
+  /**
+   * App Store Url field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.app_store_url
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  app_store_url: prismic.KeyTextField;
+
+  /**
+   * Play Store Url field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.play_store_url
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  play_store_url: prismic.KeyTextField;
+
+  /**
+   * Testimonials Title field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.testimonials_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  testimonials_title: prismic.KeyTextField;
+
+  /**
+   * Testimonials field in *Become A Host Page*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.testimonials[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  testimonials: prismic.GroupField<
+    Simplify<BecomeAHostPageDocumentDataTestimonialsItem>
+  >;
+
+  /**
+   * Meet Host Title field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.meet_host_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meet_host_title: prismic.KeyTextField;
+
+  /**
+   * Meet Host Subtitle field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.meet_host_subtitle
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meet_host_subtitle: prismic.KeyTextField;
+
+  /**
+   * Top Hosts field in *Become A Host Page*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.top_hosts[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  top_hosts: prismic.GroupField<
+    Simplify<BecomeAHostPageDocumentDataTopHostsItem>
+  >;
+
+  /**
+   * Slice Zone field in *Become A Host Page*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/slices
+   */
+  slices: prismic.SliceZone<BecomeAHostPageDocumentDataSlicesSlice>; /**
+   * Meta Title field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A title of the page used for social media and search engines
+   * - **API ID Path**: become_a_host_page.meta_title
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_title: prismic.KeyTextField;
+
+  /**
+   * Meta Description field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A brief summary of the page
+   * - **API ID Path**: become_a_host_page.meta_description
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_description: prismic.KeyTextField;
+
+  /**
+   * OG Image field in *Become A Host Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.og_image
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  og_image: prismic.ImageField<never>;
+
+  /**
+   * Meta Keywords field in *Become A Host Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: become_a_host_page.meta_keywords
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_keywords: prismic.KeyTextField;
+}
+
+/**
+ * Become A Host Page document from Prismic
+ *
+ * - **API ID**: `become_a_host_page`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type BecomeAHostPageDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<BecomeAHostPageDocumentData>,
+    "become_a_host_page",
+    Lang
+  >;
+
 type BlogListingPageDocumentDataSlicesSlice = never;
 
 /**
@@ -964,6 +1785,8 @@ export type TermsPageDocument<Lang extends string = string> =
   >;
 
 export type AllDocumentTypes =
+  | AboutUsPageDocument
+  | BecomeAHostPageDocument
   | BlogListingPageDocument
   | BlogPostDocument
   | CancellationPolicyPageDocument
@@ -992,6 +1815,19 @@ declare module "@prismicio/client" {
 
   namespace Content {
     export type {
+      AboutUsPageDocument,
+      AboutUsPageDocumentData,
+      AboutUsPageDocumentDataValuesItem,
+      AboutUsPageDocumentDataTestimonialsItem,
+      AboutUsPageDocumentDataSlicesSlice,
+      BecomeAHostPageDocument,
+      BecomeAHostPageDocumentData,
+      BecomeAHostPageDocumentDataBenefitsItem,
+      BecomeAHostPageDocumentDataHowToStepsItem,
+      BecomeAHostPageDocumentDataOnboardStepsItem,
+      BecomeAHostPageDocumentDataTestimonialsItem,
+      BecomeAHostPageDocumentDataTopHostsItem,
+      BecomeAHostPageDocumentDataSlicesSlice,
       BlogListingPageDocument,
       BlogListingPageDocumentData,
       BlogListingPageDocumentDataSlicesSlice,

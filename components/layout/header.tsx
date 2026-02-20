@@ -27,11 +27,16 @@ const NAVIGATION_LINKS: LinkProp[] = [
   { id: 1, route: "/", label: "Home" },
   {
     id: 2,
+    route: "/search",
+    label: "Rent a Car",
+  },
+  {
+    id: 3,
     route: "/become-a-host",
     label: "Become a Host",
   },
   {
-    id: 3,
+    id: 4,
     route: "/about-us",
     label: "About Us",
     className: "lg:w-[500px]",

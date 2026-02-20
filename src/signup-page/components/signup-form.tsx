@@ -18,6 +18,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import Logo from "@/components/custom/logo";
 import Link from "next/link";
+import { SESSION_USER_KEY } from "@/static";
 
 const step1Schema = z.object({
   firstName: z.string().min(1, { message: "Please enter your first name" }),
@@ -76,6 +77,14 @@ const SignUpForm = () => {
   const [showResendSuccess, setShowResendSuccess] = useState(false);
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  // Phone OTP State (for hosts)
+  const phoneOtpStep = 4;
+  const [phoneOtp, setPhoneOtp] = useState(["", "", "", ""]);
+  const [phoneOtpError, setPhoneOtpError] = useState("");
+  const [phoneResendCountdown, setPhoneResendCountdown] = useState(600);
+  const [showPhoneResendSuccess, setShowPhoneResendSuccess] = useState(false);
+  const phoneOtpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   // Modal States
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
@@ -96,6 +105,9 @@ const SignUpForm = () => {
   const { mutateAsync: CheckEmailExists } = useMutation(auth.checkEmailExists);
   const { mutateAsync: CheckPhoneExists } = useMutation(auth.checkPhoneExists);
   const { mutateAsync: GoogleSignIn } = useMutation(auth.googleSignIn);
+  const { mutateAsync: GetPhoneOtp } = useMutation(auth.getPhoneOtp);
+  const { mutateAsync: ValidatePhoneOtp } = useMutation(auth.validatePhoneOtp);
+  const { mutateAsync: SignIn } = useMutation(auth.signIn);
 
   // Email & Phone availability state: null = not checked, true = available, false = taken
   const [emailAvailable, setEmailAvailable] = useState<boolean | null>(null);
@@ -367,6 +379,16 @@ const SignUpForm = () => {
     }
   }, [step, resendCountdown, otpStep]);
 
+  // Phone OTP resend countdown timer (for hosts)
+  useEffect(() => {
+    if (step === phoneOtpStep && phoneResendCountdown > 0) {
+      const timer = setInterval(() => {
+        setPhoneResendCountdown((prev) => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [step, phoneResendCountdown]);
+
   // OTP input handling
   const handleOtpChange = (index: number, value: string) => {
     if (value.length > 1) {
@@ -404,6 +426,44 @@ const SignUpForm = () => {
       if (idx < 4) newOtp[idx] = char;
     });
     setOtp(newOtp);
+  };
+
+  // Phone OTP input handling (for hosts)
+  const handlePhoneOtpChange = (index: number, value: string) => {
+    if (value.length > 1) {
+      value = value.slice(-1);
+    }
+    if (!/^\d*$/.test(value)) return;
+
+    const newOtp = [...phoneOtp];
+    newOtp[index] = value;
+    setPhoneOtp(newOtp);
+    setPhoneOtpError("");
+
+    if (value && index < 3) {
+      phoneOtpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePhoneOtpKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (e.key === "Backspace" && !phoneOtp[index] && index > 0) {
+      phoneOtpInputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePhoneOtpPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").slice(0, 4);
+    if (!/^\d+$/.test(pastedData)) return;
+
+    const newOtp = [...phoneOtp];
+    pastedData.split("").forEach((char, idx) => {
+      if (idx < 4) newOtp[idx] = char;
+    });
+    setPhoneOtp(newOtp);
   };
 
   const onStep1Submit = async (data: z.infer<typeof step1Schema>) => {
@@ -474,6 +534,50 @@ const SignUpForm = () => {
     }
   };
 
+  // Helper: sign in, store token, send phone OTP, and move to phone OTP step (used for hosts)
+  const sendPhoneOtpAndProceed = async () => {
+    setLoadingMessage("Signing you in...");
+    try {
+      // Sign in to get a token for authenticated phone OTP endpoints
+      const signInResponse = await SignIn({
+        payload: {
+          email: signupData.email,
+          password: signupData.password,
+          deviceToken: "web",
+        },
+      });
+
+      // Store the token in sessionStorage so the axios client picks it up
+      const token =
+        signInResponse?.token ||
+        signInResponse?.data?.token ||
+        signInResponse?.jwt;
+      if (token) {
+        sessionStorage.setItem(
+          SESSION_USER_KEY,
+          JSON.stringify({ ...signInResponse, token }),
+        );
+      }
+
+      // Now send the phone OTP
+      setLoadingMessage("Sending phone verification code...");
+      const formattedPhone = `234${signupData.phoneNumber.replace(/^0+/, "")}`;
+      await GetPhoneOtp({
+        payload: { phoneNumber: formattedPhone },
+      });
+      setPhoneOtp(["", "", "", ""]);
+      setPhoneOtpError("");
+      setPhoneResendCountdown(600);
+      setStep(phoneOtpStep);
+    } catch (phoneError: any) {
+      console.error("Failed during sign-in or phone OTP:", phoneError);
+      setOtpError(
+        phoneError?.response?.data?.message ||
+          "Failed to send phone verification code. Please try again.",
+      );
+    }
+  };
+
   const handleVerifyOtp = async () => {
     const otpCode = otp.join("");
     if (otpCode.length !== 4) {
@@ -509,25 +613,37 @@ const SignUpForm = () => {
 
       await SignUp({ payload });
 
-      // Success - reset store and show modal
-      resetStore();
-      setOtp(["", "", "", ""]);
-
-      setSignupData({}); // Clear all signup data
-
-      step1Form.reset();
-      step2Form.reset();
-
-      setTimeout(() => {
-        setShowSuccessModal(true);
+      if (isHost) {
+        // For hosts, send phone OTP after successful email verification + signup
+        await sendPhoneOtpAndProceed();
+      } else {
+        // For customers, show success immediately
         resetStore();
-        setSignupData({}); // Clear all signup data
-      }, 500);
+        setOtp(["", "", "", ""]);
+        setSignupData({});
+        step1Form.reset();
+        step2Form.reset();
+
+        setTimeout(() => {
+          setShowSuccessModal(true);
+          resetStore();
+          setSignupData({});
+        }, 500);
+      }
     } catch (error: any) {
-      setOtpError(
-        error?.response?.data?.message ||
-          "Wrong code. Please try again or contact support.",
-      );
+      const errorMessage = error?.response?.data?.message || "";
+
+      // For hosts, if the account already exists, still proceed to phone OTP
+      if (
+        isHost &&
+        errorMessage.toLowerCase().includes("an account exist with this email")
+      ) {
+        await sendPhoneOtpAndProceed();
+      } else {
+        setOtpError(
+          errorMessage || "Wrong code. Please try again or contact support.",
+        );
+      }
     } finally {
       setIsLoading(false);
       setLoadingMessage("");
@@ -564,12 +680,83 @@ const SignUpForm = () => {
   };
 
   const goBack = () => {
-    if (step > 1) {
+    if (step > 1 && step !== phoneOtpStep) {
       setStep(step - 1);
     }
   };
 
   const isOtpComplete = otp.every((digit) => digit !== "");
+  const isPhoneOtpComplete = phoneOtp.every((digit) => digit !== "");
+
+  // Phone OTP verification handler (for hosts)
+  const handleVerifyPhoneOtp = async () => {
+    const otpCode = phoneOtp.join("");
+    if (otpCode.length !== 4) {
+      setPhoneOtpError("Please enter all 4 digits");
+      return;
+    }
+
+    setIsLoading(true);
+    setLoadingMessage("Verifying phone number...");
+
+    try {
+      await ValidatePhoneOtp({
+        payload: { pin: otpCode },
+      });
+
+      // Success - reset store and show modal
+      resetStore();
+      setOtp(["", "", "", ""]);
+      setPhoneOtp(["", "", "", ""]);
+      setSignupData({});
+      step1Form.reset();
+      step2Form.reset();
+      // Clear the session token used for phone verification
+      sessionStorage.removeItem(SESSION_USER_KEY);
+
+      setTimeout(() => {
+        setShowSuccessModal(true);
+        resetStore();
+        setSignupData({});
+      }, 500);
+    } catch (error: any) {
+      setPhoneOtpError(
+        error?.response?.data?.message ||
+          "Wrong code. Please try again or contact support.",
+      );
+    } finally {
+      setIsLoading(false);
+      setLoadingMessage("");
+    }
+  };
+
+  // Phone OTP resend handler (for hosts)
+  const handleResendPhoneOtp = async () => {
+    if (phoneResendCountdown > 0) return;
+
+    setIsLoading(true);
+    setLoadingMessage("Resending code...");
+
+    try {
+      const formattedPhone = `234${signupData.phoneNumber.replace(/^0+/, "")}`;
+      await GetPhoneOtp({
+        payload: { phoneNumber: formattedPhone },
+      });
+      setPhoneResendCountdown(600);
+      setShowPhoneResendSuccess(true);
+      setPhoneOtp(["", "", "", ""]);
+      setPhoneOtpError("");
+
+      setTimeout(() => {
+        setShowPhoneResendSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to resend phone OTP:", error);
+    } finally {
+      setIsLoading(false);
+      setLoadingMessage("");
+    }
+  };
 
   // Step 2 is the password step for both
   const passwordStepNumber = 2;
@@ -1342,6 +1529,127 @@ const SignUpForm = () => {
                       >
                         <div className="bg-orange-500 text-white text-center py-4 px-6 rounded-full text-[14px]">
                           A new code has been sent to your email
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              )}
+
+              {/* Phone OTP Step (Hosts only) */}
+              {step === phoneOtpStep && (
+                <motion.div
+                  key="phone-otp-step"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {/* Header */}
+                  <h1 className="text-[32px] md:text-[40px] font-[700] text-primary mb-3">
+                    Verify Your Phone Number
+                  </h1>
+                  <p className="text-[16px] text-[#646464] mb-10">
+                    We&apos;ve sent a code to +234
+                    {signupData.phoneNumber?.replace(/^0+/, "")}
+                  </p>
+
+                  {/* Phone OTP Inputs */}
+                  <div className="flex w-full gap-4 mb-4">
+                    {phoneOtp.map((digit, index) => (
+                      <input
+                        key={index}
+                        ref={(el) => {
+                          phoneOtpInputRefs.current[index] = el;
+                        }}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) =>
+                          handlePhoneOtpChange(index, e.target.value)
+                        }
+                        onKeyDown={(e) => handlePhoneOtpKeyDown(index, e)}
+                        onPaste={handlePhoneOtpPaste}
+                        className={`w-[100%] h-[100px] text-center text-[36px] font-[600] text-primary border-2 rounded-xl outline-none transition-colors ${
+                          phoneOtpError
+                            ? "border-red-500"
+                            : digit
+                              ? "border-primary"
+                              : "border-gray-200"
+                        } focus:border-primary`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Error Message */}
+                  {phoneOtpError && (
+                    <p className="text-red-500 text-[14px] mb-6">
+                      {phoneOtpError}
+                    </p>
+                  )}
+
+                  {/* Verify Button */}
+                  <button
+                    onClick={handleVerifyPhoneOtp}
+                    disabled={!isPhoneOtpComplete}
+                    className={`w-full flex items-center justify-center gap-2 transition-colors rounded-full py-4 px-6 mt-6 ${
+                      isPhoneOtpComplete
+                        ? "bg-primary hover:bg-primary/90"
+                        : "bg-[#F5F5F5] cursor-not-allowed"
+                    }`}
+                  >
+                    <span
+                      className={`text-[16px] font-[500] ${
+                        isPhoneOtpComplete ? "text-white" : "text-[#9CA3AF]"
+                      }`}
+                    >
+                      Verify
+                    </span>
+                    <ArrowRight
+                      className={`w-5 h-5 ${
+                        isPhoneOtpComplete ? "text-white" : "text-[#9CA3AF]"
+                      }`}
+                    />
+                  </button>
+
+                  {/* Resend Code */}
+                  <div className="text-center mt-6">
+                    <button
+                      onClick={handleResendPhoneOtp}
+                      disabled={phoneResendCountdown > 0}
+                      className={`text-[14px] font-[600] ${
+                        phoneResendCountdown > 0
+                          ? "text-[#9CA3AF] cursor-not-allowed"
+                          : "text-primary hover:underline"
+                      }`}
+                    >
+                      Send code again
+                    </button>
+                    {phoneResendCountdown > 0 && (
+                      <span className="text-[14px] text-[#9CA3AF] ml-2">
+                        {Math.floor(phoneResendCountdown / 60)
+                          .toString()
+                          .padStart(2, "0")}
+                        :
+                        {(phoneResendCountdown % 60)
+                          .toString()
+                          .padStart(2, "0")}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Resend Success Message */}
+                  <AnimatePresence>
+                    {showPhoneResendSuccess && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="mt-6"
+                      >
+                        <div className="bg-orange-500 text-white text-center py-4 px-6 rounded-full text-[14px]">
+                          A new code has been sent to your phone number
                         </div>
                       </motion.div>
                     )}

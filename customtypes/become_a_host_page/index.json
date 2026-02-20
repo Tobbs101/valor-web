@@ -1,0 +1,297 @@
+{
+  "format": "page",
+  "id": "become_a_host_page",
+  "label": "Become A Host Page",
+  "repeatable": false,
+  "status": true,
+  "json": {
+    "Main": {
+      "hero_title": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Hero Title",
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+        }
+      },
+      "hero_subtitle": {
+        "type": "Text",
+        "config": {
+          "label": "Hero Subtitle",
+          "placeholder": ""
+        }
+      },
+      "benefits_title": {
+        "type": "Text",
+        "config": {
+          "label": "Benefits Title",
+          "placeholder": ""
+        }
+      },
+      "benefits_subtitle": {
+        "type": "Text",
+        "config": {
+          "label": "Benefits Subtitle",
+          "placeholder": ""
+        }
+      },
+      "benefits": {
+        "type": "Group",
+        "config": {
+          "label": "Benefits",
+          "repeat": true,
+          "fields": {
+            "benefit_title": {
+              "type": "Text",
+              "config": {
+                "label": "Benefit Title",
+                "placeholder": ""
+              }
+            },
+            "benefit_description": {
+              "type": "Text",
+              "config": {
+                "label": "Benefit Description",
+                "placeholder": ""
+              }
+            }
+          }
+        }
+      },
+      "how_to_title": {
+        "type": "Text",
+        "config": {
+          "label": "How To Title",
+          "placeholder": ""
+        }
+      },
+      "how_to_subtitle": {
+        "type": "Text",
+        "config": {
+          "label": "How To Subtitle",
+          "placeholder": ""
+        }
+      },
+      "how_to_image": {
+        "type": "Image",
+        "config": {
+          "label": "How To Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "how_to_steps": {
+        "type": "Group",
+        "config": {
+          "label": "How To Steps",
+          "repeat": true,
+          "fields": {
+            "step_title": {
+              "type": "Text",
+              "config": {
+                "label": "Step Title",
+                "placeholder": ""
+              }
+            },
+            "step_description": {
+              "type": "Text",
+              "config": {
+                "label": "Step Description",
+                "placeholder": ""
+              }
+            }
+          }
+        }
+      },
+      "onboard_title": {
+        "type": "Text",
+        "config": {
+          "label": "Onboard Title",
+          "placeholder": ""
+        }
+      },
+      "onboard_subtitle": {
+        "type": "Text",
+        "config": {
+          "label": "Onboard Subtitle",
+          "placeholder": ""
+        }
+      },
+      "onboard_image": {
+        "type": "Image",
+        "config": {
+          "label": "Onboard Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "onboard_steps": {
+        "type": "Group",
+        "config": {
+          "label": "Onboard Steps",
+          "repeat": true,
+          "fields": {
+            "step_title": {
+              "type": "Text",
+              "config": {
+                "label": "Step Title",
+                "placeholder": ""
+              }
+            },
+            "step_description": {
+              "type": "Text",
+              "config": {
+                "label": "Step Description",
+                "placeholder": ""
+              }
+            }
+          }
+        }
+      },
+      "driver_app_title": {
+        "type": "Text",
+        "config": {
+          "label": "Driver App Title",
+          "placeholder": ""
+        }
+      },
+      "app_store_url": {
+        "type": "Text",
+        "config": {
+          "label": "App Store Url",
+          "placeholder": ""
+        }
+      },
+      "play_store_url": {
+        "type": "Text",
+        "config": {
+          "label": "Play Store Url",
+          "placeholder": ""
+        }
+      },
+      "testimonials_title": {
+        "type": "Text",
+        "config": {
+          "label": "Testimonials Title",
+          "placeholder": ""
+        }
+      },
+      "testimonials": {
+        "type": "Group",
+        "config": {
+          "label": "Testimonials",
+          "repeat": true,
+          "fields": {
+            "testimonial_name": {
+              "type": "Text",
+              "config": {
+                "label": "Testimonial Name",
+                "placeholder": ""
+              }
+            },
+            "testimonial_quote": {
+              "type": "Text",
+              "config": {
+                "label": "Testimonial Quote",
+                "placeholder": ""
+              }
+            }
+          }
+        }
+      },
+      "meet_host_title": {
+        "type": "Text",
+        "config": {
+          "label": "Meet Host Title",
+          "placeholder": ""
+        }
+      },
+      "meet_host_subtitle": {
+        "type": "Text",
+        "config": {
+          "label": "Meet Host Subtitle",
+          "placeholder": ""
+        }
+      },
+      "top_hosts": {
+        "type": "Group",
+        "config": {
+          "label": "Top Hosts",
+          "repeat": true,
+          "fields": {
+            "host_name": {
+              "type": "Text",
+              "config": {
+                "label": "Host Name",
+                "placeholder": ""
+              }
+            },
+            "host_trips": {
+              "type": "Number",
+              "config": {
+                "label": "Host Trips",
+                "placeholder": ""
+              }
+            },
+            "host_since": {
+              "type": "Number",
+              "config": {
+                "label": "Host Since",
+                "placeholder": ""
+              }
+            },
+            "host_rating": {
+              "type": "Number",
+              "config": {
+                "label": "Host Rating",
+                "placeholder": ""
+              }
+            }
+          }
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {}
+        }
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "config": {
+          "label": "Meta Title",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
+      "meta_description": {
+        "config": {
+          "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "og_image": {
+        "config": {
+          "label": "OG Image",
+          "constraint": {
+            "height": 1260,
+            "width": 2400
+          },
+          "thumbnails": []
+        },
+        "type": "Image"
+      },
+      "meta_keywords": {
+        "type": "Text",
+        "config": {
+          "label": "Meta Keywords",
+          "placeholder": ""
+        }
+      }
+    }
+  }
+}

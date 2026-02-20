@@ -1,0 +1,239 @@
+{
+  "format": "page",
+  "id": "about_us_page",
+  "label": "About Us Page",
+  "repeatable": false,
+  "status": true,
+  "json": {
+    "Main": {
+      "hero_title": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Hero Title",
+          "placeholder": "",
+          "allowTargetBlank": true,
+          "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+        }
+      },
+      "hero_subtitle": {
+        "type": "Text",
+        "config": {
+          "label": "Hero Subtitle",
+          "placeholder": ""
+        }
+      },
+      "hero_image": {
+        "type": "Image",
+        "config": {
+          "label": "Hero image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "mission_vision_title": {
+        "type": "Text",
+        "config": {
+          "label": "Mission & Vision Title",
+          "placeholder": ""
+        }
+      },
+      "mission_title": {
+        "type": "Text",
+        "config": {
+          "label": "Mission Title",
+          "placeholder": ""
+        }
+      },
+      "vision_title": {
+        "type": "Text",
+        "config": {
+          "label": "Vision Title",
+          "placeholder": ""
+        }
+      },
+      "mission_image": {
+        "type": "Image",
+        "config": {
+          "label": "Mission Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "mission_description": {
+        "type": "Text",
+        "config": {
+          "label": "Mission Description",
+          "placeholder": ""
+        }
+      },
+      "vision_description": {
+        "type": "Text",
+        "config": {
+          "label": "Vision Description",
+          "placeholder": ""
+        }
+      },
+      "vision_image": {
+        "type": "Image",
+        "config": {
+          "label": "Vision Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "why_valor_title": {
+        "type": "Text",
+        "config": {
+          "label": "Why Valor Title",
+          "placeholder": ""
+        }
+      },
+      "why_valor_description": {
+        "type": "Text",
+        "config": {
+          "label": "Why Valor Description",
+          "placeholder": ""
+        }
+      },
+      "why_valor_image": {
+        "type": "Image",
+        "config": {
+          "label": "Why Valor Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "our_story_title": {
+        "type": "Text",
+        "config": {
+          "label": "Our Story Title",
+          "placeholder": ""
+        }
+      },
+      "our_story_description": {
+        "type": "Text",
+        "config": {
+          "label": "Our Story Description",
+          "placeholder": ""
+        }
+      },
+      "our_story_image": {
+        "type": "Image",
+        "config": {
+          "label": "Our Story Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "our_values_title": {
+        "type": "Text",
+        "config": {
+          "label": "Our Values Title",
+          "placeholder": ""
+        }
+      },
+      "our_values_image": {
+        "type": "Image",
+        "config": {
+          "label": "Our Values Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "values": {
+        "type": "Group",
+        "config": {
+          "label": "Values",
+          "repeat": true,
+          "fields": {
+            "value_title": {
+              "type": "Text",
+              "config": {
+                "label": "Value Title",
+                "placeholder": ""
+              }
+            },
+            "value_description": {
+              "type": "Text",
+              "config": {
+                "label": "Value Description",
+                "placeholder": ""
+              }
+            }
+          }
+        }
+      },
+      "testimonials_title": {
+        "type": "Text",
+        "config": {
+          "label": "Testimonials title",
+          "placeholder": ""
+        }
+      },
+      "testimonials": {
+        "type": "Group",
+        "config": {
+          "label": "Testimonials",
+          "repeat": true,
+          "fields": {
+            "testimonial_name": {
+              "type": "Text",
+              "config": {
+                "label": "Testimonial Name",
+                "placeholder": ""
+              }
+            },
+            "testimonial_quote": {
+              "type": "Text",
+              "config": {
+                "label": "Testimonial Quote",
+                "placeholder": ""
+              }
+            }
+          }
+        }
+      },
+      "slices": {
+        "type": "Slices",
+        "fieldset": "Slice Zone",
+        "config": {
+          "choices": {}
+        }
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "config": {
+          "label": "Meta Title",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
+      "meta_description": {
+        "config": {
+          "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "og_image": {
+        "config": {
+          "label": "OG Image",
+          "constraint": {
+            "height": 1260,
+            "width": 2400
+          },
+          "thumbnails": []
+        },
+        "type": "Image"
+      },
+      "meta_keywords": {
+        "type": "Text",
+        "config": {
+          "label": "Meta Keywords",
+          "placeholder": ""
+        }
+      }
+    }
+  }
+}
