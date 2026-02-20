@@ -103,6 +103,7 @@ const yearOptions = (() => {
 
 const nigerianStates = [
   "Abia",
+  "Abuja",
   "Adamawa",
   "Akwa Ibom",
   "Anambra",
@@ -116,7 +117,7 @@ const nigerianStates = [
   "Edo",
   "Ekiti",
   "Enugu",
-  "FCT - Abuja",
+
   "Gombe",
   "Imo",
   "Jigawa",
