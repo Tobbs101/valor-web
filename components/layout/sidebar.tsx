@@ -12,6 +12,7 @@ import { X } from "lucide-react";
 import LogoMinimal from "../../assets/valor-logo.png";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import { useSignupStore } from "@/store/signup-store";
 
 const Sidebar = ({
   isOpen,
@@ -23,6 +24,8 @@ const Sidebar = ({
   const pathname = usePathname();
 
   const router = useRouter();
+
+  const { resetStore } = useSignupStore();
 
   const onClickLogo = () => {
     router.push("/");
@@ -45,7 +48,7 @@ const Sidebar = ({
               onClick={onClickLogo}
               src={LogoMinimal}
               width={80}
-              alt=""
+              alt="Logo"
               className="w-[80px] lg:hidden cursor-pointer block"
             />
             <button onClick={toggleSidebar}>
@@ -68,10 +71,17 @@ const Sidebar = ({
 
           <div className="w-full px-7">
             <Button
-              onClick={() => router.push("/sign-up")}
+              onClick={() => {
+                resetStore();
+
+                if (pathname === "/become-a-host")
+                  return router.push("/sign-up?accountType=host");
+
+                router.push("/sign-up");
+              }}
               className="rounded-[36px] text-[14px] font-[400] p-[20px_40px] bg-primary text-white hover:bg-primary/90 duration-200"
             >
-              Sign Up
+              {pathname === "/become-a-host" ? "Host Sign Up" : "Sign Up"}
             </Button>
           </div>
         </div>

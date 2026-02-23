@@ -221,7 +221,7 @@ const Header = ({
             src={logoToUse}
             width={150}
             onClick={onClickLogo}
-            alt=""
+            alt="Logo"
             className="w-[100px] lg:w-[150px] cursor-pointer"
           />
 
