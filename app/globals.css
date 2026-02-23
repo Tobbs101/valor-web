@@ -258,3 +258,8 @@ body::-webkit-scrollbar-thumb:hover {
 .phone-input-wrapper .PhoneInputInput::placeholder {
   color: #9c9c9c;
 }
+
+.PhoneInputCountryIcon--border {
+  background-color: none !important;
+  box-shadow: none !important;
+}

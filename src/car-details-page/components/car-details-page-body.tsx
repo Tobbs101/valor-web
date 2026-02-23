@@ -889,6 +889,7 @@ const CarDetailsPageBody = () => {
             src={carImages[mobileCarouselIndex]?.url || Highlander}
             alt={capitalizedCarName}
             fill
+            sizes="100vw"
             priority
             className="object-cover cursor-pointer"
             onClick={handleMobileCarouselTap}
@@ -1437,6 +1438,7 @@ const CarDetailsPageBody = () => {
                         src={car.carImages?.frontView?.url || Highlander}
                         alt={`${car.carDetails?.carMake || ""} ${car.carDetails?.carModel || ""}`}
                         fill
+                        sizes="100vw"
                         className="object-cover"
                       />
                       {/* Heart Icon */}
@@ -2123,19 +2125,19 @@ const CarDetailsPageBody = () => {
                         <button
                           key={idx}
                           disabled={item.disabled || !item.day}
-                          onClick={() =>
-                            item.day &&
-                            !item.disabled &&
-                            setSelectedDate(item.day as number)
-                          }
-                          className={`py-1.5 rounded-full transition-colors ${
+                          // onClick={() =>
+                          //   item.day &&
+                          //   !item.disabled &&
+                          //   setSelectedDate(item.day as number)
+                          // }
+                          className={`py-1.5 cursor-text rounded-full transition-colors ${
                             !item.day
                               ? ""
                               : item.disabled
-                                ? "text-[#D1D5DB] bg-gray-50 line-through cursor-not-allowed"
+                                ? "text-[#D1D5DB] bg-gray-100 line-through cursor-not-allowed"
                                 : selectedDate === item.day
                                   ? "bg-primary text-white"
-                                  : "text-[#646464] hover:bg-gray-100"
+                                  : "text-black"
                           }`}
                         >
                           {item.day || ""}
@@ -2167,6 +2169,7 @@ const CarDetailsPageBody = () => {
                         src={car.carImages?.frontView?.url || Highlander}
                         alt={`${car.carDetails?.carMake || ""} ${car.carDetails?.carModel || ""}`}
                         fill
+                        sizes="100vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       {/* Rating Badge */}

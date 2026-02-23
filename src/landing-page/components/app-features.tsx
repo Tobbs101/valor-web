@@ -128,6 +128,7 @@ const AppFeatures = () => {
                     src={FleetRentals}
                     alt="Fleet rentals"
                     fill
+                    sizes="100vw"
                     priority
                     className="object-cover"
                   />
@@ -180,6 +181,7 @@ const AppFeatures = () => {
                     alt="SIG Motors"
                     fill
                     priority
+                    sizes="100vw"
                     className="object-cover"
                   />
                 </div>
