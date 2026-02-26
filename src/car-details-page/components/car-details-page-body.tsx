@@ -594,6 +594,7 @@ const CarDetailsPageBody = () => {
       "passengerSide",
       "frontSeat",
       "rearSeat",
+      "plateNumber",
     ];
     imageKeys.forEach((key) => {
       const img = vehicleData.carImages[key];
@@ -857,6 +858,7 @@ const CarDetailsPageBody = () => {
         carId={(params?.car_id as string) || ""}
         hostId={vehicleData?.host?._id || ""}
         carName={capitalizedCarName}
+        unavailableDates={vehicleData?.unAvailableDates || []}
       />
 
       {/* Mobile View */}

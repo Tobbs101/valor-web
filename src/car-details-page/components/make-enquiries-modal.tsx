@@ -35,6 +35,7 @@ interface MakeEnquiriesModalProps {
   carId: string;
   hostId: string;
   carName?: string;
+  unavailableDates?: string[];
 }
 
 interface LocationData {
@@ -136,6 +137,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
   onClose,
   carId,
   hostId,
+  unavailableDates: unavailableDateRanges = [],
 }) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -167,6 +169,26 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
 
   const isAirportRelated =
     jobType === "Airport Pickup" || jobType === "Airport Drop";
+
+  // Parse unavailable date ranges (format "2026-03-06:2026-03-10") into Date objects
+  const disabledDates = React.useMemo(() => {
+    const dates: Date[] = [];
+    unavailableDateRanges.forEach((range: string) => {
+      const [start, end] = range.split(":");
+      if (start && end) {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        const current = new Date(startDate);
+        while (current <= endDate) {
+          dates.push(new Date(current));
+          current.setDate(current.getDate() + 1);
+        }
+      } else if (start) {
+        dates.push(new Date(start));
+      }
+    });
+    return dates;
+  }, [unavailableDateRanges]);
 
   // Handler for job type change
   const handleJobTypeChange = (newJobType: string) => {
@@ -611,14 +633,14 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                           mode="single"
                           selected={tripDates[0]}
                           onSelect={handleDateSelect}
-                          disabled={{ before: new Date() }}
+                          disabled={[{ before: new Date() }, ...disabledDates]}
                         />
                       ) : (
                         <DayPicker
                           mode="multiple"
                           selected={tripDates}
                           onSelect={handleDateSelect}
-                          disabled={{ before: new Date() }}
+                          disabled={[{ before: new Date() }, ...disabledDates]}
                         />
                       )}
                     </div>

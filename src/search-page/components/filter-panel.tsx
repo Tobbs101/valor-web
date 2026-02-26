@@ -164,15 +164,6 @@ const fallbackVehicleColors = [
   "Green",
 ];
 
-const seatOptions = [
-  "All seats",
-  "2 Seats",
-  "4 Seats",
-  "5 Seats",
-  "7 Seats",
-  "8+ Seats",
-];
-
 const minYearOptions = (() => {
   const currentYear = new Date().getFullYear();
   const years = [""];
@@ -279,8 +270,11 @@ const FilterPanel = ({
   const [selectedVehicleColor, setSelectedVehicleColor] = useState(
     filters.carColor || "All",
   );
-  const [selectedSeats, setSelectedSeats] = useState(
-    filters.capacity || "All seats",
+  const [minSeats, setMinSeats] = useState(
+    filters.capacity?.split(",")[0] || "",
+  );
+  const [maxSeats, setMaxSeats] = useState(
+    filters.capacity?.split(",")[1] || "",
   );
   const [selectedDate, setSelectedDate] = useState(
     filters.availableDates?.[0] || "All dates",
@@ -301,6 +295,7 @@ const FilterPanel = ({
   // Debounce timer refs
   const priceDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const yearDebounceRef = useRef<NodeJS.Timeout | null>(null);
+  const seatsDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialMount = useRef(true);
 
   // Fetch vehicle makes from API
@@ -454,10 +449,7 @@ const FilterPanel = ({
         selectedVehicleColor !== "All"
           ? selectedVehicleColor.toLowerCase()
           : undefined,
-      capacity:
-        selectedSeats !== "All seats"
-          ? selectedSeats.replace(" Seats", "").replace("+", "")
-          : undefined,
+      capacity: minSeats || maxSeats ? `${minSeats},${maxSeats}` : undefined,
       availableDates:
         selectedDates.length > 0
           ? selectedDates.map((d) => format(d, "yyyy-MM-dd"))
@@ -484,7 +476,8 @@ const FilterPanel = ({
     selectedVehicleGlass,
     selectedVehicleCondition,
     selectedVehicleColor,
-    selectedSeats,
+    minSeats,
+    maxSeats,
     selectedDates,
     setFilters,
     onApplyFilters,
@@ -508,7 +501,6 @@ const FilterPanel = ({
     selectedVehicleGlass,
     selectedVehicleCondition,
     selectedVehicleColor,
-    selectedSeats,
     selectedDates,
   ]);
 
@@ -547,6 +539,24 @@ const FilterPanel = ({
       }
     };
   }, [minYear, maxYear, autoApply]);
+
+  // Debounced auto-apply for seats fields (only when both have values)
+  useEffect(() => {
+    if (isInitialMount.current) return;
+    if (seatsDebounceRef.current) {
+      clearTimeout(seatsDebounceRef.current);
+    }
+    if (minSeats && maxSeats) {
+      seatsDebounceRef.current = setTimeout(() => {
+        autoApply();
+      }, 500);
+    }
+    return () => {
+      if (seatsDebounceRef.current) {
+        clearTimeout(seatsDebounceRef.current);
+      }
+    };
+  }, [minSeats, maxSeats, autoApply]);
 
   const handleDateSelect = (dates: Date[] | undefined) => {
     setSelectedDates(dates || []);
@@ -647,11 +657,11 @@ const FilterPanel = ({
         value: selectedVehicleColor,
       });
     }
-    if (selectedSeats !== "All seats") {
+    if (minSeats || maxSeats) {
       activeFilters.push({
         key: "seats",
         label: "Seats",
-        value: selectedSeats,
+        value: `${minSeats || "1"} - ${maxSeats || "100"}`,
       });
     }
     return activeFilters;
@@ -675,7 +685,7 @@ const FilterPanel = ({
     if (selectedVehicleGlass !== "All") count++;
     if (selectedVehicleCondition !== "All") count++;
     if (selectedVehicleColor !== "All") count++;
-    if (selectedSeats !== "All seats") count++;
+    if (minSeats || maxSeats) count++;
     return count;
   };
 
@@ -741,10 +751,7 @@ const FilterPanel = ({
         selectedVehicleColor !== "All"
           ? selectedVehicleColor.toLowerCase()
           : undefined,
-      capacity:
-        selectedSeats !== "All seats"
-          ? selectedSeats.replace(" Seats", "").replace("+", "")
-          : undefined,
+      capacity: minSeats || maxSeats ? `${minSeats},${maxSeats}` : undefined,
       availableDates:
         selectedDates.length > 0
           ? selectedDates.map((d) => format(d, "yyyy-MM-dd"))
@@ -778,7 +785,8 @@ const FilterPanel = ({
     setSelectedVehicleGlass("All");
     setSelectedVehicleCondition("All");
     setSelectedVehicleColor("All");
-    setSelectedSeats("All seats");
+    setMinSeats("");
+    setMaxSeats("");
     setSelectedDate("All dates");
     setSelectedCalendarDate(null);
     await onApplyFilters?.();
@@ -1213,21 +1221,42 @@ const FilterPanel = ({
 
                 {/* Number of Seats Filter */}
                 <FilterSection title="Number of Seats">
-                  <Select
-                    value={selectedSeats}
-                    onValueChange={setSelectedSeats}
-                  >
-                    <SelectTrigger className="w-full h-[50px] rounded-full border border-gray-200 bg-gray-50/50 pl-5 pr-4 text-sm font-medium focus:ring-0 focus:ring-offset-0">
-                      <SelectValue placeholder="Select Seats" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[300px] z-[10000]">
-                      {seatOptions.map((seat) => (
-                        <SelectItem key={seat} value={seat} className="text-sm">
-                          {seat}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex flex-col flex-wrap gap-3">
+                    <input
+                      type="number"
+                      placeholder="Min (1)"
+                      min={1}
+                      max={100}
+                      value={minSeats}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (
+                          val === "" ||
+                          (Number(val) >= 1 && Number(val) <= 100)
+                        ) {
+                          setMinSeats(val);
+                        }
+                      }}
+                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
+                    />
+                    <input
+                      type="number"
+                      placeholder="Max (2-100)"
+                      min={2}
+                      max={100}
+                      value={maxSeats}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (
+                          val === "" ||
+                          (Number(val) >= 2 && Number(val) <= 100)
+                        ) {
+                          setMaxSeats(val);
+                        }
+                      }}
+                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
+                    />
+                  </div>
                 </FilterSection>
               </div>
 
@@ -1651,18 +1680,36 @@ const FilterPanel = ({
 
         {/* Number of Seats Filter */}
         <FilterSection title="Number of Seats">
-          <Select value={selectedSeats} onValueChange={setSelectedSeats}>
-            <SelectTrigger className="w-full h-[44px] rounded-lg border border-gray-200 bg-gray-50/50 px-4 text-sm font-medium focus:ring-0 focus:ring-offset-0">
-              <SelectValue placeholder="Select Seats" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {seatOptions.map((seat) => (
-                <SelectItem key={seat} value={seat} className="text-sm">
-                  {seat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex flex-col gap-3">
+            <input
+              type="number"
+              placeholder="Min (1)"
+              min={1}
+              max={100}
+              value={minSeats}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || (Number(val) >= 1 && Number(val) <= 100)) {
+                  setMinSeats(val);
+                }
+              }}
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
+            />
+            <input
+              type="number"
+              placeholder="Max (2-100)"
+              min={2}
+              max={100}
+              value={maxSeats}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || (Number(val) >= 2 && Number(val) <= 100)) {
+                  setMaxSeats(val);
+                }
+              }}
+              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
+            />
+          </div>
         </FilterSection>
 
         {/* Selected Filters Display */}
