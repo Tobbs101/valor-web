@@ -594,7 +594,7 @@ const CarDetailsPageBody = () => {
       "passengerSide",
       "frontSeat",
       "rearSeat",
-      "plateNumber",
+      // "plateNumber",
     ];
     imageKeys.forEach((key) => {
       const img = vehicleData.carImages[key];

@@ -440,7 +440,7 @@ const FilterPanel = ({
       availableFullDay: availableFullDayValue,
       vehicleGlass: vehicleGlassValue,
       condition: conditionValue,
-      carColor:
+      color:
         selectedVehicleColor !== "All"
           ? selectedVehicleColor.toLowerCase()
           : undefined,
