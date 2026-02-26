@@ -418,13 +418,8 @@ const FilterPanel = ({
           ? "not_upgraded"
           : undefined;
 
-    // Map availableFullDay: "Full day" -> "yes", other services -> "no"
-    const availableFullDayValue =
-      selectedService === "All services"
-        ? undefined
-        : selectedService === "Full day"
-          ? "yes"
-          : "no";
+    // Map availableFullDay: "Full day" -> "yes", otherwise -> "no"
+    const availableFullDayValue = selectedService === "Full day" ? "yes" : "no";
 
     // Combine minYear and maxYear into makeYear format
     const makeYearValue =
@@ -719,13 +714,8 @@ const FilterPanel = ({
           ? "not_upgraded"
           : undefined;
 
-    // Map availableFullDay: "Full day" -> "yes", other services -> "no"
-    const availableFullDayValue =
-      selectedService === "All services"
-        ? undefined
-        : selectedService === "Full day"
-          ? "yes"
-          : "no";
+    // Map availableFullDay: "Full day" -> "yes", otherwise -> "no"
+    const availableFullDayValue = selectedService === "Full day" ? "yes" : "no";
 
     // Combine minYear and maxYear into makeYear format
     const makeYearValue =
@@ -1316,7 +1306,7 @@ const FilterPanel = ({
       <motion.aside
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="w-[350px] sticky top-[100px] h-fit border border-gray-200 rounded-lg p-5 flex-shrink-0 hidden lg:block"
+        className="w-[350px] lg:overflow-y-auto border border-gray-200 rounded-lg p-5 flex-shrink-0 hidden lg:block"
       >
         {/* Filter Header */}
         <div className="flex items-center justify-between mb-6 pb-5 border-b border-gray-200">

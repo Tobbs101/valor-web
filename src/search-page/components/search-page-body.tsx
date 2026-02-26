@@ -195,7 +195,7 @@ const SearchPageBody = () => {
           </div>
         </div>
 
-        <div className="flex gap-8">
+        <div className="flex gap-8 lg:h-[calc(100vh-250px)]">
           {/* Desktop Filter Sidebar */}
 
           <FilterPanel
@@ -214,7 +214,7 @@ const SearchPageBody = () => {
           />
 
           {/* Car Results Grid */}
-          <div className="flex-1">
+          <div className="flex-1 lg:overflow-y-auto">
             {!showFilter && (
               <button
                 onClick={() => setShowFilter(true)}
