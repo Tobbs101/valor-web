@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronDown, ArrowRight, CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrencyNGN, formatCurrencyNGNLabel } from "@/lib/utils";
 import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
 import { useQuery } from "react-query";
@@ -422,15 +422,14 @@ const FilterPanel = ({
     const availableFullDayValue = selectedService === "Full day" ? "yes" : "no";
 
     // Combine minYear and maxYear into makeYear format
-    const makeYearValue =
-      minYear && maxYear ? `${minYear},${maxYear}` : undefined;
+    const makeYearValue = maxYear ? `${minYear || "0"},${maxYear}` : undefined;
 
     const apiFilters = {
       sortOrder: filters.sortOrder || "",
       sortBy: filters.sortBy || "",
       page: filters.page || 1,
       limit: filters.limit || 90,
-      cost: minPrice || maxPrice ? `${minPrice},${maxPrice}` : undefined,
+      cost: maxPrice ? `${minPrice || "0"},${maxPrice}` : undefined,
       carType: selectedVehicleType ? [selectedVehicleType] : undefined,
       state: selectedState || undefined,
       carMake: selectedMake !== "All makes" ? selectedMake : undefined,
@@ -505,7 +504,7 @@ const FilterPanel = ({
     if (priceDebounceRef.current) {
       clearTimeout(priceDebounceRef.current);
     }
-    if (minPrice && maxPrice) {
+    if (maxPrice) {
       priceDebounceRef.current = setTimeout(() => {
         autoApply();
       }, 500);
@@ -523,7 +522,7 @@ const FilterPanel = ({
     if (yearDebounceRef.current) {
       clearTimeout(yearDebounceRef.current);
     }
-    if (minYear && maxYear) {
+    if (maxYear) {
       yearDebounceRef.current = setTimeout(() => {
         autoApply();
       }, 500);
@@ -570,7 +569,7 @@ const FilterPanel = ({
       activeFilters.push({
         key: "price",
         label: "Price",
-        value: `₦${minPrice || "0"} - ₦${maxPrice || "∞"}`,
+        value: `${formatCurrencyNGNLabel(minPrice) || "0"} - ${formatCurrencyNGNLabel(maxPrice) || "∞"}`,
       });
     }
     if (selectedVehicleType) {
@@ -718,8 +717,7 @@ const FilterPanel = ({
     const availableFullDayValue = selectedService === "Full day" ? "yes" : "no";
 
     // Combine minYear and maxYear into makeYear format
-    const makeYearValue =
-      minYear && maxYear ? `${minYear},${maxYear}` : undefined;
+    const makeYearValue = maxYear ? `${minYear || "0"},${maxYear}` : undefined;
 
     const apiFilters = {
       sortOrder: filters.sortOrder || "",
@@ -727,7 +725,7 @@ const FilterPanel = ({
       page: filters.page || 1,
       limit: filters.limit || 90,
       // Map UI fields
-      cost: minPrice || maxPrice ? `${minPrice},${maxPrice}` : undefined,
+      cost: maxPrice ? `${minPrice || "0"},${maxPrice}` : undefined,
       carType: selectedVehicleType ? [selectedVehicleType] : undefined,
       state: selectedState || undefined,
       carMake: selectedMake !== "All makes" ? selectedMake : undefined,

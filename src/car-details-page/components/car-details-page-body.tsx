@@ -198,7 +198,10 @@ const PhotoGalleryModal = ({
 
       {/* Image Counter */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
-        {currentIndex + 1} / {images.length}
+        {currentIndex + 1} / {images.length} -{" "}
+        <span className="capitalize">
+          {images[currentIndex]?.name.replace(/([A-Z])/g, " $1").trim()}
+        </span>
       </div>
     </div>
   );
@@ -583,6 +586,8 @@ const CarDetailsPageBody = () => {
 
   const vehicleData = currentCarData?.data;
 
+  // console.log("Vehicle Data:", vehicleData);
+
   // Extract car images for gallery
   const carImages = useMemo(() => {
     if (!vehicleData?.carImages) return [];
@@ -604,6 +609,8 @@ const CarDetailsPageBody = () => {
     });
     return images;
   }, [vehicleData?.carImages]);
+
+  // console.log("Car Images:", carImages);
 
   // Parse unavailable dates from API format "2026-03-06:2026-03-10"
   const unavailableDates = useMemo(() => {

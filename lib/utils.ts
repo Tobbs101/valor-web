@@ -52,6 +52,7 @@ export const formatCurrencyNGNLabel = (value: number | string) => {
   const nigerianNaira = new Intl.NumberFormat("en-ng", {
     style: "currency",
     currency: "NGN",
+    maximumFractionDigits: 0,
   });
 
   return nigerianNaira.format(parsedValue);
@@ -151,7 +152,7 @@ export function nameToColor(name: string) {
 export function formatToPounds(
   amount: number | string,
   minDigits?: number,
-  maxDigits?: number
+  maxDigits?: number,
 ): string {
   const numericAmount =
     typeof amount === "string" ? parseFloat(amount).toFixed(2) : amount;
