@@ -292,6 +292,27 @@ const FilterPanel = ({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isFilterLoading, setIsFilterLoading] = useState(false);
 
+  // Format a raw number string as naira for display (e.g. "150000" -> "₦150,000")
+  const formatNairaDisplay = (value: string) => {
+    if (!value) return "";
+    const num = Number(value);
+    if (isNaN(num)) return "";
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      maximumFractionDigits: 0,
+    }).format(num);
+  };
+
+  // Strip non-numeric characters from input and update state with raw number
+  const handlePriceChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: (val: string) => void,
+  ) => {
+    const raw = e.target.value.replace(/[^0-9]/g, "");
+    setter(raw);
+  };
+
   // Debounce timer refs
   const priceDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const yearDebounceRef = useRef<NodeJS.Timeout | null>(null);
@@ -827,17 +848,19 @@ const FilterPanel = ({
                 <FilterSection title="Price">
                   <div className="flex flex-col flex-wrap gap-3">
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       placeholder="Min"
-                      value={minPrice}
-                      onChange={(e) => setMinPrice(e.target.value)}
+                      value={formatNairaDisplay(minPrice)}
+                      onChange={(e) => handlePriceChange(e, setMinPrice)}
                       className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
                     />
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       placeholder="Max"
-                      value={maxPrice}
-                      onChange={(e) => setMaxPrice(e.target.value)}
+                      value={formatNairaDisplay(maxPrice)}
+                      onChange={(e) => handlePriceChange(e, setMaxPrice)}
                       className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
                     />
                   </div>
@@ -1321,17 +1344,19 @@ const FilterPanel = ({
         <FilterSection title="Price">
           <div className="flex flex-col gap-3">
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
               placeholder="Min"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
+              value={formatNairaDisplay(minPrice)}
+              onChange={(e) => handlePriceChange(e, setMinPrice)}
               className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
             />
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
               placeholder="Max"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
+              value={formatNairaDisplay(maxPrice)}
+              onChange={(e) => handlePriceChange(e, setMaxPrice)}
               className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
             />
           </div>

@@ -2,12 +2,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ReactNode } from "react";
-import PracticePaper1 from "@/assets/practice-papers/practice-paper1.png";
-import PracticePaper2 from "@/assets/practice-papers/practice-paper2.png";
-import PracticePaper3 from "@/assets/practice-papers/practice-paper3.png";
-import PracticePaper4 from "@/assets/practice-papers/practice-paper4.png";
-import PracticePaper5 from "@/assets/practice-papers/practice-paper5.png";
-import Bundle from "@/assets/practice-papers/bundle.png";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -168,37 +162,3 @@ export function formatToPounds(
     minimumFractionDigits: minDigits || 0,
   }).format(Number(numericAmount));
 }
-
-export const papers = [
-  {
-    name: "GL Practice Paper 1",
-    price: 9.99,
-    image: PracticePaper1,
-    link: "https://courses.limitbreakers.co.uk/enroll/3202888?price_id=4089",
-  },
-  {
-    name: "GL Practice Paper 2",
-    price: 9.99,
-    image: PracticePaper2,
-    link: "https://courses.limitbreakers.co.uk/enroll/3211457?price_id=4099961",
-  },
-  {
-    name: "GL Practice Paper 3",
-    price: 9.99,
-    image: PracticePaper3,
-    link: "https://courses.limitbreakers.co.uk/enroll/3218027?price_id=4107313",
-  },
-  {
-    name: "GL Practice Paper 4",
-    price: 9.99,
-    image: PracticePaper4,
-    link: "https://courses.limitbreakers.co.uk/enroll/3252792?price_id=4146675",
-  },
-  // { name: "GL Practice Paper 5", price: 9.99, image: PracticePaper5 },
-  {
-    name: "GL Practice Paper 1-4 Bundle",
-    price: 34.99,
-    image: Bundle,
-    link: "https://courses.limitbreakers.co.uk/enroll/3243764?price_id=4136442",
-  },
-];
