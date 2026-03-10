@@ -34,12 +34,13 @@ interface VehicleType {
 
 // Fallback vehicle types with icons
 const fallbackVehicleTypes: VehicleType[] = [
-  { id: "Sedan", name: "Sedan", icon: "mdi:car-sedan" },
   { id: "SUV", name: "SUV", icon: "mdi:car-suv" },
+  { id: "Sedan", name: "Sedan", icon: "mdi:car-convertible" },
   { id: "Luxury", name: "Luxury", icon: "mdi:car-sports" },
-  { id: "Vintage", name: "Vintage", icon: "mdi:car-convertible" },
+  { id: "Bus", name: "Bus", icon: "mdi:bus" },
   { id: "Pick Up", name: "Pick Up", icon: "mdi:car-pickup" },
   { id: "Mini-van", name: "Mini-van", icon: "mdi:van-passenger" },
+  { id: "Vintage", name: "Vintage", icon: "mdi:car-convertible" },
 ];
 
 // Icon mapping for car types from API
@@ -346,16 +347,18 @@ const FilterPanel = ({
   });
 
   // Build vehicle types with API data or fallback
-  const vehicleTypes: VehicleType[] =
-    carTypes?.data?.length > 0
-      ? carTypes.data.map(
-          (item: { _id: string; carType: string; createdBy: string }) => ({
-            id: item.carType,
-            name: item.carType,
-            icon: carTypeIconMap[item.carType] || "mdi:car-sports",
-          }),
-        )
-      : fallbackVehicleTypes;
+  // const vehicleTypes: VehicleType[] =
+  //   carTypes?.data?.length > 0
+  //     ? carTypes.data.map(
+  //         (item: { _id: string; carType: string; createdBy: string }) => ({
+  //           id: item.carType,
+  //           name: item.carType,
+  //           icon: carTypeIconMap[item.carType] || "mdi:car-sports",
+  //         }),
+  //       )
+  //     : fallbackVehicleTypes;
+
+  const vehicleTypes = fallbackVehicleTypes;
 
   // Build car make options with API data or fallback
   const carMakeOptions = [
@@ -399,10 +402,8 @@ const FilterPanel = ({
     setSelectedState(filters.state || "");
   }, [filters.carType, filters.state]);
 
-  // Auto-apply function with loading overlay
-  const autoApply = useCallback(async () => {
-    setIsFilterLoading(true);
-
+  // Helper function to build API filters from current state
+  const buildApiFilters = useCallback(() => {
     // Map transmission to lowercase
     const transmissionValue =
       selectedTransmission === "Manual"
@@ -427,14 +428,13 @@ const FilterPanel = ({
           ? "not_upgraded"
           : undefined;
 
-    // Map service: only send a value when a specific service is selected
-    const availableFullDayValue =
-      selectedService !== "All services" ? "yes" : undefined;
+    // Map service: "yes" only if Full day is selected, otherwise "no"
+    const availableFullDayValue = selectedService === "Full day" ? "yes" : "no";
 
     // Combine minYear and maxYear into makeYear format
     const makeYearValue = maxYear ? `${minYear || "0"},${maxYear}` : undefined;
 
-    const apiFilters = {
+    return {
       sortOrder: filters.sortOrder || "",
       sortBy: filters.sortBy || "",
       page: filters.page || 1,
@@ -449,7 +449,7 @@ const FilterPanel = ({
       availableFullDay: availableFullDayValue,
       vehicleGlass: vehicleGlassValue,
       condition: conditionValue,
-      color:
+      carColor:
         selectedVehicleColor !== "All"
           ? selectedVehicleColor.toLowerCase()
           : undefined,
@@ -459,9 +459,6 @@ const FilterPanel = ({
           ? selectedDates.map((d) => format(d, "yyyy-MM-dd"))
           : undefined,
     };
-    setFilters(apiFilters);
-    await onApplyFilters?.();
-    setIsFilterLoading(false);
   }, [
     filters.sortOrder,
     filters.sortBy,
@@ -483,9 +480,16 @@ const FilterPanel = ({
     minSeats,
     maxSeats,
     selectedDates,
-    setFilters,
-    onApplyFilters,
   ]);
+
+  // Auto-apply function with loading overlay
+  const autoApply = useCallback(async () => {
+    setIsFilterLoading(true);
+    const apiFilters = buildApiFilters();
+    setFilters(apiFilters);
+    await onApplyFilters?.();
+    setIsFilterLoading(false);
+  }, [buildApiFilters, setFilters]);
 
   // Auto-apply for non min/max fields
   useEffect(() => {
@@ -494,7 +498,6 @@ const FilterPanel = ({
       return;
     }
     autoApply();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectedVehicleType,
     selectedState,
@@ -508,6 +511,7 @@ const FilterPanel = ({
     selectedDates,
     minYear,
     maxYear,
+    autoApply,
   ]);
 
   // Debounced auto-apply for price fields (only when both have values)
@@ -519,7 +523,7 @@ const FilterPanel = ({
     if (maxPrice) {
       priceDebounceRef.current = setTimeout(() => {
         autoApply();
-      }, 500);
+      }, 2000);
     }
     return () => {
       if (priceDebounceRef.current) {
@@ -682,64 +686,7 @@ const FilterPanel = ({
   // Map UI state to API payload
   const handleApply = async (isMobile?: boolean) => {
     setIsFilterLoading(true);
-
-    // Map transmission to lowercase
-    const transmissionValue =
-      selectedTransmission === "Manual"
-        ? "manual"
-        : selectedTransmission === "Automatic"
-          ? "automatic"
-          : undefined;
-
-    // Map vehicle glass to API format
-    const vehicleGlassValue =
-      selectedVehicleGlass === "Tinted"
-        ? "tinted"
-        : selectedVehicleGlass === "Not tinted"
-          ? "none_tinted"
-          : undefined;
-
-    // Map vehicle condition to API format
-    const conditionValue =
-      selectedVehicleCondition === "Upgraded"
-        ? "upgraded"
-        : selectedVehicleCondition === "Not Upgraded"
-          ? "not_upgraded"
-          : undefined;
-
-    // Map service: only send a value when a specific service is selected
-    const availableFullDayValue =
-      selectedService !== "All services" ? "yes" : undefined;
-
-    // Combine minYear and maxYear into makeYear format
-    const makeYearValue = maxYear ? `${minYear || "0"},${maxYear}` : undefined;
-
-    const apiFilters = {
-      sortOrder: filters.sortOrder || "",
-      sortBy: filters.sortBy || "",
-      page: filters.page || 1,
-      limit: filters.limit || 90,
-      // Map UI fields
-      cost: maxPrice ? `${minPrice || "0"},${maxPrice}` : undefined,
-      carType: selectedVehicleType ? [selectedVehicleType] : undefined,
-      state: selectedState || undefined,
-      carMake: selectedMake !== "All makes" ? selectedMake : undefined,
-      carModel: selectedModel !== "All models" ? selectedModel : undefined,
-      transmission: transmissionValue,
-      makeYear: makeYearValue,
-      availableFullDay: availableFullDayValue,
-      vehicleGlass: vehicleGlassValue,
-      condition: conditionValue,
-      carColor:
-        selectedVehicleColor !== "All"
-          ? selectedVehicleColor.toLowerCase()
-          : undefined,
-      capacity: minSeats || maxSeats ? `${minSeats},${maxSeats}` : undefined,
-      availableDates:
-        selectedDates.length > 0
-          ? selectedDates.map((d) => format(d, "yyyy-MM-dd"))
-          : undefined,
-    };
+    const apiFilters = buildApiFilters();
     setFilters(apiFilters);
     await onApplyFilters?.();
     setIsFilterLoading(false);
@@ -864,7 +811,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Available Dates Filter */}
-                <FilterSection title="Available Dates">
+                <FilterSection title="Rental Date">
                   <Popover
                     open={isCalendarOpen}
                     onOpenChange={setIsCalendarOpen}
@@ -1383,7 +1330,7 @@ const FilterPanel = ({
         </FilterSection>
 
         {/* Available Dates Filter */}
-        <FilterSection title="Available Dates">
+        <FilterSection title="Rental Date">
           <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
             <PopoverTrigger asChild>
               <button className="w-full h-[44px] rounded-lg border border-gray-200 bg-gray-50/50 px-4 text-sm font-medium flex items-center justify-between gap-2 hover:bg-gray-100/50 transition-colors">
