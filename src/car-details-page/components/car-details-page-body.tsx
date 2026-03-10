@@ -640,6 +640,8 @@ const CarDetailsPageBody = () => {
     const daysInMonth = getDaysInMonth(new Date(year, month));
     const firstDayOfMonth = getDay(startOfMonth(new Date(year, month)));
     const days: { day: number | ""; disabled: boolean }[] = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
 
     // Add empty slots for days before the first day of month
     for (let i = 0; i < firstDayOfMonth; i++) {
@@ -648,9 +650,11 @@ const CarDetailsPageBody = () => {
 
     // Add actual days
     for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = format(new Date(year, month, day), "yyyy-MM-dd");
+      const currentDate = new Date(year, month, day);
+      const dateStr = format(currentDate, "yyyy-MM-dd");
       const isUnavailable = unavailableDates.has(dateStr);
-      days.push({ day, disabled: isUnavailable });
+      const isPastDate = currentDate < today; // Check if date is before today
+      days.push({ day, disabled: isUnavailable || isPastDate });
     }
 
     return days;
@@ -1330,6 +1334,7 @@ const CarDetailsPageBody = () => {
                     firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
                   const days: React.ReactNode[] = [];
                   const today = new Date();
+                  today.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
 
                   // Add empty slots
                   for (let i = 0; i < adjustedFirstDay; i++) {
@@ -1338,11 +1343,10 @@ const CarDetailsPageBody = () => {
 
                   // Add actual days
                   for (let day = 1; day <= daysInMonth; day++) {
-                    const dateStr = format(
-                      new Date(year, month, day),
-                      "yyyy-MM-dd",
-                    );
+                    const currentDate = new Date(year, month, day);
+                    const dateStr = format(currentDate, "yyyy-MM-dd");
                     const isUnavailable = unavailableDates.has(dateStr);
+                    const isPastDate = currentDate < today; // Check if date is before today
                     const isSelected = selectedDate === day;
                     const isToday =
                       today.getDate() === day &&
@@ -1352,10 +1356,10 @@ const CarDetailsPageBody = () => {
                     days.push(
                       <button
                         key={day}
-                        disabled={isUnavailable}
-                        onClick={() => !isUnavailable && setSelectedDate(day)}
+                        disabled={isUnavailable || isPastDate}
+                        onClick={() => !isUnavailable && !isPastDate && setSelectedDate(day)}
                         className={`py-2 rounded-full transition-colors ${
-                          isUnavailable
+                          isUnavailable || isPastDate
                             ? "text-[#D1D5DB] cursor-not-allowed"
                             : isSelected
                               ? "bg-primary text-white"
