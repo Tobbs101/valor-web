@@ -1357,7 +1357,9 @@ const CarDetailsPageBody = () => {
                       <button
                         key={day}
                         disabled={isUnavailable || isPastDate}
-                        onClick={() => !isUnavailable && !isPastDate && setSelectedDate(day)}
+                        onClick={() =>
+                          !isUnavailable && !isPastDate && setSelectedDate(day)
+                        }
                         className={`py-2 rounded-full transition-colors ${
                           isUnavailable || isPastDate
                             ? "text-[#D1D5DB] cursor-not-allowed"
