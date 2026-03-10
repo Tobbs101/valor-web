@@ -10,7 +10,7 @@ export interface SearchFilters {
   carType?: string[];
   availableDates?: string[];
   makeYear?: string;
-  availableFullDay?: string;
+  serviceType?: "fullDay" | "airportPickup" | "airportDrop" | "overNight";
   cost?: string;
   userId?: string;
   state?: string;

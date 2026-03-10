@@ -142,6 +142,26 @@ const servicesOptions = [
   "Overnight",
 ];
 
+const serviceTypeMap: Record<
+  string,
+  "fullDay" | "airportPickup" | "airportDrop" | "overNight"
+> = {
+  "Full day": "fullDay",
+  "Airport pick-up": "airportPickup",
+  "Airport drop-off": "airportDrop",
+  Overnight: "overNight",
+};
+
+const serviceTypeReverseMap: Record<
+  "fullDay" | "airportPickup" | "airportDrop" | "overNight",
+  string
+> = {
+  fullDay: "Full day",
+  airportPickup: "Airport pick-up",
+  airportDrop: "Airport drop-off",
+  overNight: "Overnight",
+};
+
 const vehicleGlassOptions = ["All", "Tinted", "Not tinted"];
 
 const vehicleConditionOptions = ["All", "Upgraded", "Not Upgraded"];
@@ -250,7 +270,17 @@ const FilterPanel = ({
   const [maxYear, setMaxYear] = useState(filters.maxYear || "");
   const [makeSearchQuery, setMakeSearchQuery] = useState("");
   const [modelSearchQuery, setModelSearchQuery] = useState("");
-  const [selectedService, setSelectedService] = useState("All services");
+  const [selectedService, setSelectedService] = useState(
+    filters.serviceType
+      ? serviceTypeReverseMap[
+          filters.serviceType as
+            | "fullDay"
+            | "airportPickup"
+            | "airportDrop"
+            | "overNight"
+        ] || "All services"
+      : "All services",
+  );
   const [selectedVehicleGlass, setSelectedVehicleGlass] = useState(
     filters.carTint || "All",
   );
@@ -428,8 +458,11 @@ const FilterPanel = ({
           ? "not_upgraded"
           : undefined;
 
-    // Map service: "yes" only if Full day is selected, otherwise "no"
-    const availableFullDayValue = selectedService === "Full day" ? "yes" : "no";
+    // Map service option to API serviceType
+    const serviceTypeValue =
+      selectedService !== "All services"
+        ? serviceTypeMap[selectedService]
+        : undefined;
 
     // Combine minYear and maxYear into makeYear format
     const makeYearValue = maxYear ? `${minYear || "0"},${maxYear}` : undefined;
@@ -446,7 +479,7 @@ const FilterPanel = ({
       carModel: selectedModel !== "All models" ? selectedModel : undefined,
       transmission: transmissionValue,
       makeYear: makeYearValue,
-      availableFullDay: availableFullDayValue,
+      serviceType: serviceTypeValue,
       vehicleGlass: vehicleGlassValue,
       condition: conditionValue,
       carColor:

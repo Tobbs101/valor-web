@@ -55,7 +55,7 @@ const SearchPageBody = () => {
     if (filters.availableDates?.length) count++;
     if (filters.capacity) count++;
     if (filters.makeYear) count++;
-    if (filters.availableFullDay) count++;
+    if (filters.serviceType) count++;
     return count;
   };
   const activeFilterCount = getActiveFilterCount();
