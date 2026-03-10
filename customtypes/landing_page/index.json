@@ -1,0 +1,226 @@
+{
+  "format": "page",
+  "id": "landing_page",
+  "label": "Landing Page",
+  "repeatable": false,
+  "status": true,
+  "json": {
+    "Main": {
+      "hero_title": {
+        "type": "Text",
+        "config": {
+          "label": "Hero Title",
+          "placeholder": "Hire any car with ease"
+        }
+      },
+      "hero_subtitle": {
+        "type": "Text",
+        "config": {
+          "label": "Hero Subtitle",
+          "placeholder": "Book from a variety of vetted hosts and make payment securely using our platform."
+        }
+      },
+      "hero_image": {
+        "type": "Image",
+        "config": {
+          "label": "Hero Background Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      },
+      "hero_cta_text": {
+        "type": "Text",
+        "config": {
+          "label": "Hero CTA Text",
+          "placeholder": "Get Bids From Hosts"
+        }
+      },
+      "popular_rides_title": {
+        "type": "Text",
+        "config": {
+          "label": "Popular Rides Title",
+          "placeholder": "Popular Rides"
+        }
+      },
+      "popular_rides_cta_text": {
+        "type": "Text",
+        "config": {
+          "label": "Popular Rides CTA Text",
+          "placeholder": "View All"
+        }
+      },
+      "car_selection_title": {
+        "type": "Text",
+        "config": {
+          "label": "Car Selection Title",
+          "placeholder": "Car Selection"
+        }
+      },
+      "car_selection_description": {
+        "type": "Text",
+        "config": {
+          "label": "Car Selection Description",
+          "placeholder": "From small cars to premium rides, the Valor Hire platform offers a wide range of vehicles."
+        }
+      },
+      "what_valor_gives_title": {
+        "type": "Text",
+        "config": {
+          "label": "What Valor Gives You Title",
+          "placeholder": "What Valor Gives You"
+        }
+      },
+      "what_valor_gives_description": {
+        "type": "Text",
+        "config": {
+          "label": "What Valor Gives You Description",
+          "placeholder": "Book from a variety of vetted hosts and make payment securely using our platform"
+        }
+      },
+      "app_features_title": {
+        "type": "Text",
+        "config": {
+          "label": "App Features Title",
+          "placeholder": "App Features"
+        }
+      },
+      "app_features_subtitle": {
+        "type": "Text",
+        "config": {
+          "label": "App Features Subtitle",
+          "placeholder": "Here are some unique features and advantages of using the Valor app."
+        }
+      },
+      "safe_transactions_title": {
+        "type": "Text",
+        "config": {
+          "label": "Safe Transactions Title",
+          "placeholder": "Safe transactions"
+        }
+      },
+      "safe_transactions_description": {
+        "type": "Text",
+        "config": {
+          "label": "Safe Transactions Description",
+          "placeholder": "Payment is made to Valor and will only be released to the Host once the job has been successfully completed."
+        }
+      },
+      "verified_vehicles_title": {
+        "type": "Text",
+        "config": {
+          "label": "Verified Vehicles Title",
+          "placeholder": "Verified Vehicles and Hosts"
+        }
+      },
+      "verified_vehicles_description": {
+        "type": "Text",
+        "config": {
+          "label": "Verified Vehicles Description",
+          "placeholder": "Every vehicle and host on Valor undergoes a strict vetting process."
+        }
+      },
+      "trip_tracking_title": {
+        "type": "Text",
+        "config": {
+          "label": "Trip Tracking Title",
+          "placeholder": "Trip Tracking"
+        }
+      },
+      "trip_tracking_description": {
+        "type": "Text",
+        "config": {
+          "label": "Trip Tracking Description",
+          "placeholder": "Track your trips in real-time for safety and peace of mind."
+        }
+      },
+      "how_it_works_title": {
+        "type": "Text",
+        "config": {
+          "label": "How It Works Title",
+          "placeholder": "How It Works"
+        }
+      },
+      "how_it_works_steps": {
+        "type": "Group",
+        "config": {
+          "label": "How It Works Steps",
+          "fields": {
+            "step_title": {
+              "type": "Text",
+              "config": {
+                "label": "Step Title",
+                "placeholder": ""
+              }
+            },
+            "step_description": {
+              "type": "Text",
+              "config": {
+                "label": "Step Description",
+                "placeholder": ""
+              }
+            }
+          }
+        }
+      },
+      "rental_options_title": {
+        "type": "Text",
+        "config": {
+          "label": "Rental Options Title",
+          "placeholder": "Rental Options"
+        }
+      },
+      "rental_options_description": {
+        "type": "Text",
+        "config": {
+          "label": "Rental Options Description",
+          "placeholder": ""
+        }
+      },
+      "experience_valor_title": {
+        "type": "Text",
+        "config": {
+          "label": "Experience Valor Title",
+          "placeholder": "Experience Valor"
+        }
+      },
+      "experience_valor_description": {
+        "type": "Text",
+        "config": {
+          "label": "Experience Valor Description",
+          "placeholder": ""
+        }
+      }
+    },
+    "SEO": {
+      "meta_title": {
+        "type": "Text",
+        "config": {
+          "label": "Meta Title",
+          "placeholder": "Welcome to Valor - Premium Car Rentals in Nigeria"
+        }
+      },
+      "meta_description": {
+        "type": "Text",
+        "config": {
+          "label": "Meta Description",
+          "placeholder": "Discover premium car rentals from trusted hosts across Nigeria."
+        }
+      },
+      "meta_keywords": {
+        "type": "Text",
+        "config": {
+          "label": "Meta Keywords",
+          "placeholder": "valor, car rental, Nigeria, premium"
+        }
+      },
+      "og_image": {
+        "type": "Image",
+        "config": {
+          "label": "OG Image",
+          "constraint": {},
+          "thumbnails": []
+        }
+      }
+    }
+  }
+}

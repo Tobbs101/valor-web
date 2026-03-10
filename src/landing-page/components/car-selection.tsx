@@ -69,7 +69,17 @@ const CategoryCard = ({
   );
 };
 
-const CarSelection = () => {
+const CarSelection = ({
+  sectionTitle,
+  sectionDescription,
+  whatValorTitle,
+  whatValorDescription,
+}: {
+  sectionTitle?: string;
+  sectionDescription?: string;
+  whatValorTitle?: string;
+  whatValorDescription?: string;
+}) => {
   const router = useRouter();
   const { setFilters } = useSearchStore();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -556,7 +566,7 @@ const CarSelection = () => {
           variants={headerVariants}
           className="w-full text-[24px] text-primary leading-[56px] md:mb-3 md:text-[48px] font-[700] text-left"
         >
-          Car Selection
+          {sectionTitle || "Car Selection"}
         </motion.h1>
         <motion.p
           initial="hidden"
@@ -564,9 +574,14 @@ const CarSelection = () => {
           variants={descriptionVariants}
           className="text-[14px] text-[#323232] leading-[20px] md:leading-[24px] md:text-[20px] font-[400] md:text-base"
         >
-          From small cars to premium rides, the Valor Hire platform offers a
-          wide range of vehicles. <br />
-          Whatever you need, we've got you covered.
+          {sectionDescription ||
+            "From small cars to premium rides, the Valor Hire platform offers a wide range of vehicles."}
+          {!sectionDescription && (
+            <>
+              <br />
+              Whatever you need, we&apos;ve got you covered.
+            </>
+          )}
         </motion.p>
 
         {/* Continuous Slider */}
@@ -609,7 +624,7 @@ const CarSelection = () => {
                     transition={{ duration: 0.6 }}
                     className="text-[32px] md:text-[48px] text-white font-[700] leading-[40px] md:leading-[56px] mb-4"
                   >
-                    What Valor Gives You
+                    {whatValorTitle || "What Valor Gives You"}
                   </motion.h2>
                   <motion.p
                     initial={{ opacity: 0, y: 20 }}
@@ -618,8 +633,8 @@ const CarSelection = () => {
                     transition={{ duration: 0.6, delay: 0.1 }}
                     className="text-[16px] md:text-[18px] text-white/80 max-w-[500px] leading-[24px]"
                   >
-                    Book from a variety of vetted hosts and make payment
-                    securely using our platform
+                    {whatValorDescription ||
+                      "Book from a variety of vetted hosts and make payment securely using our platform"}
                   </motion.p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -705,7 +720,7 @@ const CarSelection = () => {
               transition={{ duration: 0.6 }}
               className="text-[24px] md:text-[48px] text-white font-[700] leading-[40px] md:leading-[56px] mb-4"
             >
-              What Valor Gives You
+              {whatValorTitle || "What Valor Gives You"}
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -714,8 +729,8 @@ const CarSelection = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-[14px] md:text-[18px] text-white/80 max-w-[500px] leading-[24px]"
             >
-              Book from a variety of vetted hosts and make payment securely
-              using our platform
+              {whatValorDescription ||
+                "Book from a variety of vetted hosts and make payment securely using our platform"}
             </motion.p>
           </div>
           <motion.div

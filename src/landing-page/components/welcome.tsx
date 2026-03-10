@@ -8,8 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 import { Icon } from "@iconify/react";
-import Image, { StaticImageData } from "next/image";
-import Highlander from "@/assets/highlander.png";
+import Image from "next/image";
 
 import LGA from "@/assets/lga.png";
 import Prembly from "@/assets/prembly.png";
@@ -17,6 +16,9 @@ import Paystack from "@/assets/paystack.png";
 import Fleet from "@/assets/fleet.png";
 import { useRouter } from "next/navigation";
 import PopularRidesCarousel from "./popular-rides-carousel";
+import { fleet } from "@/apis/fleet";
+import { useQuery } from "react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Partner logos
 const partners = [
@@ -46,56 +48,48 @@ const partners = [
   },
 ];
 
-// Sample car data - replace with real data later
-const popularRides = [
-  {
-    id: 1,
-    name: "Toyota Highlander",
-    location: "Lagos, Nigeria",
-    price: 57000,
-    rating: 4.8,
-    image: Highlander, // Replace with actual image
-  },
-  {
-    id: 2,
-    name: "Toyota Highlander",
-    location: "Lagos, Nigeria",
-    price: 57000,
-    rating: 4.8,
-    image: Highlander,
-  },
-  {
-    id: 3,
-    name: "Toyota Highlander",
-    location: "Lagos, Nigeria",
-    price: 57000,
-    rating: 4.8,
-    image: Highlander,
-  },
-  {
-    id: 3,
-    name: "Toyota Highlander",
-    location: "Lagos, Nigeria",
-    price: 57000,
-    rating: 4.8,
-    image: Highlander,
-  },
-];
+// Mapped ride shape for cards
+export interface PopularRide {
+  id: string;
+  name: string;
+  location: string;
+  price: number;
+  rating: number;
+  image: string;
+}
 
-const CarCard = ({
-  car,
-  index,
-}: {
-  car: {
-    id: number;
-    name: string;
-    location: string;
-    price: number;
-    rating: number;
-    image: StaticImageData;
-  };
-  index: number;
-}) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mapSpecialDeals = (data: any[]): PopularRide[] =>
+  data.map((deal) => {
+    const { carMake, carModel, yearString, city } = deal.carDetails;
+    const capitalize = (s: string) =>
+      s
+        .split("-")
+        .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join("-");
+    return {
+      id: deal._id,
+      name: `${capitalize(carMake)} ${capitalize(carModel)} ${yearString}`,
+      location: city ? `${city}, Nigeria` : "Nigeria",
+      price: deal.pricing?.minPrice ?? 0,
+      rating: deal.vehicleRating ?? 0,
+      image: deal.carImages?.frontView?.url ?? "",
+    };
+  });
+
+const CarCardSkeleton = () => (
+  <div className="rounded-[16px] overflow-hidden bg-white shadow-sm border border-gray-100">
+    <Skeleton className="h-[250px] sm:h-[200px] w-full" />
+    <div className="p-4 space-y-3">
+      <Skeleton className="h-6 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="h-4 w-1/4" />
+      <Skeleton className="h-8 w-2/3" />
+    </div>
+  </div>
+);
+
+const CarCard = ({ car, index }: { car: PopularRide; index: number }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.2,
@@ -113,32 +107,36 @@ const CarCard = ({
         delay: index * 0.15,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
-      onClick={() => router.push(`/search/${index + 1}`)}
+      onClick={() => router.push(`/search/${car.id}`)}
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       className="rounded-[16px] overflow-hidden bg-white shadow-sm border border-gray-100 cursor-pointer"
     >
       {/* Image Container */}
       <div className="relative h-[250px] sm:h-[200px] w-full bg-gray-200">
-        <Image
-          src={car.image}
-          alt={car.name}
-          priority
-          fill
-          className="object-cover"
-        />
-        {/* Rating Badge */}
-        <div className="absolute top-3 right-3 bg-white rounded-full px-3 py-1 flex items-center gap-1 shadow-sm">
-          <Icon
-            icon="material-symbols:star"
-            className="text-yellow-500 text-sm"
+        {car.image && (
+          <Image
+            src={car.image}
+            alt={car.name}
+            priority
+            fill
+            className="object-cover"
           />
-          <span className="text-sm font-medium">{car.rating}</span>
-        </div>
+        )}
+        {/* Rating Badge */}
+        {car.rating > 0 && (
+          <div className="absolute top-3 right-3 bg-white rounded-full px-3 py-1 flex items-center gap-1 shadow-sm">
+            <Icon
+              icon="material-symbols:star"
+              className="text-yellow-500 text-sm"
+            />
+            <span className="text-sm font-medium">{car.rating}</span>
+          </div>
+        )}
       </div>
 
       {/* Card Content */}
       <div className="p-4">
-        <h3 className="text-[18px] md:text-[24px] font-[700] text-gray-900 mb-2">
+        <h3 className="text-[18px] md:text-[24px] font-[700] text-gray-900 mb-2 capitalize">
           {car.name}
         </h3>
         <div className="flex items-center gap-1 mb-2">
@@ -168,7 +166,15 @@ const CarCard = ({
   );
 };
 
-const Welcome = ({ headerClass }: { headerClass?: string }) => {
+const Welcome = ({
+  headerClass,
+  sectionTitle,
+  ctaText,
+}: {
+  headerClass?: string;
+  sectionTitle?: string;
+  ctaText?: string;
+}) => {
   const { ref: headerRef, inView: headerInView } = useInView({
     triggerOnce: true,
     threshold: 0.3,
@@ -208,6 +214,19 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
 
   const router = useRouter();
 
+  const { data: specialDeals, isLoading: isDealsLoading } = useQuery(
+    "specialDeals",
+    () => fleet.getSpecialDeals(),
+    {
+      staleTime: 1000 * 60 * 30, // Cache for 30 minutes
+      refetchOnWindowFocus: false,
+    },
+  );
+
+  const popularRides: PopularRide[] = specialDeals?.data
+    ? mapSpecialDeals(specialDeals.data)
+    : [];
+
   return (
     <div className="px-5 bg-white">
       <Container className="py-[30px] sm:py-[70px]">
@@ -234,7 +253,7 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                   headerClass,
                 )}
               >
-                Popular Rides
+                {sectionTitle || "Popular Rides"}
               </motion.h1>
               <motion.div
                 initial="hidden"
@@ -245,14 +264,18 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                   onClick={() => router.push("/search")}
                   className="rounded-[36px] w-[139px] h-[49px] sm:flex hidden text-[14px] text-center font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200"
                 >
-                  View All
+                  {ctaText || "View All"}
                 </Button>
               </motion.div>
             </div>
-            <div className="mt-7 sm:grid hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {popularRides.map((car, index) => (
-                <CarCard key={car.id} car={car} index={index} />
-              ))}
+            <div className="mt-7 sm:grid hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {isDealsLoading
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <CarCardSkeleton key={i} />
+                  ))
+                : popularRides.map((car, index) => (
+                    <CarCard key={car.id} car={car} index={index} />
+                  ))}
             </div>
 
             {/*carousel for mobile */}
@@ -291,7 +314,10 @@ const Welcome = ({ headerClass }: { headerClass?: string }) => {
                 </CarouselContent>
               </Carousel>
             </div> */}
-            <PopularRidesCarousel popularRides={popularRides} />
+            <PopularRidesCarousel
+              popularRides={popularRides}
+              isLoading={isDealsLoading}
+            />
 
             {/* Partners Section */}
             <motion.div

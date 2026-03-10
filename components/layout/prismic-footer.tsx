@@ -92,6 +92,7 @@ const PrismicFooter = ({ data }: PrismicFooterProps) => {
           {/* Logo */}
           {data?.footer_logo?.url ? (
             <PrismicNextImage
+              alt=""
               field={data.footer_logo}
               className="w-40 lg:w-48 h-auto object-contain"
             />

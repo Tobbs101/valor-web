@@ -80,7 +80,19 @@ const letterVariants = {
 
 const lines = ["Hire any car with ease"];
 
-const HeroMd = () => {
+interface HeroMdProps {
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroImage?: string;
+  heroCtaText?: string;
+}
+
+const HeroMd = ({
+  heroTitle,
+  heroSubtitle,
+  heroImage,
+  heroCtaText,
+}: HeroMdProps) => {
   const router = useRouter();
   const { setFilters } = useSearchStore();
 
@@ -136,7 +148,7 @@ const HeroMd = () => {
                 transition={{ delay: 0.5, duration: 0.5, ease: "easeOut" }}
                 className=" text-white mb-1 w-full text-center max-w-[98%] mx-auto text-[32px] md:text-[64px] md:font-[500] font-[700]"
               >
-                Hire any car with ease
+                {heroTitle || "Hire any car with ease"}
               </motion.p>
 
               <motion.p
@@ -145,8 +157,8 @@ const HeroMd = () => {
                 transition={{ delay: 1, duration: 0.5, ease: "easeOut" }}
                 className=" text-white w-full leading-[20px] md:leading-[30px] text-center max-w-[98%] mx-auto text-[16px] md:text-[24px] font-[400]"
               >
-                Book from a variety of vetted hosts and make payment securely
-                using our platform.
+                {heroSubtitle ||
+                  "Book from a variety of vetted hosts and make payment securely using our platform."}
               </motion.p>
 
               <motion.div
@@ -257,18 +269,29 @@ const HeroMd = () => {
                     "duration-300 text-[14px] gap-1 font-[700] flex items-center justify-center outline-none bg-white rounded-[300px] text-primary focus:ring-0 focus-visible:ring-0 cursor-pointer px-10 py-4",
                   )}
                 >
-                  Get Bids From Hosts <ArrowRight className="mt-[2px]" />
+                  {heroCtaText || "Get Bids From Hosts"}{" "}
+                  <ArrowRight className="mt-[2px]" />
                 </button>
               </motion.div>
             </Container>
           </div>
           <div className="absolute top-0 left-0 w-full h-full">
-            <Image
-              priority
-              src={background}
-              alt="Hero Background"
-              className="w-full h-full object-cover"
-            />
+            {heroImage ? (
+              <Image
+                priority
+                src={heroImage}
+                alt="Hero Background"
+                fill
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                priority
+                src={background}
+                alt="Hero Background"
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
           <div className="absolute top-0 left-0 bg-[#0B112A]/70 lg:bg-[#0B112A]/60 z-[1] w-full h-full" />
         </div>

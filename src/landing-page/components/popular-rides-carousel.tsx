@@ -6,29 +6,29 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Car } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { PopularRide } from "./welcome";
 
-const CarCard = ({
-  car,
-  index,
-}: {
-  car: {
-    id: number;
-    name: string;
-    location: string;
-    price: number;
-    rating: number;
-    image: StaticImageData;
-  };
-  index: number;
-}) => {
+const CarCardSkeleton = () => (
+  <div className="rounded-[16px] overflow-hidden bg-white shadow-sm border border-gray-100">
+    <Skeleton className="h-[250px] sm:h-[200px] w-full" />
+    <div className="p-4 space-y-3">
+      <Skeleton className="h-6 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="h-4 w-1/4" />
+      <Skeleton className="h-8 w-2/3" />
+    </div>
+  </div>
+);
+
+const CarCard = ({ car, index }: { car: PopularRide; index: number }) => {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.2,
@@ -46,32 +46,36 @@ const CarCard = ({
         delay: index * 0.15,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
-      onClick={() => router.push(`/search/${index + 1}`)}
+      onClick={() => router.push(`/search/${car.id}`)}
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       className="rounded-[16px] overflow-hidden bg-white shadow-sm border border-gray-100 cursor-pointer"
     >
       {/* Image Container */}
       <div className="relative h-[250px] sm:h-[200px] w-full bg-gray-200">
-        <Image
-          src={car.image}
-          alt={car.name}
-          priority
-          fill
-          className="object-cover"
-        />
-        {/* Rating Badge */}
-        <div className="absolute top-3 right-3 bg-white rounded-full px-3 py-1 flex items-center gap-1 shadow-sm">
-          <Icon
-            icon="material-symbols:star"
-            className="text-yellow-500 text-sm"
+        {car.image && (
+          <Image
+            src={car.image}
+            alt={car.name}
+            priority
+            fill
+            className="object-cover"
           />
-          <span className="text-sm font-medium">{car.rating}</span>
-        </div>
+        )}
+        {/* Rating Badge */}
+        {car.rating > 0 && (
+          <div className="absolute top-3 right-3 bg-white rounded-full px-3 py-1 flex items-center gap-1 shadow-sm">
+            <Icon
+              icon="material-symbols:star"
+              className="text-yellow-500 text-sm"
+            />
+            <span className="text-sm font-medium">{car.rating}</span>
+          </div>
+        )}
       </div>
 
       {/* Card Content */}
       <div className="p-4">
-        <h3 className="text-[18px] md:text-[24px] font-[700] text-gray-900 mb-2">
+        <h3 className="text-[18px] md:text-[24px] font-[700] text-gray-900 mb-2 capitalize">
           {car.name}
         </h3>
         <div className="flex items-center gap-1 mb-2">
@@ -101,7 +105,13 @@ const CarCard = ({
   );
 };
 
-const PopularRidesCarousel = ({ popularRides }: { popularRides: any[] }) => {
+const PopularRidesCarousel = ({
+  popularRides,
+  isLoading = false,
+}: {
+  popularRides: PopularRide[];
+  isLoading?: boolean;
+}) => {
   const { ref: headerRef, inView: headerInView } = useInView({
     triggerOnce: true,
     threshold: 0.3,
@@ -151,11 +161,17 @@ const PopularRidesCarousel = ({ popularRides }: { popularRides: any[] }) => {
         </div>
 
         <CarouselContent className="mt-5">
-          {popularRides.map((car, index) => (
-            <CarouselItem key={car.id}>
-              <CarCard car={car} index={index} />
-            </CarouselItem>
-          ))}
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <CarouselItem key={i}>
+                  <CarCardSkeleton />
+                </CarouselItem>
+              ))
+            : popularRides.map((car, index) => (
+                <CarouselItem key={car.id}>
+                  <CarCard car={car} index={index} />
+                </CarouselItem>
+              ))}
         </CarouselContent>
 
         <div className="w-full mt-5">

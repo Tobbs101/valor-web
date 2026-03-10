@@ -157,3 +157,18 @@ export async function getBecomeAHostPage() {
     return null;
   }
 }
+
+/**
+ * Fetch the Landing page from Prismic
+ */
+export async function getLandingPage() {
+  const client = createClient();
+
+  try {
+    const landingPage = await client.getSingle("landing_page");
+    return landingPage;
+  } catch (error) {
+    console.error("Error fetching landing page from Prismic:", error);
+    return null;
+  }
+}

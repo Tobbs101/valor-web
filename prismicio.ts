@@ -44,6 +44,10 @@ const routes: prismic.ClientConfig["routes"] = [
     type: "become_a_host_page",
     path: "/become-a-host",
   },
+  {
+    type: "landing_page",
+    path: "/",
+  },
   // Add this route once the document type is created in Prismic:
   // {
   //   type: "privacy_policy_page",

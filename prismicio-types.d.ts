@@ -1492,6 +1492,360 @@ export type ContactUsPageDocument<Lang extends string = string> =
   >;
 
 /**
+ * Item in *Landing Page → How It Works Steps*
+ */
+export interface LandingPageDocumentDataHowItWorksStepsItem {
+  /**
+   * Step Title field in *Landing Page → How It Works Steps*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: landing_page.how_it_works_steps[].step_title
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  step_title: prismic.KeyTextField;
+
+  /**
+   * Step Description field in *Landing Page → How It Works Steps*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: landing_page.how_it_works_steps[].step_description
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  step_description: prismic.KeyTextField;
+}
+
+/**
+ * Content for Landing Page documents
+ */
+interface LandingPageDocumentData {
+  /**
+   * Hero Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Hire any car with ease
+   * - **API ID Path**: landing_page.hero_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  hero_title: prismic.KeyTextField;
+
+  /**
+   * Hero Subtitle field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Book from a variety of vetted hosts and make payment securely using our platform.
+   * - **API ID Path**: landing_page.hero_subtitle
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  hero_subtitle: prismic.KeyTextField;
+
+  /**
+   * Hero Background Image field in *Landing Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: landing_page.hero_image
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  hero_image: prismic.ImageField<never>;
+
+  /**
+   * Hero CTA Text field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Get Bids From Hosts
+   * - **API ID Path**: landing_page.hero_cta_text
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  hero_cta_text: prismic.KeyTextField;
+
+  /**
+   * Popular Rides Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Popular Rides
+   * - **API ID Path**: landing_page.popular_rides_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  popular_rides_title: prismic.KeyTextField;
+
+  /**
+   * Popular Rides CTA Text field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: View All
+   * - **API ID Path**: landing_page.popular_rides_cta_text
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  popular_rides_cta_text: prismic.KeyTextField;
+
+  /**
+   * Car Selection Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Car Selection
+   * - **API ID Path**: landing_page.car_selection_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  car_selection_title: prismic.KeyTextField;
+
+  /**
+   * Car Selection Description field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: From small cars to premium rides, the Valor Hire platform offers a wide range of vehicles.
+   * - **API ID Path**: landing_page.car_selection_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  car_selection_description: prismic.KeyTextField;
+
+  /**
+   * What Valor Gives You Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: What Valor Gives You
+   * - **API ID Path**: landing_page.what_valor_gives_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  what_valor_gives_title: prismic.KeyTextField;
+
+  /**
+   * What Valor Gives You Description field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Book from a variety of vetted hosts and make payment securely using our platform
+   * - **API ID Path**: landing_page.what_valor_gives_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  what_valor_gives_description: prismic.KeyTextField;
+
+  /**
+   * App Features Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: App Features
+   * - **API ID Path**: landing_page.app_features_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  app_features_title: prismic.KeyTextField;
+
+  /**
+   * App Features Subtitle field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Here are some unique features and advantages of using the Valor app.
+   * - **API ID Path**: landing_page.app_features_subtitle
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  app_features_subtitle: prismic.KeyTextField;
+
+  /**
+   * Safe Transactions Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Safe transactions
+   * - **API ID Path**: landing_page.safe_transactions_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  safe_transactions_title: prismic.KeyTextField;
+
+  /**
+   * Safe Transactions Description field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Payment is made to Valor and will only be released to the Host once the job has been successfully completed.
+   * - **API ID Path**: landing_page.safe_transactions_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  safe_transactions_description: prismic.KeyTextField;
+
+  /**
+   * Verified Vehicles Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Verified Vehicles and Hosts
+   * - **API ID Path**: landing_page.verified_vehicles_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  verified_vehicles_title: prismic.KeyTextField;
+
+  /**
+   * Verified Vehicles Description field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Every vehicle and host on Valor undergoes a strict vetting process.
+   * - **API ID Path**: landing_page.verified_vehicles_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  verified_vehicles_description: prismic.KeyTextField;
+
+  /**
+   * Trip Tracking Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Trip Tracking
+   * - **API ID Path**: landing_page.trip_tracking_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  trip_tracking_title: prismic.KeyTextField;
+
+  /**
+   * Trip Tracking Description field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Track your trips in real-time for safety and peace of mind.
+   * - **API ID Path**: landing_page.trip_tracking_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  trip_tracking_description: prismic.KeyTextField;
+
+  /**
+   * How It Works Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: How It Works
+   * - **API ID Path**: landing_page.how_it_works_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  how_it_works_title: prismic.KeyTextField;
+
+  /**
+   * How It Works Steps field in *Landing Page*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: landing_page.how_it_works_steps[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/repeatable-group
+   */
+  how_it_works_steps: prismic.GroupField<
+    Simplify<LandingPageDocumentDataHowItWorksStepsItem>
+  >;
+
+  /**
+   * Rental Options Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Rental Options
+   * - **API ID Path**: landing_page.rental_options_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  rental_options_title: prismic.KeyTextField;
+
+  /**
+   * Rental Options Description field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: landing_page.rental_options_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  rental_options_description: prismic.KeyTextField;
+
+  /**
+   * Experience Valor Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Experience Valor
+   * - **API ID Path**: landing_page.experience_valor_title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  experience_valor_title: prismic.KeyTextField;
+
+  /**
+   * Experience Valor Description field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: landing_page.experience_valor_description
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  experience_valor_description: prismic.KeyTextField; /**
+   * Meta Title field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Welcome to Valor - Premium Car Rentals in Nigeria
+   * - **API ID Path**: landing_page.meta_title
+   * - **Tab**: SEO
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_title: prismic.KeyTextField;
+
+  /**
+   * Meta Description field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Discover premium car rentals from trusted hosts across Nigeria.
+   * - **API ID Path**: landing_page.meta_description
+   * - **Tab**: SEO
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_description: prismic.KeyTextField;
+
+  /**
+   * Meta Keywords field in *Landing Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: valor, car rental, Nigeria, premium
+   * - **API ID Path**: landing_page.meta_keywords
+   * - **Tab**: SEO
+   * - **Documentation**: https://prismic.io/docs/fields/text
+   */
+  meta_keywords: prismic.KeyTextField;
+
+  /**
+   * OG Image field in *Landing Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: landing_page.og_image
+   * - **Tab**: SEO
+   * - **Documentation**: https://prismic.io/docs/fields/image
+   */
+  og_image: prismic.ImageField<never>;
+}
+
+/**
+ * Landing Page document from Prismic
+ *
+ * - **API ID**: `landing_page`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/content-modeling
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type LandingPageDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<LandingPageDocumentData>,
+    "landing_page",
+    Lang
+  >;
+
+/**
  * Item in *Site Settings → Footer Links*
  */
 export interface SiteSettingsDocumentDataFooterLinksItem {
@@ -1791,6 +2145,7 @@ export type AllDocumentTypes =
   | BlogPostDocument
   | CancellationPolicyPageDocument
   | ContactUsPageDocument
+  | LandingPageDocument
   | SiteSettingsDocument
   | TermsPageDocument;
 
@@ -1840,6 +2195,9 @@ declare module "@prismicio/client" {
       ContactUsPageDocument,
       ContactUsPageDocumentData,
       ContactUsPageDocumentDataSlicesSlice,
+      LandingPageDocument,
+      LandingPageDocumentData,
+      LandingPageDocumentDataHowItWorksStepsItem,
       SiteSettingsDocument,
       SiteSettingsDocumentData,
       SiteSettingsDocumentDataFooterLinksItem,

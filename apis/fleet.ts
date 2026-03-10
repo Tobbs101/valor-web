@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { get } from "http";
 import client from "./client";
 
 export const fleet = {
@@ -17,6 +16,9 @@ export const fleet = {
     client
       .get(`explore/vehicles/${carId}/reviews`)
       .then(({ data }: any) => data),
+
+  getSpecialDeals: () =>
+    client.get(`explore/special-deals`).then(({ data }: any) => data),
 
   getVehicleMakes: () =>
     client.get(`getCarMake?page=1&limit=1000`).then(({ data }: any) => data),

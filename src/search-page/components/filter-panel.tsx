@@ -92,15 +92,6 @@ const fallbackCarMakeOptions = [
 //   "GX 460",
 // ];
 
-const yearOptions = (() => {
-  const currentYear = new Date().getFullYear();
-  const years = ["All Years"];
-  for (let year = currentYear; year >= 2000; year--) {
-    years.push(year.toString());
-  }
-  return years;
-})();
-
 const nigerianStates = [
   "Abia",
   "Abuja",
@@ -164,16 +155,16 @@ const fallbackVehicleColors = [
   "Green",
 ];
 
-const minYearOptions = (() => {
-  const currentYear = new Date().getFullYear();
-  const years = [""];
-  for (let year = currentYear; year >= 2000; year--) {
+const MIN_YEAR = 1990;
+const CURRENT_YEAR = new Date().getFullYear();
+
+const allYearOptions = (() => {
+  const years: string[] = [];
+  for (let year = CURRENT_YEAR; year >= MIN_YEAR; year--) {
     years.push(year.toString());
   }
   return years;
 })();
-
-const maxYearOptions = minYearOptions;
 
 interface FilterPanelProps {
   isOpen: boolean;
@@ -258,9 +249,7 @@ const FilterPanel = ({
   const [maxYear, setMaxYear] = useState(filters.maxYear || "");
   const [makeSearchQuery, setMakeSearchQuery] = useState("");
   const [modelSearchQuery, setModelSearchQuery] = useState("");
-  const [selectedService, setSelectedService] = useState(
-    filters.availableFullDay || "All services",
-  );
+  const [selectedService, setSelectedService] = useState("All services");
   const [selectedVehicleGlass, setSelectedVehicleGlass] = useState(
     filters.carTint || "All",
   );
@@ -315,7 +304,6 @@ const FilterPanel = ({
 
   // Debounce timer refs
   const priceDebounceRef = useRef<NodeJS.Timeout | null>(null);
-  const yearDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const seatsDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialMount = useRef(true);
 
@@ -439,8 +427,9 @@ const FilterPanel = ({
           ? "not_upgraded"
           : undefined;
 
-    // Map availableFullDay: "Full day" -> "yes", otherwise -> "no"
-    const availableFullDayValue = selectedService === "Full day" ? "yes" : "no";
+    // Map service: only send a value when a specific service is selected
+    const availableFullDayValue =
+      selectedService !== "All services" ? "yes" : undefined;
 
     // Combine minYear and maxYear into makeYear format
     const makeYearValue = maxYear ? `${minYear || "0"},${maxYear}` : undefined;
@@ -517,6 +506,8 @@ const FilterPanel = ({
     selectedVehicleCondition,
     selectedVehicleColor,
     selectedDates,
+    minYear,
+    maxYear,
   ]);
 
   // Debounced auto-apply for price fields (only when both have values)
@@ -536,24 +527,6 @@ const FilterPanel = ({
       }
     };
   }, [minPrice, maxPrice, autoApply]);
-
-  // Debounced auto-apply for year fields (only when both have values)
-  useEffect(() => {
-    if (isInitialMount.current) return;
-    if (yearDebounceRef.current) {
-      clearTimeout(yearDebounceRef.current);
-    }
-    if (maxYear) {
-      yearDebounceRef.current = setTimeout(() => {
-        autoApply();
-      }, 500);
-    }
-    return () => {
-      if (yearDebounceRef.current) {
-        clearTimeout(yearDebounceRef.current);
-      }
-    };
-  }, [minYear, maxYear, autoApply]);
 
   // Debounced auto-apply for seats fields (only when both have values)
   useEffect(() => {
@@ -734,8 +707,9 @@ const FilterPanel = ({
           ? "not_upgraded"
           : undefined;
 
-    // Map availableFullDay: "Full day" -> "yes", otherwise -> "no"
-    const availableFullDayValue = selectedService === "Full day" ? "yes" : "no";
+    // Map service: only send a value when a specific service is selected
+    const availableFullDayValue =
+      selectedService !== "All services" ? "yes" : undefined;
 
     // Combine minYear and maxYear into makeYear format
     const makeYearValue = maxYear ? `${minYear || "0"},${maxYear}` : undefined;
@@ -1106,20 +1080,50 @@ const FilterPanel = ({
                 {/* Year of Manufacturing Filter */}
                 <FilterSection title="Year of Manufacturing">
                   <div className="flex flex-col flex-wrap gap-3">
-                    <input
-                      type="number"
-                      placeholder="Min"
+                    <Select
                       value={minYear}
-                      onChange={(e) => setMinYear(e.target.value)}
-                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Max"
+                      onValueChange={(value) =>
+                        setMinYear(value === "clear" ? "" : value)
+                      }
+                    >
+                      <SelectTrigger className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary">
+                        <SelectValue placeholder="Min Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* <SelectItem value="clear">Min Year</SelectItem> */}
+                        {allYearOptions
+                          .filter(
+                            (y) => !maxYear || Number(y) <= Number(maxYear),
+                          )
+                          .map((year) => (
+                            <SelectItem key={year} value={year}>
+                              {year}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
                       value={maxYear}
-                      onChange={(e) => setMaxYear(e.target.value)}
-                      className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
-                    />
+                      onValueChange={(value) =>
+                        setMaxYear(value === "clear" ? "" : value)
+                      }
+                    >
+                      <SelectTrigger className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary">
+                        <SelectValue placeholder="Max Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* <SelectItem value="clear">Max Year</SelectItem> */}
+                        {allYearOptions
+                          .filter(
+                            (y) => !minYear || Number(y) >= Number(minYear),
+                          )
+                          .map((year) => (
+                            <SelectItem key={year} value={year}>
+                              {year}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </FilterSection>
 
@@ -1577,20 +1581,46 @@ const FilterPanel = ({
         {/* Year of Manufacturing Filter */}
         <FilterSection title="Year of Manufacturing">
           <div className="flex flex-col gap-3">
-            <input
-              type="number"
-              placeholder="Min"
+            <Select
               value={minYear}
-              onChange={(e) => setMinYear(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
-            />
-            <input
-              type="number"
-              placeholder="Max"
+              onValueChange={(value) =>
+                setMinYear(value === "clear" ? "" : value)
+              }
+            >
+              <SelectTrigger className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary">
+                <SelectValue placeholder="Min Year" />
+              </SelectTrigger>
+              <SelectContent>
+                {/* <SelectItem value="clear">Min Year</SelectItem> */}
+                {allYearOptions
+                  .filter((y) => !maxYear || Number(y) <= Number(maxYear))
+                  .map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            <Select
               value={maxYear}
-              onChange={(e) => setMaxYear(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
-            />
+              onValueChange={(value) =>
+                setMaxYear(value === "clear" ? "" : value)
+              }
+            >
+              <SelectTrigger className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary">
+                <SelectValue placeholder="Max Year" />
+              </SelectTrigger>
+              <SelectContent>
+                {/* <SelectItem value="clear">Max Year</SelectItem> */}
+                {allYearOptions
+                  .filter((y) => !minYear || Number(y) >= Number(minYear))
+                  .map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
           </div>
         </FilterSection>
 

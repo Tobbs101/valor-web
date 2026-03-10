@@ -57,6 +57,7 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
       <div className="relative h-[180px] w-full">
         {post.data.featured_image?.url ? (
           <PrismicNextImage
+            alt=""
             field={post.data.featured_image}
             fill
             className="object-cover"
@@ -115,6 +116,7 @@ const PrismicBlogPage = ({ post, relatedPosts }: PrismicBlogPageProps) => {
       <div className="relative h-[300px] md:h-[450px] w-full">
         {post.data.featured_image?.url ? (
           <PrismicNextImage
+            alt=""
             field={post.data.featured_image}
             fill
             className="object-cover"

@@ -22,7 +22,42 @@ import ExperienceValor from "@/components/shared/experience-valor";
 import { useRouter } from "next/navigation";
 import { useSignupStore } from "@/store/signup-store";
 
-const AppFeatures = () => {
+interface HowItWorksStep {
+  step_title?: string | null;
+  step_description?: string | null;
+}
+
+interface AppFeaturesProps {
+  appFeaturesTitle?: string;
+  appFeaturesSubtitle?: string;
+  safeTransactionsTitle?: string;
+  safeTransactionsDescription?: string;
+  verifiedVehiclesTitle?: string;
+  verifiedVehiclesDescription?: string;
+  tripTrackingTitle?: string;
+  tripTrackingDescription?: string;
+  howItWorksTitle?: string;
+  howItWorksSteps?: HowItWorksStep[];
+  rentalOptionsTitle?: string;
+  rentalOptionsDescription?: string;
+  experienceValorTitle?: string;
+  experienceValorDescription?: string;
+}
+
+const AppFeatures = ({
+  appFeaturesTitle,
+  appFeaturesSubtitle,
+  safeTransactionsTitle,
+  safeTransactionsDescription,
+  verifiedVehiclesTitle,
+  verifiedVehiclesDescription,
+  tripTrackingTitle,
+  tripTrackingDescription,
+  howItWorksTitle,
+  howItWorksSteps,
+  rentalOptionsTitle,
+  rentalOptionsDescription,
+}: AppFeaturesProps) => {
   const { ref: headerRef, inView: headerInView } = useInView({
     triggerOnce: true,
     threshold: 0.5,
@@ -60,7 +95,7 @@ const AppFeatures = () => {
           variants={headerVariants}
           className="w-full text-[24px] text-primary md:leading-[56px] mb-2 md:mb-5 md:text-[48px] font-[700] text-center"
         >
-          App Features
+          {appFeaturesTitle || "App Features"}
         </motion.h1>
         <motion.p
           initial="hidden"
@@ -68,7 +103,8 @@ const AppFeatures = () => {
           variants={descriptionVariants}
           className=" text-[14px] text-center text-[#535353] leading-[20px] md:leading-[24px] md:text-[20px] font-[400] md:text-base"
         >
-          Here are some unique features and advantages of using the Valor app.
+          {appFeaturesSubtitle ||
+            "Here are some unique features and advantages of using the Valor app."}
         </motion.p>
 
         {/* Safe Transactions Section */}
@@ -91,11 +127,11 @@ const AppFeatures = () => {
             }}
           >
             <h2 className="text-[20px] md:text-[40px] font-[700] text-primary leading-[30px] md:leading-[48px] mb-2 md:mb-4">
-              Safe transactions
+              {safeTransactionsTitle || "Safe transactions"}
             </h2>
             <p className="text-[14px] font-[400] md:text-[18px] text-[#535353] md:leading-[26px]">
-              Payment is made to Valor and will only be released to the Host
-              once the job has been successfully completed.
+              {safeTransactionsDescription ||
+                "Payment is made to Valor and will only be released to the Host once the job has been successfully completed."}
             </p>
           </motion.div>
 
@@ -436,11 +472,11 @@ const AppFeatures = () => {
             }}
           >
             <h2 className="text-[20px] text-left md:text-[40px] font-[700] text-primary leading-[28px] md:leading-[48px] mb-2 md:mb-4">
-              Verified Vehicles and Hosts
+              {verifiedVehiclesTitle || "Verified Vehicles and Hosts"}
             </h2>
             <p className="text-[14px] font-[400] text-left md:text-[18px] text-[#646464] leading-[26px]">
-              All vehicles, hosts, and drivers on our platform are fully
-              verified.
+              {verifiedVehiclesDescription ||
+                "All vehicles, hosts, and drivers on our platform are fully verified."}
             </p>
           </motion.div>
         </motion.div>
@@ -465,11 +501,11 @@ const AppFeatures = () => {
             }}
           >
             <h2 className="text-[20px] md:text-[40px] font-[700] text-primary leading-[30px] md:leading-[48px] mb-2 md:mb-4">
-              Trip Tracking
+              {tripTrackingTitle || "Trip Tracking"}
             </h2>
             <p className="text-[14px] font-[400] md:text-[18px] text-[#535353] md:leading-[26px]">
-              Track your vehicle and driver on trip day for a smooth and
-              seamless experience.
+              {tripTrackingDescription ||
+                "Track your vehicle and driver on trip day for a smooth and seamless experience."}
             </p>
           </motion.div>
 
@@ -582,7 +618,7 @@ const AppFeatures = () => {
             }}
           >
             <h2 className="text-[32px] md:text-[40px] font-[700] text-primary leading-[40px] md:leading-[48px] mb-4">
-              How it works
+              {howItWorksTitle || "How it works"}
             </h2>
             <p className="text-[14px] font-[400] md:text-[18px] text-[#646464] leading-[26px] mb-10">
               Book from a variety of vetted hosts and make payment securely
@@ -723,10 +759,11 @@ const AppFeatures = () => {
             }}
           >
             <h2 className="text-[20px] md:text-[40px] font-[700] text-primary leading-[40px] md:leading-[48px] mb-2 md:mb-4">
-              Rental Options
+              {rentalOptionsTitle || "Rental Options"}
             </h2>
             <p className="text-[14px] font-[400] md:text-[18px] text-[#535353] leading-[14px] md:leading-[26px] mb-10">
-              See a list of out car options that you can pick from.
+              {rentalOptionsDescription ||
+                "See a list of out car options that you can pick from."}
             </p>
 
             {/* Options Grid */}

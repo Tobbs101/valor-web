@@ -6,7 +6,6 @@ import Each from "../helpers/each";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import logo from "../../assets/valor-logo.png";
-import logowhite from "@/assets/vw.png";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
@@ -19,7 +18,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import { LinkProp } from "@/types";
 import { usePathname, useRouter } from "next/navigation";
-import { useLayoutContext } from "@/app/client-layout";
 import useScrollAtTop from "@/hooks/use-scroll";
 import { useSignupStore } from "@/store/signup-store";
 

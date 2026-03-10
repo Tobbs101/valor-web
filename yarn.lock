@@ -1416,19 +1416,19 @@
     tslib "^2.3.1"
     uuid "^9.0.1"
 
-"@prismicio/next@^2.2.1":
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/@prismicio/next/-/next-2.2.1.tgz#fb891ce17fd4f262f68b3b73f1690276f9d80220"
-  integrity sha512-0y0xTQpUtwYM7yq4MvthLBRoPzHLXZzHqu0yA1LVdQhD/U50jlF6Op5BPiVo4DdktVAK1bD/KO4RyQF2mGygOA==
+"@prismicio/next@^2.2.2":
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@prismicio/next/-/next-2.2.2.tgz#c015c45342485ccb38939e89cb1dafe445871514"
+  integrity sha512-/xtaJanRCQQ6iH2bI01XRWV+HlokvgjlzKG8smdlxEeLiP3q0Ypo2oJioJJsNBzj6sl3WQg8QWi3HLJbmguTxQ==
   dependencies:
     "@prismicio/simulator" "^0.2.0"
     imgix-url-builder "^0.0.5"
     lz-string "^1.5.0"
 
-"@prismicio/react@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@prismicio/react/-/react-3.3.0.tgz#996b1a95ea7e31f3a71ed07e2075452fb0fb18f2"
-  integrity sha512-M9u0iKkU/Ir1JCmEhTLYcUf86n6+o3fTWw74CGW91E+cPwJZ5UZDqqwWSSUU++ByaEfbjoYOhvvaxlPlBzuicg==
+"@prismicio/react@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@prismicio/react/-/react-3.4.0.tgz#dbbe54630a054e73068f92e5cf1e80e5ed1a1f2c"
+  integrity sha512-OYLAkIK2mYPTxV45cYfreZnvb+nimX92QhlRKdjAHyz3pPGLUWjFrJKMk3meaCIRk/Q1STCgezkF30XHEbWBNw==
   dependencies:
     esm-env "^1.2.2"
 
