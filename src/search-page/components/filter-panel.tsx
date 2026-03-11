@@ -144,20 +144,20 @@ const servicesOptions = [
 
 const serviceTypeMap: Record<
   string,
-  "fullDay" | "airportPickup" | "airportDrop" | "overNight"
+  "fullDay" | "airportPickUp" | "airportDrop" | "overNight"
 > = {
   "Full day": "fullDay",
-  "Airport pick-up": "airportPickup",
+  "Airport pick-up": "airportPickUp",
   "Airport drop-off": "airportDrop",
   Overnight: "overNight",
 };
 
 const serviceTypeReverseMap: Record<
-  "fullDay" | "airportPickup" | "airportDrop" | "overNight",
+  "fullDay" | "airportPickUp" | "airportDrop" | "overNight",
   string
 > = {
   fullDay: "Full day",
-  airportPickup: "Airport pick-up",
+  airportPickUp: "Airport pick-up",
   airportDrop: "Airport drop-off",
   overNight: "Overnight",
 };
@@ -275,7 +275,7 @@ const FilterPanel = ({
       ? serviceTypeReverseMap[
           filters.serviceType as
             | "fullDay"
-            | "airportPickup"
+            | "airportPickUp"
             | "airportDrop"
             | "overNight"
         ] || "All services"
