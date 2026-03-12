@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Icon } from "@iconify/react";
 import {
   ChevronLeft,
@@ -265,8 +266,8 @@ const HostDetailsModal = ({
               <div className="flex items-center justify-between py-3 border-b border-gray-100">
                 <span className="text-[14px] text-[#9CA3AF]">Name</span>
                 <span className="text-[14px] font-[500] text-primary">
-                  {hostData?.fName && hostData?.lName
-                    ? `${hostData.fName} ${hostData.lName}`
+                  {hostData?.fName
+                    ? `${hostData.fName}`
                     : hostData?.businessName || "N/A"}
                 </span>
               </div>
@@ -1050,9 +1051,12 @@ const CarDetailsPageBody = () => {
                 <div className="w-6 h-6 rounded-full bg-orange-50 flex items-center justify-center flex-shrink-0">
                   <Icon icon="mdi:check" className="text-[#FB8500] text-sm" />
                 </div>
-                <span className="text-[14px] text-[#646464]">
+                <Link
+                  href="/cancellation-refund-policy"
+                  className="text-[14px] text-blue-600 hover:text-primary hover:underline"
+                >
                   No refund cancellation policy
-                </span>
+                </Link>
               </div>
               {rentalTerms.map((term, idx) => (
                 <div key={idx} className="flex items-center gap-3">
@@ -1205,8 +1209,8 @@ const CarDetailsPageBody = () => {
               <div className="flex items-center justify-between">
                 <span className="text-[14px] text-[#9CA3AF]">Name:</span>
                 <span className="text-[14px] font-[500] text-primary">
-                  {vehicleData?.host?.fName && vehicleData?.host?.lName
-                    ? `${vehicleData.host.fName} ${vehicleData.host.lName}`
+                  {vehicleData?.host?.fName
+                    ? `${vehicleData.host.fName}`
                     : vehicleData?.host?.businessName || "N/A"}
                 </span>
               </div>
@@ -1769,6 +1773,20 @@ const CarDetailsPageBody = () => {
                   Rental Terms
                 </h2>
                 <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                      <Icon
+                        icon="mdi:check"
+                        className="text-[#FB8500] text-sm"
+                      />
+                    </div>
+                    <Link
+                      href="/cancellation-refund-policy"
+                      className="text-[14px] text-blue-600 hover:text-primary hover:underline"
+                    >
+                      No refund cancellation policy
+                    </Link>
+                  </div>
                   {rentalTerms.length > 0 ? (
                     rentalTerms.map((term, idx) => (
                       <div key={idx} className="flex items-center gap-3">
@@ -1928,8 +1946,8 @@ const CarDetailsPageBody = () => {
                       Name
                     </p>
                     <p className="text-[14px] md:text-[16px] font-[600] text-primary">
-                      {vehicleData?.host?.fName && vehicleData?.host?.lName
-                        ? `${vehicleData.host.fName} ${vehicleData.host.lName}`
+                      {vehicleData?.host?.fName
+                        ? `${vehicleData.host.fName}`
                         : "N/A"}
                     </p>
                   </div>

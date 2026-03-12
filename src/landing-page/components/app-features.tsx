@@ -652,7 +652,7 @@ const AppFeatures = ({
                     </h4>
                     <p className="text-[14px] text-[#535353] leading-[20px] md:leading-[22px]">
                       Book from a variety of vetted hosts and make payment
-                      securely using out platform
+                      securely using our platform
                     </p>
                   </div>
                 </motion.div>
@@ -678,7 +678,7 @@ const AppFeatures = ({
                     </h4>
                     <p className="text-[14px] text-[#535353] leading-[20px] md:leading-[22px]">
                       Book from a variety of vetted hosts and make payment
-                      securely using out platform
+                      securely using our platform
                     </p>
                   </div>
                 </motion.div>
@@ -704,7 +704,7 @@ const AppFeatures = ({
                     </h4>
                     <p className="text-[14px] text-[#535353] leading-[20px] md:leading-[22px]">
                       Book from a variety of vetted hosts and make payment
-                      securely using out platform
+                      securely using our platform
                     </p>
                   </div>
                 </motion.div>
@@ -730,7 +730,7 @@ const AppFeatures = ({
                     </h4>
                     <p className="text-[14px] text-[#535353] leading-[20px] md:leading-[22px]">
                       Book from a variety of vetted hosts and make payment
-                      securely using out platform
+                      securely using our platform
                     </p>
                   </div>
                 </motion.div>
@@ -763,7 +763,7 @@ const AppFeatures = ({
             </h2>
             <p className="text-[14px] font-[400] md:text-[18px] text-[#535353] leading-[14px] md:leading-[26px] mb-10">
               {rentalOptionsDescription ||
-                "See a list of out car options that you can pick from."}
+                "See a list of our car options that you can pick from."}
             </p>
 
             {/* Options Grid */}
@@ -839,7 +839,7 @@ const AppFeatures = ({
                   Airport Pickup/Drop off
                 </h4>
                 <p className="text-[14px] text-[#646464] leading-[20px] md:leading-[22px]">
-                  Hire a vehicle for airport pickup and drip off services
+                  Hire a vehicle for airport pickup and drop-off services
                 </p>
               </motion.div>
 
