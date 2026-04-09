@@ -11,30 +11,31 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "react-query";
 import { fleet } from "@/apis/fleet";
 import { useSearchStore } from "@/store/search-store";
+import { formatCurrencyNGNLabel } from "@/lib/utils";
 import JobListingModal from "@/src/landing-page/components/job-listing-modal";
 
 const sortOptions = [
   { label: "Relevance", sortBy: "", sortOrder: "" as const, disabled: true },
   {
-    label: "Price: low to high",
+    label: "Price: Lowest price first",
     sortBy: "price",
     sortOrder: "ASC" as const,
     disabled: false,
   },
   {
-    label: "Price: high to low",
+    label: "Price: Highest price first",
     sortBy: "price",
     sortOrder: "DESC" as const,
     disabled: false,
   },
   {
-    label: "Ratings: low to high",
+    label: "Ratings: Lowest rating first",
     sortBy: "ratings",
     sortOrder: "ASC" as const,
     disabled: false,
   },
   {
-    label: "Ratings: high to low",
+    label: "Ratings: Highest rating first",
     sortBy: "ratings",
     sortOrder: "DESC" as const,
     disabled: false,
@@ -59,6 +60,70 @@ const SearchPageBody = () => {
     return count;
   };
   const activeFilterCount = getActiveFilterCount();
+
+  // Build active filter tags for display from store
+  const getActiveFilterTags = () => {
+    const tags: { key: string; label: string; value: string }[] = [];
+    const f = filters as Record<string, any>;
+    if (f.cost) {
+      const [min, max] = f.cost.split(",");
+      tags.push({
+        key: "price",
+        label: "Price",
+        value: `${formatCurrencyNGNLabel(min) || "0"} - ${formatCurrencyNGNLabel(max) || "∞"}`,
+      });
+    }
+    if (f.carType?.length) {
+      tags.push({ key: "carType", label: "Vehicle Type", value: f.carType[0] });
+    }
+    if (f.state) {
+      tags.push({ key: "state", label: "State", value: f.state });
+    }
+    if (f.availableDates?.length) {
+      tags.push({
+        key: "dates",
+        label: "Dates",
+        value: f.availableDates.join(", "),
+      });
+    }
+    if (f.carMake) {
+      tags.push({ key: "make", label: "Make", value: f.carMake });
+    }
+    if (f.carModel) {
+      tags.push({ key: "model", label: "Model", value: f.carModel });
+    }
+    if (f.transmission) {
+      tags.push({ key: "transmission", label: "Transmission", value: f.transmission });
+    }
+    if (f.makeYear) {
+      const [min, max] = f.makeYear.split(",");
+      tags.push({ key: "year", label: "Year", value: `${min || "0"} - ${max}` });
+    }
+    if (f.serviceType) {
+      const serviceLabels: Record<string, string> = {
+        fullDay: "Full day",
+        airportPickUp: "Airport pick-up",
+        airportDrop: "Airport drop-off",
+        overNight: "Overnight",
+      };
+      tags.push({ key: "service", label: "Service", value: serviceLabels[f.serviceType] || f.serviceType });
+    }
+    if (f.vehicleGlass) {
+      tags.push({ key: "glass", label: "Glass", value: f.vehicleGlass === "tinted" ? "Tinted" : "Not tinted" });
+    }
+    if (f.condition) {
+      tags.push({ key: "condition", label: "Condition", value: f.condition === "upgraded" ? "Upgraded" : "Not Upgraded" });
+    }
+    if (f.carColor) {
+      tags.push({ key: "color", label: "Color", value: f.carColor });
+    }
+    if (f.capacity) {
+      const [min, max] = f.capacity.split(",");
+      tags.push({ key: "seats", label: "Seats", value: `${min || "1"} - ${max || "100"}` });
+    }
+    return tags;
+  };
+  const activeFilterTags = getActiveFilterTags();
 
   // console.log(activeFilterCount, "activeFilterCount");
 
@@ -145,7 +210,7 @@ const SearchPageBody = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[180px]"
+                  className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[220px]"
                 >
                   {sortOptions.map((option) => (
                     <button
@@ -224,6 +289,27 @@ const SearchPageBody = () => {
                 <span className="text-[14px] font-[500]">Show Filters</span>
               </button>
             )}
+
+            {/* Active Filters Display */}
+            {activeFilterTags.length > 0 && (
+              <div className="mb-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs text-gray-500 font-medium">
+                    Active filters:
+                  </span>
+                  {activeFilterTags.map((filter) => (
+                    <span
+                      key={filter.key}
+                      className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-3 py-1.5 rounded-full"
+                    >
+                      <span className="font-medium">{filter.label}:</span>{" "}
+                      {filter.value}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {isLoading && (
               <div className="text-center py-10 text-primary font-bold">
                 {isSorting ? "Sorting..." : "Loading vehicles..."}

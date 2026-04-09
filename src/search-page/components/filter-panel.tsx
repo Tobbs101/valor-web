@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronDown, ArrowRight, CalendarIcon } from "lucide-react";
-import { cn, formatCurrencyNGN, formatCurrencyNGNLabel } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
 import { useQuery } from "react-query";
@@ -333,9 +333,6 @@ const FilterPanel = ({
     setter(raw);
   };
 
-  // Debounce timer refs
-  const priceDebounceRef = useRef<NodeJS.Timeout | null>(null);
-  const seatsDebounceRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialMount = useRef(true);
 
   // Fetch vehicle makes from API
@@ -515,14 +512,19 @@ const FilterPanel = ({
     selectedDates,
   ]);
 
-  // Auto-apply function with loading overlay
+  // Keep a ref to buildApiFilters so autoApply stays referentially stable
+  const buildApiFiltersRef = useRef(buildApiFilters);
+  buildApiFiltersRef.current = buildApiFilters;
+
+  // Auto-apply function with loading overlay (stable reference)
   const autoApply = useCallback(async () => {
     setIsFilterLoading(true);
-    const apiFilters = buildApiFilters();
+    const apiFilters = buildApiFiltersRef.current();
     setFilters(apiFilters);
     await onApplyFilters?.();
     setIsFilterLoading(false);
-  }, [buildApiFilters, setFilters]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setFilters]);
 
   // Auto-apply for non min/max fields
   useEffect(() => {
@@ -547,42 +549,6 @@ const FilterPanel = ({
     autoApply,
   ]);
 
-  // Debounced auto-apply for price fields (only when both have values)
-  useEffect(() => {
-    if (isInitialMount.current) return;
-    if (priceDebounceRef.current) {
-      clearTimeout(priceDebounceRef.current);
-    }
-    if (maxPrice) {
-      priceDebounceRef.current = setTimeout(() => {
-        autoApply();
-      }, 2000);
-    }
-    return () => {
-      if (priceDebounceRef.current) {
-        clearTimeout(priceDebounceRef.current);
-      }
-    };
-  }, [minPrice, maxPrice, autoApply]);
-
-  // Debounced auto-apply for seats fields (only when both have values)
-  useEffect(() => {
-    if (isInitialMount.current) return;
-    if (seatsDebounceRef.current) {
-      clearTimeout(seatsDebounceRef.current);
-    }
-    if (minSeats && maxSeats) {
-      seatsDebounceRef.current = setTimeout(() => {
-        autoApply();
-      }, 500);
-    }
-    return () => {
-      if (seatsDebounceRef.current) {
-        clearTimeout(seatsDebounceRef.current);
-      }
-    };
-  }, [minSeats, maxSeats, autoApply]);
-
   const handleDateSelect = (dates: Date[] | undefined) => {
     setSelectedDates(dates || []);
   };
@@ -592,107 +558,6 @@ const FilterPanel = ({
       selectedDates.filter((date) => date.getTime() !== dateToRemove.getTime()),
     );
   };
-
-  // Get list of active filters for display
-  const getActiveFilters = () => {
-    const activeFilters: { key: string; label: string; value: string }[] = [];
-    if (minPrice || maxPrice) {
-      activeFilters.push({
-        key: "price",
-        label: "Price",
-        value: `${formatCurrencyNGNLabel(minPrice) || "0"} - ${formatCurrencyNGNLabel(maxPrice) || "∞"}`,
-      });
-    }
-    if (selectedVehicleType) {
-      const type = vehicleTypes.find((t) => t.id === selectedVehicleType);
-      activeFilters.push({
-        key: "carType",
-        label: "Vehicle Type",
-        value: type?.name || selectedVehicleType,
-      });
-    }
-    if (selectedState) {
-      activeFilters.push({
-        key: "state",
-        label: "State",
-        value: selectedState,
-      });
-    }
-    if (selectedDates.length > 0) {
-      activeFilters.push({
-        key: "dates",
-        label: "Dates",
-        value: selectedDates
-          .map((date) => format(date, "MMM d, yyyy"))
-          .join(", "),
-      });
-    }
-    if (selectedMake !== "All makes") {
-      activeFilters.push({ key: "make", label: "Make", value: selectedMake });
-    }
-    if (selectedModel !== "All models") {
-      activeFilters.push({
-        key: "model",
-        label: "Model",
-        value: selectedModel,
-      });
-    }
-    if (selectedTransmission !== "All transmissions") {
-      activeFilters.push({
-        key: "transmission",
-        label: "Transmission",
-        value: selectedTransmission,
-      });
-    }
-    if (selectedYear !== "All Years") {
-      activeFilters.push({ key: "year", label: "Year", value: selectedYear });
-    }
-    if (minYear || maxYear) {
-      activeFilters.push({
-        key: "yearRange",
-        label: "Year Range",
-        value: `${minYear || "0"} - ${maxYear || "Present"}`,
-      });
-    }
-    if (selectedService !== "All services") {
-      activeFilters.push({
-        key: "service",
-        label: "Service",
-        value: selectedService,
-      });
-    }
-    if (selectedVehicleGlass !== "All") {
-      activeFilters.push({
-        key: "glass",
-        label: "Glass",
-        value: selectedVehicleGlass,
-      });
-    }
-    if (selectedVehicleCondition !== "All") {
-      activeFilters.push({
-        key: "condition",
-        label: "Condition",
-        value: selectedVehicleCondition,
-      });
-    }
-    if (selectedVehicleColor !== "All") {
-      activeFilters.push({
-        key: "color",
-        label: "Color",
-        value: selectedVehicleColor,
-      });
-    }
-    if (minSeats || maxSeats) {
-      activeFilters.push({
-        key: "seats",
-        label: "Seats",
-        value: `${minSeats || "1"} - ${maxSeats || "100"}`,
-      });
-    }
-    return activeFilters;
-  };
-
-  const activeFilters = getActiveFilters();
 
   // Count active filters
   const getActiveFilterCount = () => {
@@ -817,6 +682,12 @@ const FilterPanel = ({
                       onChange={(e) => handlePriceChange(e, setMaxPrice)}
                       className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
                     />
+                    <button
+                      onClick={() => autoApply()}
+                      className="w-full bg-primary hover:bg-primary/90 text-white rounded-full py-3 text-[14px] font-[500] transition-colors"
+                    >
+                      Apply Price
+                    </button>
                   </div>
                 </FilterSection>
 
@@ -1069,7 +940,7 @@ const FilterPanel = ({
                       <SelectTrigger className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary">
                         <SelectValue placeholder="Min Year" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-[100000]">
                         {/* <SelectItem value="clear">Min Year</SelectItem> */}
                         {allYearOptions
                           .filter(
@@ -1091,7 +962,7 @@ const FilterPanel = ({
                       <SelectTrigger className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary">
                         <SelectValue placeholder="Max Year" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-[100000]">
                         {/* <SelectItem value="clear">Max Year</SelectItem> */}
                         {allYearOptions
                           .filter(
@@ -1251,29 +1122,15 @@ const FilterPanel = ({
                       }}
                       className="flex-1 border border-gray-200 rounded-full px-4 py-3 text-[14px] text-center outline-none focus:border-primary"
                     />
+                    <button
+                      onClick={() => autoApply()}
+                      className="w-full bg-primary hover:bg-primary/90 text-white rounded-full py-3 text-[14px] font-[500] transition-colors"
+                    >
+                      Apply Seats
+                    </button>
                   </div>
                 </FilterSection>
               </div>
-
-              {/* Selected Filters Display */}
-              {activeFilters.length > 0 && (
-                <div className="px-5 py-3 border-t border-gray-100 bg-gray-50">
-                  <p className="text-xs text-gray-500 mb-2 font-medium">
-                    Selected filters:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {activeFilters.map((filter) => (
-                      <span
-                        key={filter.key}
-                        className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-3 py-1.5 rounded-full"
-                      >
-                        <span className="font-medium">{filter.label}:</span>{" "}
-                        {filter.value}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* Apply & Clear Buttons - Fixed at bottom */}
               <div className="p-5 border-t border-gray-200 flex gap-3">
@@ -1343,6 +1200,12 @@ const FilterPanel = ({
               onChange={(e) => handlePriceChange(e, setMaxPrice)}
               className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
             />
+            <button
+              onClick={() => autoApply()}
+              className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg py-2.5 text-[14px] font-[500] transition-colors"
+            >
+              Apply Price
+            </button>
           </div>
         </FilterSection>
 
@@ -1732,28 +1595,14 @@ const FilterPanel = ({
               }}
               className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-[14px] outline-none focus:border-primary"
             />
+            <button
+              onClick={() => autoApply()}
+              className="w-full bg-primary hover:bg-primary/90 text-white rounded-lg py-2.5 text-[14px] font-[500] transition-colors"
+            >
+              Apply Seats
+            </button>
           </div>
         </FilterSection>
-
-        {/* Selected Filters Display */}
-        {activeFilters.length > 0 && (
-          <div className="py-4 border-t border-gray-100">
-            <p className="text-xs text-gray-500 mb-2 font-medium">
-              Selected filters:
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {activeFilters.map((filter) => (
-                <span
-                  key={filter.key}
-                  className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2.5 py-1 rounded-full"
-                >
-                  <span className="font-medium">{filter.label}:</span>{" "}
-                  {filter.value}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div className="py-5 flex-wrap flex gap-3">
           <button

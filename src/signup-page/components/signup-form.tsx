@@ -73,7 +73,16 @@ const SignUpForm = () => {
   // OTP State
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [otpError, setOtpError] = useState("");
-  const [resendCountdown, setResendCountdown] = useState(600);
+  const [resendCountdown, setResendCountdown] = useState(() => {
+    if (typeof window !== "undefined") {
+      const endTime = localStorage.getItem("otpResendEndTime");
+      if (endTime) {
+        const remaining = Math.ceil((parseInt(endTime, 10) - Date.now()) / 1000);
+        return remaining > 0 ? remaining : 0;
+      }
+    }
+    return 0;
+  });
   const [showResendSuccess, setShowResendSuccess] = useState(false);
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -81,7 +90,16 @@ const SignUpForm = () => {
   const phoneOtpStep = 4;
   const [phoneOtp, setPhoneOtp] = useState(["", "", "", ""]);
   const [phoneOtpError, setPhoneOtpError] = useState("");
-  const [phoneResendCountdown, setPhoneResendCountdown] = useState(600);
+  const [phoneResendCountdown, setPhoneResendCountdown] = useState(() => {
+    if (typeof window !== "undefined") {
+      const endTime = localStorage.getItem("phoneOtpResendEndTime");
+      if (endTime) {
+        const remaining = Math.ceil((parseInt(endTime, 10) - Date.now()) / 1000);
+        return remaining > 0 ? remaining : 0;
+      }
+    }
+    return 0;
+  });
   const [showPhoneResendSuccess, setShowPhoneResendSuccess] = useState(false);
   const phoneOtpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -180,7 +198,6 @@ const SignUpForm = () => {
       return;
     }
 
-    // @ts-expect-error - Google Identity Services types
     if (!window.google?.accounts?.oauth2) {
       console.error("Google Identity Services not loaded");
       return;
@@ -190,7 +207,6 @@ const SignUpForm = () => {
     setLoadingMessage("Connecting to Google...");
     setGoogleSignInError(""); // Clear any previous error
 
-    // @ts-expect-error - Google Identity Services types
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: googleClientId,
       scope: "email profile",
@@ -369,25 +385,39 @@ const SignUpForm = () => {
     checkPhoneAvailability(phone);
   }, [step2Form, checkPhoneAvailability]);
 
-  // Resend countdown timer
+  // Resend countdown timer — uses localStorage end time so it persists across navigations
   useEffect(() => {
-    if (step === otpStep && resendCountdown > 0) {
-      const timer = setInterval(() => {
-        setResendCountdown((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [step, resendCountdown, otpStep]);
+    if (resendCountdown <= 0) return;
+    const timer = setInterval(() => {
+      const endTime = localStorage.getItem("otpResendEndTime");
+      if (!endTime) { setResendCountdown(0); return; }
+      const remaining = Math.ceil((parseInt(endTime, 10) - Date.now()) / 1000);
+      if (remaining <= 0) {
+        setResendCountdown(0);
+        localStorage.removeItem("otpResendEndTime");
+      } else {
+        setResendCountdown(remaining);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCountdown > 0]);
 
-  // Phone OTP resend countdown timer (for hosts)
+  // Phone OTP resend countdown timer (for hosts) — localStorage-persisted
   useEffect(() => {
-    if (step === phoneOtpStep && phoneResendCountdown > 0) {
-      const timer = setInterval(() => {
-        setPhoneResendCountdown((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [step, phoneResendCountdown]);
+    if (phoneResendCountdown <= 0) return;
+    const timer = setInterval(() => {
+      const endTime = localStorage.getItem("phoneOtpResendEndTime");
+      if (!endTime) { setPhoneResendCountdown(0); return; }
+      const remaining = Math.ceil((parseInt(endTime, 10) - Date.now()) / 1000);
+      if (remaining <= 0) {
+        setPhoneResendCountdown(0);
+        localStorage.removeItem("phoneOtpResendEndTime");
+      } else {
+        setPhoneResendCountdown(remaining);
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [phoneResendCountdown > 0]);
 
   // OTP input handling
   const handleOtpChange = (index: number, value: string) => {
@@ -521,7 +551,8 @@ const SignUpForm = () => {
         },
       });
       setStep(otpStep);
-      setResendCountdown(600);
+      localStorage.setItem("otpResendEndTime", String(Date.now() + 180 * 1000));
+      setResendCountdown(180);
     } catch (error: any) {
       console.error("Failed to send OTP:", error);
       setStep2Error(
@@ -567,7 +598,8 @@ const SignUpForm = () => {
       });
       setPhoneOtp(["", "", "", ""]);
       setPhoneOtpError("");
-      setPhoneResendCountdown(600);
+      localStorage.setItem("phoneOtpResendEndTime", String(Date.now() + 180 * 1000));
+      setPhoneResendCountdown(180);
       setStep(phoneOtpStep);
     } catch (phoneError: any) {
       console.error("Failed during sign-in or phone OTP:", phoneError);
@@ -663,7 +695,8 @@ const SignUpForm = () => {
           fName: signupData.firstName,
         },
       });
-      setResendCountdown(600);
+      localStorage.setItem("otpResendEndTime", String(Date.now() + 180 * 1000));
+      setResendCountdown(180);
       setShowResendSuccess(true);
       setOtp(["", "", "", ""]);
       setOtpError("");
@@ -742,7 +775,8 @@ const SignUpForm = () => {
       await GetPhoneOtp({
         payload: { phoneNumber: formattedPhone },
       });
-      setPhoneResendCountdown(600);
+      localStorage.setItem("phoneOtpResendEndTime", String(Date.now() + 180 * 1000));
+      setPhoneResendCountdown(180);
       setShowPhoneResendSuccess(true);
       setPhoneOtp(["", "", "", ""]);
       setPhoneOtpError("");
