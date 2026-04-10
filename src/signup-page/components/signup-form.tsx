@@ -198,7 +198,7 @@ const SignUpForm = () => {
       return;
     }
 
-    // @ts-ignore - Google Identity Services types
+    // @ts-expect-error - Google Identity Services types
     if (!window.google?.accounts?.oauth2) {
       console.error("Google Identity Services not loaded");
       return;
@@ -208,7 +208,7 @@ const SignUpForm = () => {
     setLoadingMessage("Connecting to Google...");
     setGoogleSignInError(""); // Clear any previous error
 
-    // @ts-ignore - Google Identity Services types
+    // @ts-expect-error - Google Identity Services types
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: googleClientId,
       scope: "email profile",
