@@ -520,7 +520,11 @@ const FilterPanel = ({
   const autoApply = useCallback(async () => {
     setIsFilterLoading(true);
     const apiFilters = buildApiFiltersRef.current();
-    setFilters(apiFilters);
+    // Strip undefined values so they don't overwrite existing filters
+    const cleanFilters = Object.fromEntries(
+      Object.entries(apiFilters).filter(([, v]) => v !== undefined),
+    );
+    setFilters(cleanFilters);
     await onApplyFilters?.();
     setIsFilterLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps

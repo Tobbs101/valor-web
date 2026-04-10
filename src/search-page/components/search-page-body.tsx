@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronDown, X } from "lucide-react";
 
 import FilterPanel from "./filter-panel";
 import { useRouter } from "next/navigation";
@@ -46,6 +46,31 @@ const SearchPageBody = () => {
   const [showFilter, setShowFilter] = useState(true);
   // Zustand store for filters
   const { filters, setFilters } = useSearchStore();
+
+  // Remove a single filter by key
+  const removeFilter = (key: string) => {
+    const keyToStoreMap: Record<string, string[]> = {
+      price: ["cost"],
+      carType: ["carType"],
+      state: ["state"],
+      dates: ["availableDates"],
+      make: ["carMake"],
+      model: ["carModel"],
+      transmission: ["transmission"],
+      year: ["makeYear"],
+      service: ["serviceType"],
+      glass: ["vehicleGlass"],
+      condition: ["condition"],
+      color: ["carColor"],
+      seats: ["capacity"],
+    };
+    const storeKeys = keyToStoreMap[key] || [];
+    const patch: Record<string, undefined> = {};
+    for (const k of storeKeys) {
+      patch[k] = undefined;
+    }
+    setFilters(patch as any);
+  };
 
   // Calculate active filter count from store
   const getActiveFilterCount = () => {
@@ -304,6 +329,12 @@ const SearchPageBody = () => {
                     >
                       <span className="font-medium">{filter.label}:</span>{" "}
                       {filter.value}
+                      <button
+                        onClick={() => removeFilter(filter.key)}
+                        className="ml-1 hover:bg-primary/20 rounded-full p-0.5 transition-colors"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
                     </span>
                   ))}
                 </div>
