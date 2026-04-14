@@ -227,6 +227,16 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
   const emailRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLDivElement>(null);
 
+  // Step 2 refs
+  const tripDateRef = useRef<HTMLDivElement>(null);
+  const pickupTimeRef = useRef<HTMLInputElement>(null);
+  const closingTimeRef = useRef<HTMLInputElement>(null);
+  const pickupLocationRef = useRef<HTMLDivElement>(null);
+  const itineraryRef = useRef<HTMLTextAreaElement>(null);
+  const airportNameRef = useRef<HTMLInputElement>(null);
+  const timeOfFlightRef = useRef<HTMLInputElement>(null);
+  const dropoffLocationRef = useRef<HTMLDivElement>(null);
+
   // Validation helpers
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -445,6 +455,41 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
     } else if (step === 2) {
       setShowValidation(true);
 
+      // Focus first invalid field based on job type
+      if (tripDates.length === 0) {
+        tripDateRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      if (jobType === "Full Day") {
+        if (!pickupTime) { pickupTimeRef.current?.showPicker(); pickupTimeRef.current?.focus(); return; }
+        if (!closingTime) { closingTimeRef.current?.showPicker(); closingTimeRef.current?.focus(); return; }
+        if (!pickupLocation) {
+          const input = pickupLocationRef.current?.querySelector("input");
+          input?.focus(); return;
+        }
+        if (!itinerary) { itineraryRef.current?.focus(); return; }
+      }
+
+      if (jobType === "Airport Pickup") {
+        if (!airportName) { airportNameRef.current?.focus(); return; }
+        if (!timeOfFlight) { timeOfFlightRef.current?.showPicker(); timeOfFlightRef.current?.focus(); return; }
+        if (!pickupTime) { pickupTimeRef.current?.showPicker(); pickupTimeRef.current?.focus(); return; }
+        if (!dropoffLocation) {
+          const input = dropoffLocationRef.current?.querySelector("input");
+          input?.focus(); return;
+        }
+      }
+
+      if (jobType === "Airport Drop") {
+        if (!pickupLocation) {
+          const input = pickupLocationRef.current?.querySelector("input");
+          input?.focus(); return;
+        }
+        if (!pickupTime) { pickupTimeRef.current?.showPicker(); pickupTimeRef.current?.focus(); return; }
+        if (!airportName) { airportNameRef.current?.focus(); return; }
+      }
+
       if (isStep2Valid()) {
         handleSubmit();
       }
@@ -621,6 +666,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                     </p>
                   )}
                   <div
+                    ref={tripDateRef}
                     className={`w-full overflow-x-auto border rounded-[16px] p-3 ${
                       showValidation && tripDates.length === 0
                         ? "border-red-400 bg-red-50"
@@ -681,10 +727,12 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         Pick-up Time
                       </label>
                       <input
+                        ref={pickupTimeRef}
                         type="time"
                         value={pickupTime}
                         onChange={(e) => setPickupTime(e.target.value)}
-                        className="w-full h-[50px] rounded-full bg-white border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                        onClick={(e) => (e.target as HTMLInputElement).showPicker()}
+                        className={`w-full h-[50px] rounded-full bg-white border px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer ${showValidation && pickupTime === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                       />
                     </div>
 
@@ -694,15 +742,17 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         Closing Time
                       </label>
                       <input
+                        ref={closingTimeRef}
                         type="time"
                         value={closingTime}
                         onChange={(e) => setClosingTime(e.target.value)}
-                        className="w-full h-[50px] rounded-full bg-white border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                        onClick={(e) => (e.target as HTMLInputElement).showPicker()}
+                        className={`w-full h-[50px] rounded-full bg-white border px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer ${showValidation && closingTime === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                       />
                     </div>
 
                     {/* Pick-up Location */}
-                    <div className="">
+                    <div ref={pickupLocationRef}>
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Pick-up Location
                       </label>
@@ -727,6 +777,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         Itinerary
                       </label>
                       <textarea
+                        ref={itineraryRef}
                         value={itinerary}
                         onChange={(e) => setItinerary(e.target.value)}
                         placeholder="Kindly input your description here"
@@ -758,6 +809,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         Airport Name
                       </label>
                       <input
+                        ref={airportNameRef}
                         type="text"
                         placeholder="e.g. MM2"
                         className={`w-full border rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && airportName === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
@@ -772,10 +824,12 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         Time of Flight
                       </label>
                       <input
+                        ref={timeOfFlightRef}
                         type="time"
                         value={timeOfFlight}
                         onChange={(e) => setTimeOfFlight(e.target.value)}
-                        className={`w-full h-[50px] bg-wwhite rounded-full border px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none ${showValidation && timeOfFlight === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
+                        onClick={(e) => (e.target as HTMLInputElement).showPicker()}
+                        className={`w-full h-[50px] bg-white rounded-full border px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer ${showValidation && timeOfFlight === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                       />
                     </div>
 
@@ -785,15 +839,17 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         Pick-up Time
                       </label>
                       <input
+                        ref={pickupTimeRef}
                         type="time"
                         value={pickupTime}
                         onChange={(e) => setPickupTime(e.target.value)}
-                        className="w-full h-[50px] rounded-full bg-white border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                        onClick={(e) => (e.target as HTMLInputElement).showPicker()}
+                        className={`w-full h-[50px] rounded-full bg-white border px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer ${showValidation && pickupTime === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                       />
                     </div>
 
                     {/* Drop-off Location */}
-                    <div>
+                    <div ref={dropoffLocationRef}>
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Drop-off Location
                       </label>
@@ -818,7 +874,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                 {jobType === "Airport Drop" && (
                   <>
                     {/* Pick-up Location */}
-                    <div>
+                    <div ref={pickupLocationRef}>
                       <label className="block text-[14px] font-[600] text-primary mb-2">
                         Pick-up Location
                       </label>
@@ -843,10 +899,12 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         Pick-up Time
                       </label>
                       <input
+                        ref={pickupTimeRef}
                         type="time"
                         value={pickupTime}
                         onChange={(e) => setPickupTime(e.target.value)}
-                        className="w-full h-[50px] rounded-full bg-white border border-gray-200 px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                        onClick={(e) => (e.target as HTMLInputElement).showPicker()}
+                        className={`w-full h-[50px] rounded-full bg-white border px-5 text-[14px] focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none cursor-pointer ${showValidation && pickupTime === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}
                       />
                     </div>
 
@@ -856,6 +914,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
                         Airport Name
                       </label>
                       <input
+                        ref={airportNameRef}
                         type="text"
                         placeholder="e.g. MM2"
                         className={`w-full border rounded-full h-[50px] px-5 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-[14px] ${showValidation && airportName === "" ? "border-red-400 bg-red-50" : "border-gray-200"}`}

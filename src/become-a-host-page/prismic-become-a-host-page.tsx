@@ -32,6 +32,10 @@ import SecurePayments from "@/assets/secure-payments.svg";
 import SimpleManagement from "@/assets/simple-management.svg";
 import HowItWorksImage from "@/assets/report-bug.png";
 import OnboardImage from "@/assets/327shots.png";
+import { Button } from "@/components/ui/button";
+import { useSignupStore } from "@/store/signup-store";
+import { useRouter } from "next/navigation";
+import { Arrow } from "@radix-ui/react-select";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -313,6 +317,9 @@ const PrismicBecomeAHostPage = ({ data }: PrismicBecomeAHostPageProps) => {
     triggerOnce: true,
     threshold: 0.2,
   });
+
+  const { resetStore } = useSignupStore();
+  const router = useRouter();
 
   // Testimonials carousel
   const [testimonialApi, setTestimonialApi] = useState<CarouselApi>();
@@ -663,6 +670,22 @@ const PrismicBecomeAHostPage = ({ data }: PrismicBecomeAHostPageProps) => {
                     </motion.div>
                   ))}
                 </div>
+              </div>
+
+              <div className="w-full mt-10">
+                <Button
+                  onClick={() => {
+                    resetStore();
+
+                    router.push("/sign-up?accountType=host");
+                  }}
+                  className={cn(
+                    "rounded-[36px] w-[180px] h-[47px] text-[14px] font-[400] p-[14px_40px] bg-primary text-white hover:bg-primary/90 duration-200",
+                  )}
+                >
+               Sign Up as Host
+               <ArrowRight className="w-4 h-4" />
+                </Button>
               </div>
             </motion.div>
           </motion.div>

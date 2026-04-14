@@ -235,7 +235,7 @@ const SearchPageBody = () => {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute top-full right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[220px]"
+                  className="absolute top-full left-0 sm:left-[-100px] mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[220px]"
                 >
                   {sortOptions.map((option) => (
                     <button

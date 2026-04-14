@@ -1,8 +1,8 @@
 "use client";
 
 import Container from "@/components/layout/container";
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence, useMotionValue, animate as animateMotionValue } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Image, { StaticImageData } from "next/image";
 import { Icon } from "@iconify/react";
@@ -84,6 +84,10 @@ const CarSelection = ({
   const { setFilters } = useSearchStore();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState(3);
+  const x = useMotionValue(0);
+  const animationRef = useRef<{ stop: () => void } | null>(null);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const oneSetWidth = 268 * carCategories.length;
 
   const handleCategoryClick = (filterValue: string) => {
     setFilters({ carType: [filterValue] });
@@ -106,6 +110,53 @@ const CarSelection = ({
     window.addEventListener("resize", updateVisibleCards);
     return () => window.removeEventListener("resize", updateVisibleCards);
   }, []);
+
+  // Infinite scroll animation with swipe/drag support
+  const startScrollAnimation = useCallback(() => {
+    animationRef.current?.stop();
+
+    const currentX = x.get();
+    let normalizedX = currentX % oneSetWidth;
+    if (normalizedX > 0) normalizedX -= oneSetWidth;
+
+    x.set(normalizedX);
+
+    const remainingRatio = (oneSetWidth + normalizedX) / oneSetWidth;
+    const remainingDuration = 60 * remainingRatio;
+
+    animationRef.current = animateMotionValue(x, -oneSetWidth, {
+      duration: remainingDuration,
+      ease: "linear",
+      onComplete: () => {
+        x.set(0);
+        animationRef.current = animateMotionValue(x, -oneSetWidth, {
+          duration: 60,
+          ease: "linear",
+          repeat: Infinity,
+          repeatType: "loop",
+        });
+      },
+    });
+  }, [x, oneSetWidth]);
+
+  useEffect(() => {
+    startScrollAnimation();
+    return () => {
+      animationRef.current?.stop();
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    };
+  }, [startScrollAnimation]);
+
+  const handleDragStart = () => {
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    animationRef.current?.stop();
+  };
+
+  const handleDragEnd = () => {
+    resumeTimerRef.current = setTimeout(() => {
+      startScrollAnimation();
+    }, 3000);
+  };
 
   const { ref: headerRef, inView: headerInView } = useInView({
     triggerOnce: true,
@@ -587,18 +638,13 @@ const CarSelection = ({
         {/* Continuous Slider */}
         <div className="relative overflow-hidden mt-5 w-full pl-5">
           <motion.div
-            className="flex gap-5 md:gap-8"
-            animate={{
-              x: [0, -(268 * carCategories.length)],
-            }}
-            transition={{
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 60,
-                ease: "linear",
-              },
-            }}
+            className="flex gap-5 md:gap-8 cursor-grab active:cursor-grabbing"
+            style={{ x }}
+            drag="x"
+            dragConstraints={{ left: -(oneSetWidth * 2), right: 0 }}
+            dragElastic={0.1}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
           >
             {duplicatedCategories.map((category, index) => (
               <CategoryCard
