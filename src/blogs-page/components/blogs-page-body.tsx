@@ -9,6 +9,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { useMutation } from "react-query";
+import { jobListing } from "@/apis/job-listing";
+import { toast } from "@/hooks/use-toast";
 
 // Mock blog data
 const blogPosts = [
@@ -164,6 +167,25 @@ const BlogCard = ({
 const BlogsPageBody = () => {
   const [email, setEmail] = React.useState("");
 
+  const subscribeMutation = useMutation({
+    mutationFn: () => jobListing.newsletterSubscribe({ payload: { email } }),
+    onSuccess: () => {
+      toast({ title: "Subscribed!", description: "You've been subscribed to our newsletter." });
+      setEmail("");
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to subscribe. Please try again.", variant: "destructive" });
+    },
+  });
+
+  const handleSubscribe = () => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast({ title: "Invalid email", description: "Please enter a valid email address.", variant: "destructive" });
+      return;
+    }
+    subscribeMutation.mutate();
+  };
+
   return (
     <div className="bg-white overflow-hidden">
       {/* Header Section */}
@@ -219,8 +241,12 @@ const BlogsPageBody = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-[48px] bg-white rounded-full px-6 border-gray-200 max-w-[300px] mx-auto sm:mx-0"
               />
-              <Button className="h-[48px] px-8 rounded-full bg-primary hover:bg-primary/90 text-white font-[500]">
-                Sign Up
+              <Button
+                onClick={handleSubscribe}
+                disabled={subscribeMutation.isLoading}
+                className="h-[48px] px-8 rounded-full bg-primary hover:bg-primary/90 text-white font-[500]"
+              >
+                {subscribeMutation.isLoading ? "Subscribing..." : "Sign Up"}
               </Button>
             </div>
 

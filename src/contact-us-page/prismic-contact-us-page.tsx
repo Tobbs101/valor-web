@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Container from "@/components/layout/container";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,13 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import ExperienceValor from "@/components/shared/experience-valor";
 import { KeyTextField, ImageField } from "@prismicio/client";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import { useMutation } from "react-query";
+import { jobListing } from "@/apis/job-listing";
+import LoadingOverlay from "@/components/custom/loading-overlay";
+import SuccessModalCard from "@/components/custom/success-modal";
+import FailureModalCard from "@/components/custom/failure-modal";
 
 // Types for Prismic data
 interface ContactUsPageData {
@@ -41,6 +48,10 @@ interface PrismicContactUsPageProps {
 const contactFormSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
+  phoneNumber: z.string().min(1, { message: "Phone number is required" }).refine(
+    (val) => isValidPhoneNumber(val),
+    { message: "Please enter a valid phone number" }
+  ),
   inquiryType: z.string().min(1, { message: "Please select an inquiry type" }),
   message: z.string().min(1, { message: "Please enter your message" }),
 });
@@ -79,19 +90,58 @@ const defaultSocialLinks = [
 ];
 
 const PrismicContactUsPage = ({ data }: PrismicContactUsPageProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showFailure, setShowFailure] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
       name: "",
       email: "",
+      phoneNumber: "",
       inquiryType: "",
       message: "",
     },
   });
 
-  const onSubmit = (formData: ContactFormValues) => {
-    console.log(formData);
-    // Handle form submission here
+  const contactMutation = useMutation(
+    (payload: {
+      name: string;
+      email: string;
+      typeOfInquiry: string;
+      message: string;
+      phoneNumber: string;
+    }) => jobListing.contactUs({ payload }),
+  );
+
+  const onSubmit = async (formData: ContactFormValues) => {
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const inquiryLabel =
+        inquiryOptions.find((opt) => opt.value === formData.inquiryType)
+          ?.title || formData.inquiryType;
+
+      await contactMutation.mutateAsync({
+        name: formData.name,
+        email: formData.email,
+        typeOfInquiry: inquiryLabel,
+        message: formData.message,
+        phoneNumber: formData.phoneNumber,
+      });
+      form.reset();
+      setShowSuccess(true);
+    } catch (error: any) {
+      setErrorMessage(
+        error?.response?.data?.message ||
+          "Failed to submit your enquiry. Please try again.",
+      );
+      setShowFailure(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Google Maps embed URL (no API key required)
@@ -99,6 +149,8 @@ const PrismicContactUsPage = ({ data }: PrismicContactUsPageProps) => {
   const mapUrl = data.map_embed_url || defaultMapUrl;
 
   return (
+    <>
+    <LoadingOverlay isLoading={isLoading} message="Submitting your enquiry..." />
     <div className="bg-white pt-[30px] md:pt-[60px] pb-[0px] md:pb-[80px] overflow-hidden">
       <Container className="px-5">
         {/* Contact Form Section */}
@@ -151,6 +203,38 @@ const PrismicContactUsPage = ({ data }: PrismicContactUsPageProps) => {
                       type="email"
                       className="h-[48px] rounded-[8px] border-gray-200"
                     />
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <div className="space-y-2 py-2">
+                      <label className="text-sm font-medium leading-none">
+                        Phone Number (Required)
+                      </label>
+                      <PhoneInput
+                        international
+                        defaultCountry="NG"
+                        value={field.value}
+                        onChange={(value) => field.onChange(value || "")}
+                        className={`phone-input-wrapper flex items-center border overflow-hidden rounded-[8px] h-[48px] px-4 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary ${
+                          form.formState.errors.phoneNumber
+                            ? "border-red-400 bg-red-50"
+                            : "border-gray-200"
+                        }`}
+                        numberInputProps={{
+                          className:
+                            "flex-1 h-full pl-3 outline-none text-[14px] bg-transparent",
+                        }}
+                      />
+                      {form.formState.errors.phoneNumber && (
+                        <p className="text-[0.8rem] font-medium text-destructive">
+                          {form.formState.errors.phoneNumber.message}
+                        </p>
+                      )}
+                    </div>
                   )}
                 />
 
@@ -296,6 +380,25 @@ const PrismicContactUsPage = ({ data }: PrismicContactUsPageProps) => {
         <ExperienceValor />
       </div>
     </div>
+
+    <SuccessModalCard
+      isOpen={showSuccess}
+      title="Message Sent!"
+      info="Thank you for reaching out. We'll get back to you as soon as possible."
+      primaryBtnLabel="Okay"
+      onProceed={() => setShowSuccess(false)}
+      onClose={() => setShowSuccess(false)}
+    />
+
+    <FailureModalCard
+      isOpen={showFailure}
+      title="Submission Failed"
+      info={errorMessage || "Something went wrong. Please try again."}
+      primaryBtnLabel="Try Again"
+      onProceed={() => setShowFailure(false)}
+      onClose={() => setShowFailure(false)}
+    />
+    </>
   );
 };
 

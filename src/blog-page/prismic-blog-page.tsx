@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "react-query";
+import { jobListing } from "@/apis/job-listing";
+import { toast } from "@/hooks/use-toast";
 import { PrismicNextImage } from "@prismicio/next";
 import { PrismicRichText } from "@prismicio/react";
 
@@ -99,6 +102,25 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
 
 const PrismicBlogPage = ({ post, relatedPosts }: PrismicBlogPageProps) => {
   const [email, setEmail] = React.useState("");
+
+  const subscribeMutation = useMutation({
+    mutationFn: () => jobListing.newsletterSubscribe({ payload: { email } }),
+    onSuccess: () => {
+      toast({ title: "Subscribed!", description: "You've been subscribed to our newsletter." });
+      setEmail("");
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to subscribe. Please try again.", variant: "destructive" });
+    },
+  });
+
+  const handleSubscribe = () => {
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast({ title: "Invalid email", description: "Please enter a valid email address.", variant: "destructive" });
+      return;
+    }
+    subscribeMutation.mutate();
+  };
 
   const formatDate = (dateString?: string | null) => {
     if (!dateString) return "";
@@ -309,8 +331,12 @@ const PrismicBlogPage = ({ post, relatedPosts }: PrismicBlogPageProps) => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-[48px] bg-white rounded-full px-6 border-gray-200 max-w-[300px] mx-auto sm:mx-0"
               />
-              <Button className="h-[48px] px-8 rounded-full bg-primary hover:bg-primary/90 text-white font-[500]">
-                Sign Up
+              <Button
+                onClick={handleSubscribe}
+                disabled={subscribeMutation.isLoading}
+                className="h-[48px] px-8 rounded-full bg-primary hover:bg-primary/90 text-white font-[500]"
+              >
+                {subscribeMutation.isLoading ? "Subscribing..." : "Sign Up"}
               </Button>
             </div>
 

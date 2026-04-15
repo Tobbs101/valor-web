@@ -74,4 +74,22 @@ export const jobListing = {
     client
       .post(`bookings/guest/create-request`, payload)
       .then(({ data }: any) => data),
+
+  contactUs: ({
+    payload,
+  }: {
+    payload: {
+      name: string;
+      email: string;
+      typeOfInquiry: string;
+      message: string;
+      phoneNumber: string;
+    };
+  }) =>
+    client.post(`contact-us`, payload).then(({ data }: any) => data),
+
+  newsletterSubscribe: ({ payload }: { payload: { email: string } }) =>
+    client
+      .post(`newsletter/subscribe`, payload)
+      .then(({ data }: any) => data),
 };
