@@ -668,7 +668,7 @@ const FilterPanel = ({
               {/* Scrollable Filter Content */}
               <div className="flex-1 overflow-y-auto p-5">
                 {/* Price Filter */}
-                <FilterSection title="Price">
+                <FilterSection title="Price" defaultOpen={false}>
                   <div className="flex flex-col flex-wrap gap-3">
                     <input
                       type="text"
@@ -696,7 +696,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* State Filter */}
-                <FilterSection title="State">
+                <FilterSection title="State" defaultOpen={false}>
                   <Select
                     value={selectedState}
                     onValueChange={setSelectedState}
@@ -719,7 +719,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Available Dates Filter */}
-                <FilterSection title="Rental Date">
+                <FilterSection title="Rental Date" defaultOpen={false}>
                   <Popover
                     open={isCalendarOpen}
                     onOpenChange={setIsCalendarOpen}
@@ -783,7 +783,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Vehicle Type Filter */}
-                <FilterSection title="Vehicle type">
+                <FilterSection title="Vehicle type" defaultOpen={false}>
                   <div className="grid grid-cols-3 gap-3">
                     {vehicleTypes.map((type) => (
                       <button
@@ -812,7 +812,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Transmission Filter */}
-                <FilterSection title="Transmission">
+                <FilterSection title="Transmission" defaultOpen={false}>
                   <div className="space-y-3">
                     {transmissionOptions.map((option) => (
                       <label
@@ -840,7 +840,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Car Make Filter */}
-                <FilterSection title="Car Make">
+                <FilterSection title="Car Make" defaultOpen={false}>
                   <div className="space-y-3">
                     <div className="relative">
                       <input
@@ -885,7 +885,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Car Model Filter */}
-                <FilterSection title="Car Model">
+                <FilterSection title="Car Model" defaultOpen={false}>
                   <div className="space-y-3">
                     <div className="relative">
                       <input
@@ -933,7 +933,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Year of Manufacturing Filter */}
-                <FilterSection title="Year of Manufacturing">
+                <FilterSection title="Year of Manufacturing" defaultOpen={false}>
                   <div className="flex flex-col flex-wrap gap-3">
                     <Select
                       value={minYear}
@@ -983,7 +983,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Services Filter */}
-                <FilterSection title="Services">
+                <FilterSection title="Services" defaultOpen={false}>
                   <div className="space-y-3">
                     {servicesOptions.map((option) => (
                       <label
@@ -1011,7 +1011,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Vehicle Glass Filter */}
-                <FilterSection title="Vehicle Glass">
+                <FilterSection title="Vehicle Glass" defaultOpen={false}>
                   <div className="space-y-3">
                     {vehicleGlassOptions.map((option) => (
                       <label
@@ -1039,7 +1039,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Vehicle Condition Filter */}
-                <FilterSection title="Vehicle Condition">
+                <FilterSection title="Vehicle Condition" defaultOpen={false}>
                   <div className="space-y-3">
                     {vehicleConditionOptions.map((option) => (
                       <label
@@ -1067,7 +1067,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Vehicle Color Filter */}
-                <FilterSection title="Vehicle Color">
+                <FilterSection title="Vehicle Color" defaultOpen={false}>
                   <Select
                     value={selectedVehicleColor}
                     onValueChange={setSelectedVehicleColor}
@@ -1090,7 +1090,7 @@ const FilterPanel = ({
                 </FilterSection>
 
                 {/* Number of Seats Filter */}
-                <FilterSection title="Number of Seats">
+                <FilterSection title="Number of Seats" defaultOpen={false}>
                   <div className="flex flex-col flex-wrap gap-3">
                     <input
                       type="number"

@@ -12,8 +12,10 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "react-query";
 import { jobListing } from "@/apis/job-listing";
-import { toast } from "@/hooks/use-toast";
 import { PrismicNextImage } from "@prismicio/next";
+import LoadingOverlay from "@/components/custom/loading-overlay";
+import SuccessModalCard from "@/components/custom/success-modal";
+import FailureModalCard from "@/components/custom/failure-modal";
 import { PrismicRichText } from "@prismicio/react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,24 +104,36 @@ const BlogCard = ({ post, index }: { post: BlogPost; index: number }) => {
 
 const PrismicBlogPage = ({ post, relatedPosts }: PrismicBlogPageProps) => {
   const [email, setEmail] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [showSuccess, setShowSuccess] = React.useState(false);
+  const [showFailure, setShowFailure] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
 
-  const subscribeMutation = useMutation({
-    mutationFn: () => jobListing.newsletterSubscribe({ payload: { email } }),
-    onSuccess: () => {
-      toast({ title: "Subscribed!", description: "You've been subscribed to our newsletter." });
-      setEmail("");
-    },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to subscribe. Please try again.", variant: "destructive" });
-    },
-  });
+  const subscribeMutation = useMutation(
+    () => jobListing.newsletterSubscribe({ payload: { email } }),
+  );
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast({ title: "Invalid email", description: "Please enter a valid email address.", variant: "destructive" });
+      setErrorMessage("Please enter a valid email address.");
+      setShowFailure(true);
       return;
     }
-    subscribeMutation.mutate();
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      await subscribeMutation.mutateAsync();
+      setEmail("");
+      setShowSuccess(true);
+    } catch (error: any) {
+      setErrorMessage(
+        error?.response?.data?.message ||
+          "Failed to subscribe. Please try again.",
+      );
+      setShowFailure(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatDate = (dateString?: string | null) => {
@@ -133,6 +147,8 @@ const PrismicBlogPage = ({ post, relatedPosts }: PrismicBlogPageProps) => {
   };
 
   return (
+    <>
+    <LoadingOverlay isLoading={isLoading} message="Subscribing..." />
     <div className="bg-white w-full">
       {/* Hero Section */}
       <div className="relative h-[300px] md:h-[450px] w-full">
@@ -353,6 +369,25 @@ const PrismicBlogPage = ({ post, relatedPosts }: PrismicBlogPageProps) => {
         </Container>
       </div>
     </div>
+
+    <SuccessModalCard
+      isOpen={showSuccess}
+      title="Subscribed!"
+      info="You've been subscribed to our newsletter."
+      primaryBtnLabel="Okay"
+      onProceed={() => setShowSuccess(false)}
+      onClose={() => setShowSuccess(false)}
+    />
+
+    <FailureModalCard
+      isOpen={showFailure}
+      title="Subscription Failed"
+      info={errorMessage || "Something went wrong. Please try again."}
+      primaryBtnLabel="Try Again"
+      onProceed={() => setShowFailure(false)}
+      onClose={() => setShowFailure(false)}
+    />
+    </>
   );
 };
 
