@@ -779,13 +779,95 @@ const CarDetailsPageBody = () => {
   if (loadingCarData) {
     return (
       <div className="min-h-screen bg-white">
-        <div className="max-w-[1200px] mx-auto py-20 px-5">
+        {/* Mobile Skeleton */}
+        <div className="md:hidden">
+          {/* Hero Image */}
+          <Skeleton className="w-full h-[350px] rounded-none" />
+
+          {/* Content Card */}
+          <div className="relative -mt-6 bg-white rounded-t-[24px] px-5 pt-6 pb-8">
+            {/* Car Name & Location */}
+            <Skeleton className="w-48 h-7 mb-3" />
+            <Skeleton className="w-32 h-4 mb-2" />
+            <Skeleton className="w-52 h-4 mb-6" />
+
+            {/* Technical Specification */}
+            <Skeleton className="w-48 h-5 mb-4" />
+            <div className="flex flex-wrap gap-3 mb-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="w-[80px] h-[52px] rounded-lg" />
+              ))}
+            </div>
+
+            {/* Features */}
+            <Skeleton className="w-24 h-5 mb-4" />
+            <div className="flex gap-3 mb-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="w-[100px] h-[80px] rounded-xl" />
+              ))}
+            </div>
+
+            {/* Rental Terms */}
+            <Skeleton className="w-32 h-5 mb-4" />
+            <div className="space-y-3 mb-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <Skeleton className="w-6 h-6 rounded-full" />
+                  <Skeleton className="flex-1 h-4" />
+                </div>
+              ))}
+            </div>
+
+            {/* Service */}
+            <Skeleton className="w-20 h-5 mb-4" />
+            <div className="flex gap-3 mb-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="w-[100px] h-[90px] rounded-xl" />
+              ))}
+            </div>
+
+            {/* Hosted By */}
+            <Skeleton className="w-28 h-5 mb-4" />
+            <div className="space-y-3 mb-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <Skeleton className="w-20 h-4" />
+                  <Skeleton className="w-28 h-4" />
+                </div>
+              ))}
+            </div>
+            <Skeleton className="w-full h-[44px] rounded-3xl mb-6" />
+
+            {/* Date Available */}
+            <Skeleton className="w-32 h-5 mb-4" />
+            <Skeleton className="w-full h-[44px] rounded-lg mb-4" />
+            <Skeleton className="w-full h-[280px] rounded-lg mb-6" />
+
+            {/* Ratings */}
+            <Skeleton className="w-44 h-5 mb-4" />
+            <Skeleton className="w-full h-[100px] rounded-xl" />
+          </div>
+
+          {/* Fixed Bottom Bar */}
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-5 py-4 z-[100]">
+            <div className="flex items-center justify-between">
+              <div>
+                <Skeleton className="w-12 h-3 mb-1" />
+                <Skeleton className="w-24 h-7" />
+              </div>
+              <Skeleton className="w-[160px] h-[44px] rounded-full" />
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Skeleton */}
+        <div className="hidden md:block max-w-[1200px] mx-auto py-20 px-5">
           <Skeleton className="w-40 h-8 mb-6" />
           <div className="flex flex-col md:flex-row gap-4 mb-8">
-            <Skeleton className="flex-1 h-[250px] md:h-[400px] rounded-2xl" />
-            <div className="w-full md:w-[280px] flex flex-row md:flex-col gap-4">
-              <Skeleton className="flex-1 h-[140px] md:h-[190px] rounded-2xl" />
-              <Skeleton className="flex-1 h-[140px] md:h-[190px] rounded-2xl" />
+            <Skeleton className="flex-1 h-[400px] rounded-2xl" />
+            <div className="w-[280px] flex flex-col gap-4">
+              <Skeleton className="flex-1 h-[190px] rounded-2xl" />
+              <Skeleton className="flex-1 h-[190px] rounded-2xl" />
             </div>
           </div>
           <div className="flex flex-col lg:flex-row gap-8">

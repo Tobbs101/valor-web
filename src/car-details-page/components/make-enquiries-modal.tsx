@@ -520,7 +520,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent
-          className="max-w-[525px] p-0 w-[95%] max-h-[95svh] overflow-y-auto rounded-2xl z-[101]"
+          className="max-w-[525px] p-0 w-full h-[100dvh] md:h-auto md:w-[95%] md:max-h-[95svh] rounded-none md:rounded-2xl z-[101] flex flex-col overflow-hidden inset-0 translate-x-0 translate-y-0 md:inset-auto md:left-[50%] md:top-[50%] md:translate-x-[-50%] md:translate-y-[-50%]"
           onInteractOutside={handleInteractOutside}
           onPointerDownOutside={handleInteractOutside}
         >
@@ -533,7 +533,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
             </button>
           )}
 
-          <DialogHeader className={cn("mt-5 px-5 pt-5", step === 2 && "pt-10")}>
+          <DialogHeader className={cn("mt-5 px-5 pt-5 shrink-0", step === 2 && "pt-10")}>
             <DialogTitle className="text-[28px] font-[700] text-primary">
               Make Enquiries - Step {step}/2
             </DialogTitle>
@@ -542,7 +542,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
             </p>
           </DialogHeader>
 
-          <div className="space-y-5 border-t border-gray-200 p-5 max-h-[calc(95svh-280px)] overflow-y-auto mt-4">
+          <div className="space-y-5 border-t border-gray-200 p-5 flex-1 overflow-y-auto mt-4">
             {step === 1 && (
               <>
                 {/* First Name */}
@@ -958,7 +958,7 @@ const MakeEnquiriesModal: React.FC<MakeEnquiriesModalProps> = ({
           </div>
 
           {/* Footer Buttons */}
-          <div className="p-5 border-t border-gray-200">
+          <div className="p-5 border-t border-gray-200 shrink-0">
             {step === 1 ? (
               <button
                 onClick={handleNext}

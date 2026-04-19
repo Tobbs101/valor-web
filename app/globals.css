@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force time/date inputs to respect container width on mobile */
+input[type="time"],
+input[type="date"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 /* Light - 300 */
 @font-face {
   font-family: "AirbnbCereal";

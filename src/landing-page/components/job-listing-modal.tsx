@@ -165,14 +165,14 @@ const TimePickerInput: React.FC<{
   };
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className="min-w-0 w-full overflow-hidden">
       {label && (
         <label className="block text-[14px] font-[600] text-primary mb-2">
           {label}
         </label>
       )}
-      <div className="relative" onClick={handleClick}>
-        <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+      <div className="relative overflow-hidden rounded-full" onClick={handleClick}>
+        <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-[1]" />
         <input
           ref={inputRef}
           type="time"
@@ -670,7 +670,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent
-          className="max-w-[500px] p-0 w-[95%] max-h-[95svh] overflow-y-auto rounded-2xl z-[101]"
+          className="max-w-[500px] p-0 w-full h-[100dvh] md:h-auto md:w-[95%] md:max-h-[95svh] rounded-none md:rounded-2xl z-[101] flex flex-col overflow-hidden inset-0 translate-x-0 translate-y-0 md:inset-auto md:left-[50%] md:top-[50%] md:translate-x-[-50%] md:translate-y-[-50%]"
           onInteractOutside={handleInteractOutside}
           onPointerDownOutside={handleInteractOutside}
         >
@@ -683,7 +683,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
             </button>
           )}
 
-          <DialogHeader className={cn("mt-5 px-5 pt-5", step === 2 && "pt-10")}>
+          <DialogHeader className={cn("mt-5 px-5 pt-5 shrink-0", step === 2 && "pt-10")}>
             <DialogTitle className="text-[28px] font-[700] text-primary">
               Job Listing - Step {step}/2
             </DialogTitle>
@@ -693,7 +693,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
             </p>
           </DialogHeader>
 
-          <div className="space-y-5 p-5 max-h-[calc(95svh-280px)] border-t border-b border-gray-200 overflow-y-auto mt-4">
+          <div className="space-y-5 p-5 flex-1 border-t border-b border-gray-200 overflow-y-auto mt-4">
             {step === 1 && (
               <>
                 {/* First Name */}
@@ -1219,7 +1219,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
           </div>
 
           {/* Buttons */}
-          <div className="flex px-5 pb-5 gap-3">
+          <div className="flex px-5 pb-5 gap-3 shrink-0">
             {step === 2 && (
               <button
                 onClick={handleBack}
