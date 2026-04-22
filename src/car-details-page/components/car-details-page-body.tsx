@@ -1137,7 +1137,7 @@ const CarDetailsPageBody = () => {
                   href="/cancellation-refund-policy"
                   className="text-[14px] text-blue-600 hover:text-primary hover:underline"
                 >
-                  No refund cancellation policy
+                  View cancellation policy
                 </Link>
               </div>
               {rentalTerms.map((term, idx) => (
@@ -1866,7 +1866,7 @@ const CarDetailsPageBody = () => {
                       href="/cancellation-refund-policy"
                       className="text-[14px] text-blue-600 hover:text-primary hover:underline"
                     >
-                      No refund cancellation policy
+                      View cancellation policy
                     </Link>
                   </div>
                   {rentalTerms.length > 0 ? (
