@@ -1525,12 +1525,12 @@ const CarDetailsPageBody = () => {
               <h2 className="text-[18px] font-[600] text-primary mb-4">
                 More Recommendations
               </h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="flex gap-4 overflow-x-auto pb-2">
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {similarVehicles.slice(0, 4).map((car: any, idx: number) => (
                   <div
                     key={car._id || idx}
-                    className="cursor-pointer"
+                    className="cursor-pointer flex-shrink-0 w-[165px]"
                     onClick={() => router.push(`/search/${car._id}`)}
                   >
                     {/* Car Image */}
