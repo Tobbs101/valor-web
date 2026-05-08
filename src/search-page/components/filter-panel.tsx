@@ -38,7 +38,7 @@ const fallbackVehicleTypes: VehicleType[] = [
   { id: "Sedan", name: "Sedan", icon: "mdi:car-convertible" },
   { id: "Luxury", name: "Luxury", icon: "mdi:car-sports" },
   { id: "Bus", name: "Bus", icon: "mdi:bus" },
-  { id: "Pick Up", name: "Pick Up", icon: "mdi:car-pickup" },
+  { id: "Pickup", name: "Pick Up", icon: "mdi:car-pickup" },
   { id: "Mini-van", name: "Mini-van", icon: "mdi:van-passenger" },
   { id: "Vintage", name: "Vintage", icon: "mdi:car-convertible" },
 ];
