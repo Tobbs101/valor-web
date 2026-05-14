@@ -1701,7 +1701,7 @@ const SignUpForm = () => {
       <AnimatePresence>
         {showSuccessModal && (
           <motion.div
-            onClick={() => setShowSuccessModal(false)}
+            onClick={() => router.push("/")}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -1790,10 +1790,10 @@ const SignUpForm = () => {
                 {/* Close Button */}
                 <div className="flex items-center justify-center gap-5">
                   <button
-                    onClick={() => router.push("/search")}
+                    onClick={() => router.push("/")}
                     className="mt-8 hover:underline text-[14px] text-[#585b62] hover:text-primary transition-colors"
                   >
-                    Search for Vehicles{" "}
+                    Go to Home{" "}
                     <ArrowRight className="inline-block w-4 h-4" />
                   </button>
                 </div>
