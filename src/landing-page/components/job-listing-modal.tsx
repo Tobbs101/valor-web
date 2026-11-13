@@ -56,6 +56,16 @@ const fallbackVehicleTypes: VehicleType[] = [
   { id: "Mini-van", name: "Mini-van", icon: "mdi:van-passenger" },
 ];
 
+const longTermVehicleTypes: VehicleType[] = [
+  { id: "Sedan", name: "Sedan", icon: "mdi:car-sedan" },
+  { id: "SUV", name: "SUV", icon: "mdi:car-suv" },
+  { id: "Bus", name: "Bus", icon: "mdi:bus" },
+  { id: "Mini Van", name: "Mini Van", icon: "mdi:van-passenger" },
+  { id: "Luxury", name: "Luxury", icon: "mdi:car-sports" },
+  { id: "Pick-Up", name: "Pick-Up", icon: "mdi:car-pickup" },
+  { id: "Vintage", name: "Vintage", icon: "mdi:car-convertible" },
+];
+
 // Icon mapping for car types from API
 const carTypeIconMap: Record<string, string> = {
   // Sedan: "mdi:car-sedan",
@@ -909,7 +919,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                           <SelectValue placeholder="Select vehicle type" />
                         </SelectTrigger>
                         <SelectContent className="z-[10000]">
-                          {vehicleTypes?.map((type) => (
+                          {longTermVehicleTypes.map((type) => (
                             <SelectItem
                               key={type.id}
                               value={type?.name}
