@@ -56,7 +56,7 @@ const fallbackVehicleTypes: VehicleType[] = [
   { id: "Mini-van", name: "Mini-van", icon: "mdi:van-passenger" },
 ];
 
-const longTermVehicleTypes: VehicleType[] = [
+const longTermVehicleChoices: VehicleType[] = [
   { id: "Sedan", name: "Sedan", icon: "mdi:car-sedan" },
   { id: "SUV", name: "SUV", icon: "mdi:car-suv" },
   { id: "Bus", name: "Bus", icon: "mdi:bus" },
@@ -65,6 +65,7 @@ const longTermVehicleTypes: VehicleType[] = [
   { id: "Pick-Up", name: "Pick-Up", icon: "mdi:car-pickup" },
   { id: "Vintage", name: "Vintage", icon: "mdi:car-convertible" },
 ];
+const normalizeCarType = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 // Icon mapping for car types from API
 const carTypeIconMap: Record<string, string> = {
@@ -253,7 +254,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
   const setJobDuration = (value: string) =>
     setStep1Data({ jobDuration: value });
 
-  const { data: carTypes } = useQuery("carTypes", () => fleet.getCarTypes(), {
+  const { data: carTypes, isLoading: carTypesLoading } = useQuery("carTypes", () => fleet.getCarTypes(), {
     staleTime: 1000 * 60 * 30, // Cache for 30 minutes
     refetchOnWindowFocus: false,
   });
@@ -262,12 +263,27 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
     carTypes?.data?.length > 0
       ? carTypes.data.map(
           (item: { _id: string; carType: string; createdBy: string }) => ({
-            id: item.carType,
+            id: item._id,
             name: item.carType,
             icon: carTypeIconMap[item.carType] || "mdi:car-sports",
           }),
         )
       : fallbackVehicleTypes;
+  const availableLongTermTypes = carTypes?.data?.length > 0
+    ? vehicleTypes.filter((type) => /^[a-f\d]{24}$/i.test(type.id))
+    : [];
+  const usedLongTermTypeIds = new Set<string>();
+  const longTermVehicleTypes = longTermVehicleChoices.reduce<VehicleType[]>((matches, choice) => {
+    const wanted = normalizeCarType(choice.name);
+    const candidates = availableLongTermTypes.filter((type) => !usedLongTermTypeIds.has(type.id));
+    const match = candidates.find((type) => normalizeCarType(type.name) === wanted)
+      || candidates.find((type) => normalizeCarType(type.name).includes(wanted));
+    if (match) {
+      usedLongTermTypeIds.add(match.id);
+      matches.push({ ...choice, id: match.id });
+    }
+    return matches;
+  }, []);
 
   // Validation helpers
   const isValidEmail = (email: string) => {
@@ -332,7 +348,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [vehicles, setVehicles] = useState<
-    { type: string; quantity: string }[]
+    { typeId: string; typeName: string; quantity: string }[]
   >([]);
   const [selectedVehicleType, setSelectedVehicleType] = useState("");
   const [vehicleQuantity, setVehicleQuantity] = useState("1");
@@ -539,16 +555,17 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
           startDate,
           endDate,
           carType: vehicles.map((v) => ({
-            carType: v.type,
+            carType: v.typeId,
             quantity: parseInt(v.quantity, 10),
           })),
         };
 
         await longTermMutation.mutateAsync(longTermPayload);
       }
-    } finally {
-      resetForm();
       resetStore();
+    } catch {
+      // The mutation displays the API error and keeps the form available to correct.
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -911,6 +928,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                       <Select
                         value={selectedVehicleType}
                         onValueChange={setSelectedVehicleType}
+                        disabled={carTypesLoading || longTermVehicleTypes.length === 0}
                       >
                         <SelectTrigger
                           ref={vehicleSelectRef}
@@ -922,7 +940,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                           {longTermVehicleTypes.map((type) => (
                             <SelectItem
                               key={type.id}
-                              value={type?.name}
+                              value={type.id}
                               className="text-[14px]"
                             >
                               {type?.name}
@@ -941,9 +959,9 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          if (selectedVehicleType && vehicleQuantity) {
+                          if (selectedVehicleType && Number(vehicleQuantity) > 0) {
                             const existingIndex = vehicles.findIndex(
-                              (v) => v.type === selectedVehicleType,
+                              (v) => v.typeId === selectedVehicleType,
                             );
                             if (existingIndex >= 0) {
                               const updated = [...vehicles];
@@ -953,7 +971,8 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                               setVehicles([
                                 ...vehicles,
                                 {
-                                  type: selectedVehicleType,
+                                  typeId: selectedVehicleType,
+                                  typeName: longTermVehicleTypes.find((type) => type.id === selectedVehicleType)?.name || "Vehicle",
                                   quantity: vehicleQuantity,
                                 },
                               ]);
@@ -967,6 +986,10 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                         Add <span className="text-[18px]">+</span>
                       </button>
                     </div>
+                    {carTypesLoading && <p className="mt-2 text-xs text-gray-500">Loading vehicle types…</p>}
+                    {!carTypesLoading && longTermVehicleTypes.length === 0 && (
+                      <p className="mt-2 text-xs text-red-600">Vehicle types are unavailable. Please try again shortly.</p>
+                    )}
                     {/* Display added vehicles */}
                     {vehicles.length > 0 && (
                       <div className="mt-3 space-y-2">
@@ -976,7 +999,7 @@ const JobListingModal: React.FC<JobListingModalProps> = ({
                             className="flex items-center justify-between bg-[#CBEEFF] rounded-lg px-4 py-3"
                           >
                             <span className="text-[14px]">
-                              {v.type}{" "}
+                              {v.typeName}{" "}
                               <span className="font-semibold">
                                 × {v.quantity}
                               </span>
